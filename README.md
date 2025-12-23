@@ -2,7 +2,7 @@
 
 Generate optimized prompts for Nano Banana Pro Slides - Generate slides using AI.
 
-![App Screenshot](./docs/samples/screenshot.png)
+![App Screenshot](./docs/samples/Screenshot.png)
 
 ## Sample Slides
 
