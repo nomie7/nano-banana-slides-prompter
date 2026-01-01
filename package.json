@@ -1,7 +1,7 @@
 {
   "name": "nano-banana-slides-prompter",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:server\"",
