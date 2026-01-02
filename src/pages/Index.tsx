@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sparkles, Loader2, X, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ContentInput } from '@/components/slide-prompt/ContentInput';
@@ -56,13 +56,15 @@ export default function Index() {
   };
 
   // Show toast on error
-  if (error) {
-    toast({
-      title: 'Generation Failed',
-      description: error,
-      variant: 'destructive',
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Generation Failed',
+        description: error,
+        variant: 'destructive',
+      });
+    }
+  }, [error, toast]);
 
   // Show toast on completion
   if (generatedPrompt && !isGenerating && slides.length > 0) {

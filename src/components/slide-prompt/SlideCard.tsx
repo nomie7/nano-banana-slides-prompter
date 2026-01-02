@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, Copy, ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useToast } from '@/hooks/use-toast';
@@ -14,6 +14,11 @@ interface SlideCardProps {
 
 export function SlideCard({ slide, defaultOpen = false, isNew = false, animationDelay = 0 }: SlideCardProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  // Update open state when defaultOpen changes (for Expand/Collapse All)
+  useEffect(() => {
+    setIsOpen(defaultOpen);
+  }, [defaultOpen]);
   const [copied, setCopied] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(!isNew);
   const { toast } = useToast();
