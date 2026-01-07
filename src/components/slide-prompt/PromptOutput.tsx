@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Check, Copy, FileText, Code, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,16 +38,15 @@ export function PromptOutput({
   streamingSlides = [],
   expectedSlideCount = 10
 }: PromptOutputProps) {
+  const { t } = useTranslation();
   const [format, setFormat] = useState<OutputFormat>('text');
   const [copied, setCopied] = useState(false);
   const [allExpanded, setAllExpanded] = useState(true);
   const { toast } = useToast();
 
-  // Track which slide numbers have been seen for animation
   const seenSlidesRef = useRef<Set<number>>(new Set());
   const [newSlides, setNewSlides] = useState<Set<number>>(new Set());
 
-  // Update seen slides when streaming slides change
   useEffect(() => {
     if (isStreaming) {
       const currentNewSlides = new Set<number>();
@@ -62,7 +62,6 @@ export function PromptOutput({
     }
   }, [streamingSlides, isStreaming]);
 
-  // Reset tracking when generation completes
   useEffect(() => {
     if (!isStreaming && prompt) {
       seenSlidesRef.current = new Set(prompt.slides.map(s => s.slideNumber));
@@ -70,7 +69,6 @@ export function PromptOutput({
     }
   }, [isStreaming, prompt]);
 
-  // Reset when starting new generation
   useEffect(() => {
     if (isStreaming && streamingSlides.length === 0) {
       seenSlidesRef.current = new Set();
@@ -84,7 +82,6 @@ export function PromptOutput({
     ? Math.max(0, Math.min(3, expectedSlideCount - streamingSlides.length))
     : 0;
 
-  // Empty state
   if (!prompt && !isStreaming) {
     return (
       <Card className="border-dashed border-2 border-border/50 bg-card/50 backdrop-blur-sm">
@@ -93,10 +90,10 @@ export function PromptOutput({
             <FileText className="h-10 w-10 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-medium text-foreground mb-2">
-            No prompt generated yet
+            {t('promptOutput.noPrompt')}
           </h3>
           <p className="text-sm text-muted-foreground max-w-sm">
-            Add your content, select a style, and configure settings, then click "Generate Prompt" to create your slide prompt.
+            {t('promptOutput.noPromptHint')}
           </p>
         </CardContent>
       </Card>
@@ -114,14 +111,14 @@ export function PromptOutput({
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       toast({
-        title: 'Copied All!',
-        description: `All ${prompt.slides.length} slide prompts copied to clipboard.`,
+        title: t('toast.copiedAll'),
+        description: t('toast.copiedAllDesc', { count: prompt.slides.length }),
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: 'Failed to copy',
-        description: 'Please select and copy the text manually.',
+        title: t('toast.copyFailed'),
+        description: t('toast.copyFailedHint'),
         variant: 'destructive',
       });
     }
@@ -135,17 +132,17 @@ export function PromptOutput({
             {isStreaming ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                <span>Generating...</span>
+                <span>{t('promptOutput.generating')}</span>
                 <span className="text-sm font-normal text-muted-foreground">
-                  ({streamingSlides.length} slides)
+                  {t('promptOutput.slideCount', { count: streamingSlides.length })}
                 </span>
               </>
             ) : (
               <>
-                Generated Prompts
+                {t('promptOutput.title')}
                 {hasSlides && (
                   <span className="ml-2 text-sm font-normal text-muted-foreground">
-                    ({displaySlides.length} slides)
+                    {t('promptOutput.slideCount', { count: displaySlides.length })}
                   </span>
                 )}
               </>
@@ -161,12 +158,12 @@ export function PromptOutput({
                 {allExpanded ? (
                   <>
                     <ChevronUp className="h-4 w-4 mr-1" />
-                    Collapse All
+                    {t('buttons.collapseAll')}
                   </>
                 ) : (
                   <>
                     <ChevronDown className="h-4 w-4 mr-1" />
-                    Expand All
+                    {t('buttons.expandAll')}
                   </>
                 )}
               </Button>
@@ -183,7 +180,7 @@ export function PromptOutput({
                 ) : (
                   <Copy className="h-4 w-4 mr-2" />
                 )}
-                {copied ? 'Copied!' : 'Copy All'}
+                {copied ? t('buttons.copied') : t('buttons.copyAll')}
               </Button>
             )}
           </div>
@@ -194,17 +191,17 @@ export function PromptOutput({
           <TabsList className="grid w-full grid-cols-2 mb-4 bg-muted/50">
             <TabsTrigger value="text" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Slides
+              {t('promptOutput.tabs.slides')}
             </TabsTrigger>
             <TabsTrigger value="json" className="flex items-center gap-2" disabled={isStreaming}>
               <Code className="h-4 w-4" />
-              Raw Output
+              {t('promptOutput.tabs.raw')}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="text" className="mt-0">
             {hasSlides || isStreaming ? (
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
                 {displaySlides.map((slide, index) => (
                   <SlideCard
                     key={slide.slideNumber}
@@ -214,7 +211,6 @@ export function PromptOutput({
                     animationDelay={index * 50}
                   />
                 ))}
-                {/* Skeleton loaders for upcoming slides */}
                 {Array.from({ length: remainingSkeletons }).map((_, i) => (
                   <SlideSkeleton key={`skeleton-${i}`} />
                 ))}
@@ -239,13 +235,12 @@ export function PromptOutput({
 
         <p className="text-xs text-muted-foreground mt-4">
           {isStreaming
-            ? 'Slides appear as they are generated. Click to expand each slide.'
+            ? t('promptOutput.streamingHint')
             : format === 'text'
-              ? 'Click on each slide to expand. Copy individual prompts or all at once.'
-              : 'Raw LLM output for debugging or custom processing.'}
+              ? t('promptOutput.slidesHint')
+              : t('promptOutput.rawHint')}
         </p>
       </CardContent>
     </Card>
   );
 }
-

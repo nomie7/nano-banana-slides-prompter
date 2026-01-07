@@ -1,113 +1,226 @@
-import { useState, useCallback, useRef } from 'react';
-import { generatePromptStream, type GeneratePromptRequest, type StreamEvent } from '@/lib/api';
-import type { ParsedSlide, GeneratedPrompt } from '@/types/slidePrompt';
+import { useState, useCallback, useRef, useEffect } from "react";
+import {
+  generatePromptStream,
+  type GeneratePromptRequest,
+  type StreamEvent,
+} from "@/lib/api";
+import { useSessionStore } from "@/stores/sessionStore";
+import type { ParsedSlide, GeneratedPrompt } from "@/types/slidePrompt";
 
 export interface UseStreamingGenerationState {
-    isGenerating: boolean;
-    slides: ParsedSlide[];
-    error: string | null;
-    generatedPrompt: GeneratedPrompt | null;
+  isGenerating: boolean;
+  slides: ParsedSlide[];
+  error: string | null;
+  generatedPrompt: GeneratedPrompt | null;
 }
 
-export interface UseStreamingGenerationReturn extends UseStreamingGenerationState {
-    generate: (request: GeneratePromptRequest) => Promise<void>;
-    cancel: () => void;
-    reset: () => void;
+export interface UseStreamingGenerationReturn
+  extends UseStreamingGenerationState {
+  generate: (request: GeneratePromptRequest) => Promise<void>;
+  cancel: () => void;
+  reset: () => void;
 }
 
 export function useStreamingGeneration(): UseStreamingGenerationReturn {
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [slides, setSlides] = useState<ParsedSlide[]>([]);
-    const [error, setError] = useState<string | null>(null);
-    const [generatedPrompt, setGeneratedPrompt] = useState<GeneratedPrompt | null>(null);
+  const {
+    getCurrentSession,
+    currentSessionId,
+    updateSessionStatus,
+    updateSessionSlides,
+    updateSessionPrompt,
+    updateSessionError,
+    updateSessionConfig,
+    updateSessionTitle,
+    setAbortController,
+    getAbortController,
+    removeAbortController,
+  } = useSessionStore();
 
-    const abortControllerRef = useRef<AbortController | null>(null);
+  const currentSession = getCurrentSession();
 
-    const cancel = useCallback(() => {
-        abortControllerRef.current?.abort();
-        abortControllerRef.current = null;
-        setIsGenerating(false);
-    }, []);
+  const [localIsGenerating, setLocalIsGenerating] = useState(false);
+  const [localSlides, setLocalSlides] = useState<ParsedSlide[]>([]);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [localPrompt, setLocalPrompt] = useState<GeneratedPrompt | null>(null);
 
-    const reset = useCallback(() => {
-        cancel();
-        setSlides([]);
-        setError(null);
-        setGeneratedPrompt(null);
-    }, [cancel]);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-    const generate = useCallback(async (request: GeneratePromptRequest) => {
-        // Cancel any existing generation
-        cancel();
+  useEffect(() => {
+    if (currentSession) {
+      setLocalSlides(currentSession.slides);
+      setLocalPrompt(currentSession.generatedPrompt);
+      setLocalError(currentSession.error);
+      setLocalIsGenerating(currentSession.status === "generating");
+    } else {
+      setLocalSlides([]);
+      setLocalPrompt(null);
+      setLocalError(null);
+      setLocalIsGenerating(false);
+    }
+  }, [currentSession?.id]);
 
-        // Reset state
-        setSlides([]);
-        setError(null);
-        setGeneratedPrompt(null);
-        setIsGenerating(true);
+  const cancel = useCallback(() => {
+    if (!currentSessionId) return;
 
-        // Create new abort controller
-        abortControllerRef.current = new AbortController();
+    const controller = getAbortController(currentSessionId);
+    if (controller) {
+      controller.abort();
+      removeAbortController(currentSessionId);
+    }
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
 
-        try {
-            const collectedSlides: ParsedSlide[] = [];
+    updateSessionStatus(currentSessionId, "idle");
+    setLocalIsGenerating(false);
+  }, [
+    currentSessionId,
+    getAbortController,
+    removeAbortController,
+    updateSessionStatus,
+  ]);
 
-            for await (const event of generatePromptStream(request, abortControllerRef.current.signal)) {
-                switch (event.type) {
-                    case 'slide': {
-                        const slide = event.data as ParsedSlide;
-                        collectedSlides.push(slide);
-                        // Sort slides by number to ensure correct order
-                        const sortedSlides = [...collectedSlides].sort((a, b) => a.slideNumber - b.slideNumber);
-                        setSlides(sortedSlides);
-                        break;
-                    }
-                    case 'done': {
-                        // Build final generated prompt
-                        const sortedSlides = [...collectedSlides].sort((a, b) => a.slideNumber - b.slideNumber);
-                        const plainText = sortedSlides
-                            .map(s => `**Slide ${s.slideNumber}: ${s.title}**\n\`\`\`\n${s.prompt}\n\`\`\``)
-                            .join('\n\n');
+  const reset = useCallback(() => {
+    cancel();
+    if (currentSessionId) {
+      updateSessionSlides(currentSessionId, []);
+      updateSessionPrompt(currentSessionId, null);
+      updateSessionError(currentSessionId, null);
+    }
+    setLocalSlides([]);
+    setLocalError(null);
+    setLocalPrompt(null);
+  }, [
+    cancel,
+    currentSessionId,
+    updateSessionSlides,
+    updateSessionPrompt,
+    updateSessionError,
+  ]);
 
-                        setGeneratedPrompt({
-                            plainText,
-                            slides: sortedSlides,
-                            jsonFormat: {
-                                model: 'nano-banana-pro',
-                                messages: [
-                                    { role: 'system', content: 'Nano Banana Pro optimized prompts' },
-                                    { role: 'user', content: plainText },
-                                ],
-                            },
-                        });
-                        break;
-                    }
-                    case 'error': {
-                        const errorData = event.data as { error: string };
-                        setError(errorData.error);
-                        break;
-                    }
+  const generate = useCallback(
+    async (request: GeneratePromptRequest) => {
+      if (!currentSessionId) return;
+
+      cancel();
+
+      updateSessionSlides(currentSessionId, []);
+      updateSessionPrompt(currentSessionId, null);
+      updateSessionError(currentSessionId, null);
+      updateSessionStatus(currentSessionId, "generating");
+      updateSessionConfig(currentSessionId, request);
+
+      setLocalSlides([]);
+      setLocalError(null);
+      setLocalPrompt(null);
+      setLocalIsGenerating(true);
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      setAbortController(currentSessionId, controller);
+
+      try {
+        const collectedSlides: ParsedSlide[] = [];
+
+        for await (const event of generatePromptStream(
+          request,
+          controller.signal
+        )) {
+          switch (event.type) {
+            case "slide": {
+              const slide = event.data as ParsedSlide;
+              collectedSlides.push(slide);
+              const sortedSlides = [...collectedSlides].sort(
+                (a, b) => a.slideNumber - b.slideNumber
+              );
+              setLocalSlides(sortedSlides);
+              updateSessionSlides(currentSessionId, sortedSlides);
+              break;
+            }
+            case "done": {
+              const sortedSlides = [...collectedSlides].sort(
+                (a, b) => a.slideNumber - b.slideNumber
+              );
+              const plainText = sortedSlides
+                .map(
+                  (s) =>
+                    `**Slide ${s.slideNumber}: ${s.title}**\n\`\`\`\n${s.prompt}\n\`\`\``
+                )
+                .join("\n\n");
+
+              const prompt: GeneratedPrompt = {
+                plainText,
+                slides: sortedSlides,
+                jsonFormat: {
+                  model: "nano-banana-pro",
+                  messages: [
+                    {
+                      role: "system",
+                      content: "Nano Banana Pro optimized prompts",
+                    },
+                    { role: "user", content: plainText },
+                  ],
+                },
+              };
+              setLocalPrompt(prompt);
+              updateSessionPrompt(currentSessionId, prompt);
+              updateSessionStatus(currentSessionId, "completed");
+
+              if (sortedSlides.length > 0) {
+                const currentTitle = getCurrentSession()?.title;
+                if (currentTitle === "New Session") {
+                  const autoTitle =
+                    sortedSlides[0].title.slice(0, 30) +
+                    -(sortedSlides[0].title.length > 30 ? "..." : "");
+                  updateSessionTitle(currentSessionId, autoTitle);
                 }
+              }
+              break;
             }
-        } catch (err) {
-            if (err instanceof Error && err.name === 'AbortError') {
-                // Generation was cancelled, not an error
-                return;
+            case "error": {
+              const errorData = event.data as { error: string };
+              setLocalError(errorData.error);
+              updateSessionError(currentSessionId, errorData.error);
+              updateSessionStatus(currentSessionId, "error");
+              break;
             }
-            setError(err instanceof Error ? err.message : 'Failed to generate prompts');
-        } finally {
-            setIsGenerating(false);
-            abortControllerRef.current = null;
+          }
         }
-    }, [cancel]);
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to generate prompts";
+        setLocalError(errorMsg);
+        updateSessionError(currentSessionId, errorMsg);
+        updateSessionStatus(currentSessionId, "error");
+      } finally {
+        setLocalIsGenerating(false);
+        abortControllerRef.current = null;
+        removeAbortController(currentSessionId);
+      }
+    },
+    [
+      currentSessionId,
+      cancel,
+      setAbortController,
+      removeAbortController,
+      updateSessionStatus,
+      updateSessionSlides,
+      updateSessionPrompt,
+      updateSessionError,
+      updateSessionConfig,
+      updateSessionTitle,
+    ]
+  );
 
-    return {
-        isGenerating,
-        slides,
-        error,
-        generatedPrompt,
-        generate,
-        cancel,
-        reset,
-    };
+  return {
+    isGenerating: localIsGenerating,
+    slides: localSlides,
+    error: localError,
+    generatedPrompt: localPrompt,
+    generate,
+    cancel,
+    reset,
+  };
 }

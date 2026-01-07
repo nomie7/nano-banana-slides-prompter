@@ -31,3 +31,6 @@ server/.env
 
 # Claude
 .claude/
+
+# Session data
+server/data/

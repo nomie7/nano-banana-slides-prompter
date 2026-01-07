@@ -1,0 +1,218 @@
+{
+  "app": {
+    "title": "Nano Banana 幻灯片提示词生成器",
+    "subtitle": "为 AI 幻灯片生成创建优化的提示词",
+    "footer": "Nano Banana 幻灯片提示词生成器 v{{version}} - 为 Nano Banana Pro Slides 生成优化的提示词"
+  },
+  "steps": {
+    "addContent": "添加内容",
+    "allSourcesCombined": "(所有来源将合并)",
+    "selectStyle": "选择风格",
+    "characterHost": "角色主持人",
+    "optional": "(可选)",
+    "configureSettings": "配置设置",
+    "generatedPrompt": "生成的提示词"
+  },
+  "buttons": {
+    "generate": "生成提示词",
+    "cancel": "取消生成",
+    "copy": "复制",
+    "copyAll": "复制全部",
+    "copied": "已复制!",
+    "extract": "提取",
+    "extracting": "提取中...",
+    "expandAll": "全部展开",
+    "collapseAll": "全部折叠"
+  },
+  "contentInput": {
+    "tabs": {
+      "text": "提示词",
+      "topic": "主题",
+      "file": "文件",
+      "url": "网址"
+    },
+    "text": {
+      "label": "输入你的提示词",
+      "placeholder": "描述你想要的幻灯片内容。你也可以从主题、文件或网址标签添加内容 - 所有来源将被合并！",
+      "charCount": "{{count}} 个字符"
+    },
+    "topic": {
+      "label": "选择主题",
+      "placeholder": "选择演示主题...",
+      "hint": "AI 将根据\"{{topic}}\"主题生成内容。",
+      "options": {
+        "businessStrategy": "商业策略",
+        "productLaunch": "产品发布",
+        "quarterlyReport": "季度报告",
+        "teamIntro": "团队介绍",
+        "techOverview": "技术概览",
+        "marketAnalysis": "市场分析",
+        "projectProposal": "项目提案",
+        "trainingCourse": "培训课程",
+        "salesPitch": "销售演讲",
+        "companyCulture": "公司文化",
+        "researchResults": "研究成果",
+        "eventDemo": "活动演示"
+      }
+    },
+    "file": {
+      "label": "上传文档",
+      "dropHint": "点击上传或拖放文件",
+      "supportedFormats": "支持 TXT、MD、CSV 或 PDF 文件",
+      "pdfReady": "PDF 已准备好供 AI 分析",
+      "extracted": "已提取 {{count}} 个字符"
+    },
+    "url": {
+      "label": "输入网址",
+      "placeholder": "https://example.com/article",
+      "hint": "点击\"提取\"按钮从网址获取并分析内容。",
+      "success": "内容提取成功",
+      "extracted": "已提取 {{count}} 个字符"
+    }
+  },
+  "styleSelector": {
+    "title": "视觉风格",
+    "styles": {
+      "professional": { "name": "专业", "description": "简洁的企业风格" },
+      "technical": { "name": "技术", "description": "蓝图与图表" },
+      "creative": { "name": "创意", "description": "大胆艺术风格" },
+      "infographic": { "name": "信息图", "description": "数据驱动可视化" },
+      "educational": { "name": "教育", "description": "清晰易懂" },
+      "pixel-art": { "name": "像素艺术", "description": "复古8位风格" },
+      "minimalist": { "name": "极简", "description": "超简洁风格" },
+      "dark-neon": { "name": "暗黑霓虹", "description": "赛博朋克发光" },
+      "hand-drawn": { "name": "手绘", "description": "素描有机风格" },
+      "glassmorphism": { "name": "玻璃态", "description": "毛玻璃效果" },
+      "vintage": { "name": "复古", "description": "70/80年代风格" },
+      "3d-isometric": { "name": "3D等距", "description": "立体图形" },
+      "watercolor": { "name": "水彩", "description": "柔和绘画纹理" },
+      "newspaper": { "name": "报纸", "description": "编辑大胆风格" },
+      "flat-design": { "name": "扁平化", "description": "大胆几何风格" },
+      "gradient-mesh": { "name": "渐变网格", "description": "流动色彩混合" },
+      "sci-fi-hud": { "name": "科幻HUD", "description": "赛博朋克界面" },
+      "deep-ocean": { "name": "深海", "description": "自然纪录片风格" },
+      "dev-console": { "name": "开发控制台", "description": "软件架构文档" },
+      "neon-scientific": { "name": "霓虹科学", "description": "生物发光科幻可视化" }
+    }
+  },
+  "characterSelector": {
+    "title": "角色主持人",
+    "subtitle": "在所有幻灯片中添加统一的主持人角色",
+    "toggle": { "on": "开", "off": "关" },
+    "styleLabel": "角色风格",
+    "genderLabel": "性别",
+    "genderOptional": "(可选)",
+    "note": "同一角色将出现在所有幻灯片中，具有动态姿势、表情和风格适配的渲染效果。",
+    "renderStyles": {
+      "pixar": { "name": "Pixar", "description": "3D动画 (迪士尼/皮克斯)" },
+      "real": { "name": "真实", "description": "逼真人物" },
+      "anime": { "name": "动漫", "description": "日式动画" },
+      "cartoon": { "name": "卡通", "description": "2D西方卡通" },
+      "sketch": { "name": "素描", "description": "手绘铅笔/墨水" },
+      "chibi": { "name": "Q版", "description": "可爱小比例" },
+      "low-poly": { "name": "低多边形", "description": "几何3D风格" },
+      "mascot": { "name": "吉祥物", "description": "企业吉祥物风格" }
+    },
+    "genders": {
+      "none": { "name": "不指定", "description": "让AI决定" },
+      "male": { "name": "男性", "description": "男性特征" },
+      "female": { "name": "女性", "description": "女性特征" }
+    }
+  },
+  "presentationSettings": {
+    "title": "演示设置",
+    "aspectRatio": "宽高比",
+    "slideCount": "幻灯片数量",
+    "colorPalette": "配色方案",
+    "colorAuto": "AI选择",
+    "colorCustom": "自定义",
+    "colorAutoHint": "AI 将根据你的内容和风格自动选择最佳配色",
+    "layoutStructure": "布局结构",
+    "aspectRatios": {
+      "16:9": "宽屏",
+      "4:3": "标准",
+      "1:1": "方形",
+      "9:16": "竖屏"
+    },
+    "palettes": {
+      "corporate-blue": "企业蓝",
+      "modern-purple": "现代紫",
+      "nature-green": "自然绿",
+      "warm-orange": "暖橙",
+      "elegant-monochrome": "优雅单色",
+      "vibrant-gradient": "活力渐变",
+      "ocean-teal": "海洋青",
+      "sunset-pink": "夕阳粉",
+      "forest-earth": "森林大地",
+      "royal-gold": "皇家金",
+      "arctic-frost": "北极霜",
+      "neon-night": "霓虹夜"
+    },
+    "layouts": {
+      "visual-heavy": { "label": "视觉为主", "description": "70% 图片" },
+      "balanced": { "label": "均衡", "description": "50/50 混合" },
+      "text-heavy": { "label": "文字为主", "description": "70% 文字" }
+    }
+  },
+  "promptOutput": {
+    "noPrompt": "尚未生成提示词",
+    "noPromptHint": "添加内容、选择风格并配置设置，然后点击\"生成提示词\"来创建幻灯片提示词。",
+    "generating": "生成中...",
+    "slideCount": "({{count}} 张幻灯片)",
+    "title": "生成的提示词",
+    "tabs": {
+      "slides": "幻灯片",
+      "raw": "原始输出"
+    },
+    "streamingHint": "幻灯片在生成时逐一显示。点击展开每张幻灯片。",
+    "slidesHint": "点击每张幻灯片展开。可单独复制或一次复制全部。",
+    "rawHint": "用于调试或自定义处理的原始 LLM 输出。"
+  },
+  "slideCard": {
+    "copiedSlide": "第 {{number}} 张幻灯片提示词已复制到剪贴板。"
+  },
+  "language": {
+    "label": "语言",
+    "zh": "中文",
+    "en": "English"
+  },
+  "settings": {
+    "title": "AI 设置",
+    "baseURL": "API 地址",
+    "baseURLHint": "无需添加 /v1（默认: {{default}}）",
+    "model": "模型",
+    "modelHint": "默认: {{default}}",
+    "apiKey": "API 密钥",
+    "apiKeyHint": "留空则使用服务器配置的密钥",
+    "save": "保存",
+    "resetDefault": "恢复默认",
+    "saved": "设置已保存",
+    "reset": "已恢复默认设置",
+    "error": "错误",
+    "fillAll": "请填写所有字段"
+  },
+  "sidebar": {
+    "newSession": "新建会话",
+    "noSessions": "暂无会话",
+    "slideCount": "{{count}} 张幻灯片",
+    "time": {
+      "justNow": "刚刚",
+      "minutesAgo": "{{count}}分钟前",
+      "hoursAgo": "{{count}}小时前",
+      "daysAgo": "{{count}}天前"
+    }
+  },
+  "toast": {
+    "generateFailed": "生成失败",
+    "extractSuccess": "内容提取成功",
+    "extractSuccessDesc": "从\"{{title}}\"提取了 {{count}} 个字符",
+    "extractFailed": "提取失败",
+    "extractFailedDefault": "无法从 URL 提取内容",
+    "connectionFailed": "连接服务器失败",
+    "copyFailed": "复制失败",
+    "copyFailedHint": "请手动选择并复制文本。",
+    "copiedAll": "已复制全部!",
+    "copiedAllDesc": "已将 {{count}} 个幻灯片提示词复制到剪贴板。",
+    "copiedSlide": "已复制!"
+  }
+}

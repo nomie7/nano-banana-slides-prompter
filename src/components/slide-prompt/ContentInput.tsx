@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileText, Link, MessageSquare, Tag, Upload, X, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,20 +11,20 @@ import { extractUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import type { ContentInput as ContentInputType, ContentInputType as InputType } from '@/types/slidePrompt';
 
-const topics = [
-  'Business Strategy',
-  'Product Launch',
-  'Quarterly Report',
-  'Team Introduction',
-  'Technology Overview',
-  'Market Analysis',
-  'Project Proposal',
-  'Training Session',
-  'Sales Pitch',
-  'Company Culture',
-  'Research Findings',
-  'Event Presentation'
-];
+const topicKeys = [
+  'businessStrategy',
+  'productLaunch',
+  'quarterlyReport',
+  'teamIntro',
+  'techOverview',
+  'marketAnalysis',
+  'projectProposal',
+  'trainingCourse',
+  'salesPitch',
+  'companyCulture',
+  'researchResults',
+  'eventDemo'
+] as const;
 
 interface ContentInputProps {
   value: ContentInputType;
@@ -31,6 +32,7 @@ interface ContentInputProps {
 }
 
 export function ContentInput({ value, onChange }: ContentInputProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<InputType>(value.type);
   const [isExtracting, setIsExtracting] = useState(false);
   const { toast } = useToast();
@@ -65,20 +67,20 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
           urlContent: result.data.content,
         });
         toast({
-          title: 'Content Extracted',
-          description: `Extracted ${result.data.content.length} characters from "${result.data.title || 'the page'}"`,
+          title: t('toast.extractSuccess'),
+          description: t('toast.extractSuccessDesc', { title: result.data.title || 'Page', count: result.data.content.length }),
         });
       } else {
         toast({
-          title: 'Extraction Failed',
-          description: result.error || 'Could not extract content from URL',
+          title: t('toast.extractFailed'),
+          description: result.error || t('toast.extractFailedDefault'),
           variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: 'Extraction Failed',
-        description: error instanceof Error ? error.message : 'Failed to connect to server',
+        title: t('toast.extractFailed'),
+        description: error instanceof Error ? error.message : t('toast.connectionFailed'),
         variant: 'destructive',
       });
     } finally {
@@ -96,35 +98,48 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
 
     const fileName = file.name.toLowerCase();
     const isCsv = fileName.endsWith('.csv');
+    const isPdf = fileName.endsWith('.pdf');
 
-    // Read text-based files (txt, md, csv) as plain text
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      let content = event.target?.result as string;
+    if (isPdf) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        onChange({
+          ...value,
+          fileName: file.name,
+          fileContent: dataUrl,
+          fileType: 'pdf'
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        let content = event.target?.result as string;
 
-      // For CSV, add a hint for the LLM
-      if (isCsv) {
-        content = `[CSV DATA - Parse this tabular data for presentation content]\n${content}`;
-      }
+        if (isCsv) {
+          content = `[CSV DATA - Parse this tabular data for presentation content]\n${content}`;
+        }
 
-      onChange({
-        ...value,
-        fileName: file.name,
-        fileContent: content.slice(0, 15000), // Limit for CSVs
-        fileType: isCsv ? 'csv' : 'text'
-      });
-    };
-    reader.readAsText(file);
+        onChange({
+          ...value,
+          fileName: file.name,
+          fileContent: content.slice(0, 15000),
+          fileType: isCsv ? 'csv' : 'text'
+        });
+      };
+      reader.readAsText(file);
+    }
   };
 
   const clearFile = () => {
     onChange({ ...value, fileName: '', fileContent: '', fileType: undefined });
   };
 
-  // Helper to get file type icon/badge
   const getFileTypeBadge = () => {
     const ext = value.fileName?.split('.').pop()?.toLowerCase();
     if (ext === 'csv') return 'CSV';
+    if (ext === 'pdf') return 'PDF';
     return 'TXT';
   };
 
@@ -135,35 +150,35 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
           <TabsList className="grid w-full grid-cols-4 bg-muted/50">
             <TabsTrigger value="text" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              <span className="hidden sm:inline">Prompt</span>
+              <span className="hidden sm:inline">{t('contentInput.tabs.text')}</span>
             </TabsTrigger>
             <TabsTrigger value="topic" className="flex items-center gap-2">
               <Tag className="h-4 w-4" />
-              <span className="hidden sm:inline">Topic</span>
+              <span className="hidden sm:inline">{t('contentInput.tabs.topic')}</span>
             </TabsTrigger>
             <TabsTrigger value="file" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">File</span>
+              <span className="hidden sm:inline">{t('contentInput.tabs.file')}</span>
             </TabsTrigger>
             <TabsTrigger value="url" className="flex items-center gap-2">
               <Link className="h-4 w-4" />
-              <span className="hidden sm:inline">URL</span>
+              <span className="hidden sm:inline">{t('contentInput.tabs.url')}</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="text" className="mt-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">
-                Enter your prompt
+                {t('contentInput.text.label')}
               </label>
               <Textarea
-                placeholder="Describe what you want in your slides. You can also add content from Topic, File, or URL tabs - all sources will be combined!"
+                placeholder={t('contentInput.text.placeholder')}
                 value={value.text}
                 onChange={(e) => handleTextChange(e.target.value)}
                 className="min-h-[200px] resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                {value.text.length} characters
+                {t('contentInput.text.charCount', { count: value.text.length })}
               </p>
             </div>
           </TabsContent>
@@ -171,23 +186,23 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
           <TabsContent value="topic" className="mt-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">
-                Select a topic
+                {t('contentInput.topic.label')}
               </label>
               <Select value={value.topic} onValueChange={handleTopicChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a presentation topic..." />
+                  <SelectValue placeholder={t('contentInput.topic.placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  {topics.map((topic) => (
-                    <SelectItem key={topic} value={topic}>
-                      {topic}
+                  {topicKeys.map((key) => (
+                    <SelectItem key={key} value={t(`contentInput.topic.options.${key}`)}>
+                      {t(`contentInput.topic.options.${key}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {value.topic && (
                 <p className="text-sm text-muted-foreground mt-2">
-                  The AI will generate content based on the "{value.topic}" theme.
+                  {t('contentInput.topic.hint', { topic: value.topic })}
                 </p>
               )}
             </div>
@@ -196,7 +211,7 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
           <TabsContent value="file" className="mt-4">
             <div className="space-y-4">
               <label className="text-sm font-medium text-foreground">
-                Upload a document
+                {t('contentInput.file.label')}
               </label>
               {value.fileName ? (
                 <div className="flex items-center justify-between p-4 bg-accent rounded-lg">
@@ -211,8 +226,8 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {value.fileType === 'pdf'
-                          ? 'PDF ready for LLM processing'
-                          : `${value.fileContent.length} characters extracted`}
+                          ? t('contentInput.file.pdfReady')
+                          : t('contentInput.file.extracted', { count: value.fileContent.length })}
                       </p>
                     </div>
                   </div>
@@ -224,15 +239,15 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
                 <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors">
                   <Upload className="h-10 w-10 text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground">
-                    Click to upload or drag and drop
+                    {t('contentInput.file.dropHint')}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    TXT, MD, or CSV files
+                    {t('contentInput.file.supportedFormats')}
                   </p>
                   <input
                     type="file"
                     className="hidden"
-                    accept=".txt,.md,.markdown,.csv"
+                    accept=".txt,.md,.markdown,.csv,.pdf"
                     onChange={handleFileUpload}
                   />
                 </label>
@@ -244,12 +259,12 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  Enter a URL
+                  {t('contentInput.url.label')}
                 </label>
                 <div className="flex gap-2">
                   <Input
                     type="url"
-                    placeholder="https://example.com/article"
+                    placeholder={t('contentInput.url.placeholder')}
                     value={value.url}
                     onChange={(e) => handleUrlChange(e.target.value)}
                     className="flex-1"
@@ -262,10 +277,10 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
                     {isExtracting ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Extracting...
+                        {t('buttons.extracting')}
                       </>
                     ) : (
-                      'Extract'
+                      t('buttons.extract')
                     )}
                   </Button>
                 </div>
@@ -276,7 +291,7 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                       <CheckCircle className="h-4 w-4" />
-                      <span>Content extracted successfully</span>
+                      <span>{t('contentInput.url.success')}</span>
                     </div>
                     <Button variant="ghost" size="sm" onClick={clearUrlContent}>
                       <X className="h-4 w-4" />
@@ -289,12 +304,12 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
                     </p>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {value.urlContent.length} characters extracted
+                    {t('contentInput.url.extracted', { count: value.urlContent.length })}
                   </p>
                 </div>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  Click "Extract" to fetch and analyze the content from the URL.
+                  {t('contentInput.url.hint')}
                 </p>
               )}
             </div>

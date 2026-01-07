@@ -107,3 +107,17 @@ export interface GeneratedPrompt {
     }>;
   };
 }
+
+export type SessionStatus = 'idle' | 'generating' | 'completed' | 'error';
+
+export interface Session {
+  id: string;
+  title: string;
+  createdAt: number;
+  updatedAt: number;
+  config: SlidePromptConfig;
+  status: SessionStatus;
+  slides: ParsedSlide[];
+  generatedPrompt: GeneratedPrompt | null;
+  error: string | null;
+}

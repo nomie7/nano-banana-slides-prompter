@@ -1,0 +1,218 @@
+{
+  "app": {
+    "title": "Nano Banana Slides Prompter",
+    "subtitle": "Create optimized prompts for AI-powered slide generation",
+    "footer": "Nano Banana Slides Prompter v{{version}} - Generate optimized prompts for Nano Banana Pro Slides"
+  },
+  "steps": {
+    "addContent": "Add Your Content",
+    "allSourcesCombined": "(all sources combined)",
+    "selectStyle": "Choose Style",
+    "characterHost": "Character Presenter",
+    "optional": "(optional)",
+    "configureSettings": "Configure Settings",
+    "generatedPrompt": "Your Prompt"
+  },
+  "buttons": {
+    "generate": "Generate Prompt",
+    "cancel": "Cancel Generation",
+    "copy": "Copy",
+    "copyAll": "Copy All",
+    "copied": "Copied!",
+    "extract": "Extract",
+    "extracting": "Extracting...",
+    "expandAll": "Expand All",
+    "collapseAll": "Collapse All"
+  },
+  "contentInput": {
+    "tabs": {
+      "text": "Prompt",
+      "topic": "Topic",
+      "file": "File",
+      "url": "URL"
+    },
+    "text": {
+      "label": "Enter your prompt",
+      "placeholder": "Describe what you want in your slides. You can also add content from Topic, File, or URL tabs - all sources will be combined!",
+      "charCount": "{{count}} characters"
+    },
+    "topic": {
+      "label": "Select a topic",
+      "placeholder": "Choose a presentation topic...",
+      "hint": "The AI will generate content based on the \"{{topic}}\" theme.",
+      "options": {
+        "businessStrategy": "Business Strategy",
+        "productLaunch": "Product Launch",
+        "quarterlyReport": "Quarterly Report",
+        "teamIntro": "Team Introduction",
+        "techOverview": "Technology Overview",
+        "marketAnalysis": "Market Analysis",
+        "projectProposal": "Project Proposal",
+        "trainingCourse": "Training Session",
+        "salesPitch": "Sales Pitch",
+        "companyCulture": "Company Culture",
+        "researchResults": "Research Findings",
+        "eventDemo": "Event Presentation"
+      }
+    },
+    "file": {
+      "label": "Upload a document",
+      "dropHint": "Click to upload or drag and drop",
+      "supportedFormats": "TXT, MD, CSV, or PDF files",
+      "pdfReady": "PDF ready for AI analysis",
+      "extracted": "{{count}} characters extracted"
+    },
+    "url": {
+      "label": "Enter a URL",
+      "placeholder": "https://example.com/article",
+      "hint": "Click \"Extract\" to fetch and analyze the content from the URL.",
+      "success": "Content extracted successfully",
+      "extracted": "{{count}} characters extracted"
+    }
+  },
+  "styleSelector": {
+    "title": "Visual Style",
+    "styles": {
+      "professional": { "name": "Professional", "description": "Clean, corporate design" },
+      "technical": { "name": "Technical", "description": "Blueprint & diagrams" },
+      "creative": { "name": "Creative", "description": "Bold & artistic" },
+      "infographic": { "name": "Infographic", "description": "Data-driven visuals" },
+      "educational": { "name": "Educational", "description": "Clear & accessible" },
+      "pixel-art": { "name": "Pixel Art", "description": "Retro 8-bit style" },
+      "minimalist": { "name": "Minimalist", "description": "Ultra-clean simplicity" },
+      "dark-neon": { "name": "Dark Neon", "description": "Cyberpunk glow" },
+      "hand-drawn": { "name": "Hand-drawn", "description": "Sketchy & organic" },
+      "glassmorphism": { "name": "Glassmorphism", "description": "Frosted glass effects" },
+      "vintage": { "name": "Vintage", "description": "70s/80s retro vibes" },
+      "3d-isometric": { "name": "3D Isometric", "description": "Dimensional graphics" },
+      "watercolor": { "name": "Watercolor", "description": "Soft painted textures" },
+      "newspaper": { "name": "Newspaper", "description": "Editorial & bold" },
+      "flat-design": { "name": "Flat Design", "description": "Bold & geometric" },
+      "gradient-mesh": { "name": "Gradient Mesh", "description": "Flowing color blends" },
+      "sci-fi-hud": { "name": "Sci-Fi HUD", "description": "Cyberpunk tech schematics" },
+      "deep-ocean": { "name": "Deep Ocean", "description": "Nature documentary style" },
+      "dev-console": { "name": "Dev Console", "description": "Software architecture docs" },
+      "neon-scientific": { "name": "Neon Scientific", "description": "Bioluminescent sci-fi visualization" }
+    }
+  },
+  "characterSelector": {
+    "title": "Character Presenter",
+    "subtitle": "Add a consistent presenter across all slides",
+    "toggle": { "on": "On", "off": "Off" },
+    "styleLabel": "Character Style",
+    "genderLabel": "Gender",
+    "genderOptional": "(optional)",
+    "note": "The same character will appear on all slides with dynamic poses, expressions, and style-appropriate rendering.",
+    "renderStyles": {
+      "pixar": { "name": "Pixar", "description": "3D animated (Disney/Pixar)" },
+      "real": { "name": "Real", "description": "Photorealistic human" },
+      "anime": { "name": "Anime", "description": "Japanese animation" },
+      "cartoon": { "name": "Cartoon", "description": "2D Western cartoon" },
+      "sketch": { "name": "Sketch", "description": "Hand-drawn pencil/ink" },
+      "chibi": { "name": "Chibi", "description": "Cute small-proportioned" },
+      "low-poly": { "name": "Low-Poly", "description": "Geometric 3D style" },
+      "mascot": { "name": "Mascot", "description": "Corporate mascot style" }
+    },
+    "genders": {
+      "none": { "name": "None", "description": "Let AI decide" },
+      "male": { "name": "Male", "description": "Masculine features" },
+      "female": { "name": "Female", "description": "Feminine features" }
+    }
+  },
+  "presentationSettings": {
+    "title": "Presentation Settings",
+    "aspectRatio": "Aspect Ratio",
+    "slideCount": "Number of Slides",
+    "colorPalette": "Color Palette",
+    "colorAuto": "AI chooses",
+    "colorCustom": "Custom",
+    "colorAutoHint": "AI will automatically choose the best colors based on your content and style",
+    "layoutStructure": "Layout Structure",
+    "aspectRatios": {
+      "16:9": "Widescreen",
+      "4:3": "Standard",
+      "1:1": "Square",
+      "9:16": "Portrait"
+    },
+    "palettes": {
+      "corporate-blue": "Corporate Blue",
+      "modern-purple": "Modern Purple",
+      "nature-green": "Nature Green",
+      "warm-orange": "Warm Orange",
+      "elegant-monochrome": "Elegant Mono",
+      "vibrant-gradient": "Vibrant Gradient",
+      "ocean-teal": "Ocean Teal",
+      "sunset-pink": "Sunset Pink",
+      "forest-earth": "Forest Earth",
+      "royal-gold": "Royal Gold",
+      "arctic-frost": "Arctic Frost",
+      "neon-night": "Neon Night"
+    },
+    "layouts": {
+      "visual-heavy": { "label": "Visual Heavy", "description": "70% images" },
+      "balanced": { "label": "Balanced", "description": "50/50 mix" },
+      "text-heavy": { "label": "Text Heavy", "description": "70% text" }
+    }
+  },
+  "promptOutput": {
+    "noPrompt": "No prompt generated yet",
+    "noPromptHint": "Add your content, select a style, and configure settings, then click \"Generate Prompt\" to create your slide prompt.",
+    "generating": "Generating...",
+    "slideCount": "({{count}} slides)",
+    "title": "Generated Prompts",
+    "tabs": {
+      "slides": "Slides",
+      "raw": "Raw Output"
+    },
+    "streamingHint": "Slides appear as they are generated. Click to expand each slide.",
+    "slidesHint": "Click on each slide to expand. Copy individual prompts or all at once.",
+    "rawHint": "Raw LLM output for debugging or custom processing."
+  },
+  "slideCard": {
+    "copiedSlide": "Slide {{number}} prompt copied to clipboard."
+  },
+  "settings": {
+    "title": "AI Settings",
+    "baseURL": "API Base URL",
+    "baseURLHint": "No need to add /v1 (Default: {{default}})",
+    "model": "Model",
+    "modelHint": "Default: {{default}}",
+    "apiKey": "API Key",
+    "apiKeyHint": "Leave empty to use server's configured key",
+    "save": "Save",
+    "resetDefault": "Reset Default",
+    "saved": "Settings saved",
+    "reset": "Reset to default settings",
+    "error": "Error",
+    "fillAll": "Please fill all fields"
+  },
+  "sidebar": {
+    "newSession": "New Session",
+    "noSessions": "No sessions yet",
+    "slideCount": "{{count}} slides",
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
+    }
+  },
+  "toast": {
+    "generateFailed": "Generation Failed",
+    "extractSuccess": "Content Extracted",
+    "extractSuccessDesc": "Extracted {{count}} characters from \"{{title}}\"",
+    "extractFailed": "Extraction Failed",
+    "extractFailedDefault": "Could not extract content from URL",
+    "connectionFailed": "Failed to connect to server",
+    "copyFailed": "Failed to copy",
+    "copyFailedHint": "Please select and copy the text manually.",
+    "copiedAll": "Copied All!",
+    "copiedAllDesc": "All {{count}} slide prompts copied to clipboard.",
+    "copiedSlide": "Copied!"
+  },
+  "language": {
+    "label": "Language",
+    "zh": "中文",
+    "en": "English"
+  }
+}
