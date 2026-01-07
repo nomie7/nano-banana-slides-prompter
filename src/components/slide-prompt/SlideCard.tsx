@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -13,9 +14,9 @@ interface SlideCardProps {
 }
 
 export function SlideCard({ slide, defaultOpen = false, isNew = false, animationDelay = 0 }: SlideCardProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  // Update open state when defaultOpen changes (for Expand/Collapse All)
   useEffect(() => {
     setIsOpen(defaultOpen);
   }, [defaultOpen]);
@@ -23,7 +24,6 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
   const [hasAnimated, setHasAnimated] = useState(!isNew);
   const { toast } = useToast();
 
-  // Mark as animated after the animation completes
   useEffect(() => {
     if (isNew && !hasAnimated) {
       const timer = setTimeout(() => {
@@ -40,14 +40,14 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
       await navigator.clipboard.writeText(slide.prompt);
       setCopied(true);
       toast({
-        title: 'Copied!',
-        description: `Slide ${slide.slideNumber} prompt copied to clipboard.`,
+        title: t('toast.copiedSlide'),
+        description: t('slideCard.copiedSlide', { number: slide.slideNumber }),
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: 'Failed to copy',
-        description: 'Please select and copy the text manually.',
+        title: t('toast.copyFailed'),
+        description: t('toast.copyFailedHint'),
         variant: 'destructive',
       });
     }
@@ -92,12 +92,12 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
             {copied ? (
               <>
                 <Check className="h-3.5 w-3.5 mr-1.5 text-green-500" />
-                <span className="text-xs">Copied</span>
+                <span className="text-xs">{t('buttons.copied')}</span>
               </>
             ) : (
               <>
                 <Copy className="h-3.5 w-3.5 mr-1.5" />
-                <span className="text-xs">Copy</span>
+                <span className="text-xs">{t('buttons.copy')}</span>
               </>
             )}
           </Button>
@@ -115,4 +115,3 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
     </Collapsible>
   );
 }
-

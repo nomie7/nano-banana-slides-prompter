@@ -3,6 +3,8 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { promptRouter } from './routes/prompt';
 import { extractRouter } from './routes/extract';
+import { sessionsRouter } from './routes/sessions';
+import { settingsRouter } from './routes/settings';
 
 const app = new Hono();
 
@@ -19,7 +21,7 @@ app.use(
       'http://127.0.0.1:8080',
       'http://localhost:5173', // Vite default port
     ],
-    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
     maxAge: 86400,
   })
@@ -37,6 +39,8 @@ app.get('/health', (c) => {
 // API routes
 app.route('/api', promptRouter);
 app.route('/api', extractRouter);
+app.route('/api', sessionsRouter);
+app.route('/api', settingsRouter);
 
 // 404 handler
 app.notFound((c) => {

@@ -68,6 +68,11 @@ const generateSchema = z.object({
       gender: z.enum(['none', 'male', 'female']),
     }).optional(),
   }),
+  llmConfig: z.object({
+    apiKey: z.string(),
+    baseURL: z.string(),
+    model: z.string(),
+  }).optional(),
 });
 
 export const promptRouter = new Hono();
@@ -264,7 +269,8 @@ promptRouter.post(
         for await (const chunk of generateWithLLMStream(
           NANO_BANANA_PRO_SYSTEM_PROMPT,
           userPrompt,
-          pdfData
+          pdfData,
+          body.llmConfig
         )) {
           buffer += chunk;
 

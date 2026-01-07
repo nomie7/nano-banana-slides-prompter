@@ -1,24 +1,69 @@
 import OpenAI from 'openai';
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-  baseURL: process.env.OPENAI_API_BASE || 'https://api.openai.com/v1',
-});
+interface LLMConfig {
+  apiKey: string;
+  baseURL: string;
+  model: string;
+}
 
-const model = process.env.OPENAI_MODEL || 'gpt-4o';
+function normalizeBaseURL(url: string): string {
+  let normalized = url.trim();
+  // Remove trailing slash
+  while (normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+  // Remove /v1 suffix if present
+  if (normalized.endsWith('/v1')) {
+    normalized = normalized.slice(0, -3);
+  }
+  // Add /v1
+  return normalized + '/v1';
+}
+
+const defaultConfig: LLMConfig = {
+  apiKey: process.env.OPENAI_API_KEY || '',
+  baseURL: normalizeBaseURL(process.env.OPENAI_API_BASE || 'https://api.openai.com'),
+  model: process.env.OPENAI_MODEL || 'gpt-4o',
+};
+
+export function getDefaultConfig(): { baseURL: string; model: string } {
+  // Return without /v1 for display
+  let displayURL = defaultConfig.baseURL;
+  if (displayURL.endsWith('/v1')) {
+    displayURL = displayURL.slice(0, -3);
+  }
+  return {
+    baseURL: displayURL,
+    model: defaultConfig.model,
+  };
+}
+
+function createClient(config?: Partial<LLMConfig>): { client: OpenAI; model: string } {
+  const baseURL = config?.baseURL
+    ? normalizeBaseURL(config.baseURL)
+    : defaultConfig.baseURL;
+
+  const client = new OpenAI({
+    apiKey: config?.apiKey || defaultConfig.apiKey,
+    baseURL,
+  });
+
+  return { client, model: config?.model || defaultConfig.model };
+}
 
 type MessageContent = string | Array<{ type: 'text'; text: string } | { type: 'image_url'; image_url: { url: string } }>;
 
 export async function generateWithLLM(
   systemPrompt: string,
   userPrompt: string,
-  pdfDataUrl?: string
+  pdfDataUrl?: string,
+  config?: Partial<LLMConfig>
 ): Promise<string> {
-  // Build user message content - multimodal if PDF is provided
+  const { client, model } = createClient(config);
+
   let userContent: MessageContent;
 
   if (pdfDataUrl) {
-    // Multimodal message with PDF as image (works with vision models)
     userContent = [
       { type: 'text', text: userPrompt },
       { type: 'image_url', image_url: { url: pdfDataUrl } }
@@ -38,16 +83,14 @@ export async function generateWithLLM(
   return response.choices[0]?.message?.content || '';
 }
 
-/**
- * Streaming version of generateWithLLM.
- * Yields text chunks as they arrive from the LLM.
- */
 export async function* generateWithLLMStream(
   systemPrompt: string,
   userPrompt: string,
-  pdfDataUrl?: string
+  pdfDataUrl?: string,
+  config?: Partial<LLMConfig>
 ): AsyncGenerator<string> {
-  // Build user message content - multimodal if PDF is provided
+  const { client, model } = createClient(config);
+
   let userContent: MessageContent;
 
   if (pdfDataUrl) {
@@ -75,4 +118,3 @@ export async function* generateWithLLMStream(
     }
   }
 }
-

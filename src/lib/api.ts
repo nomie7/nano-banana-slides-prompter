@@ -7,10 +7,17 @@ import type {
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
+export interface LLMConfig {
+  apiKey: string;
+  baseURL: string;
+  model: string;
+}
+
 export interface GeneratePromptRequest {
   content: ContentInput;
   style: SlideStyle;
   settings: PresentationSettings;
+  llmConfig?: LLMConfig;
 }
 
 export interface GeneratePromptResponse {
