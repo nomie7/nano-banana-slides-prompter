@@ -1,4 +1,222 @@
-import type { SlideStyle, ColorPalette, LayoutStructure, AspectRatio, RenderStyle, CharacterGender, CharacterSettings } from './types';
+import type { SlideStyle, ColorPalette, LayoutStructure, AspectRatio, RenderStyle, CharacterGender, CharacterSettings, GeneratedCharacter, ContentAnalysis } from './types';
+
+export interface SlideTypeTemplate {
+  id: string;
+  name: string;
+  template: string;
+}
+
+export interface SlideTypeCategory {
+  opening: SlideTypeTemplate[];
+  concept: SlideTypeTemplate[];
+  data: SlideTypeTemplate[];
+  process: SlideTypeTemplate[];
+  technical: SlideTypeTemplate[];
+  business: SlideTypeTemplate[];
+  comparison: SlideTypeTemplate[];
+  example: SlideTypeTemplate[];
+  storytelling: SlideTypeTemplate[];
+  educational: SlideTypeTemplate[];
+  closing: SlideTypeTemplate[];
+}
+
+export const SLIDE_TYPE_LIBRARY: SlideTypeCategory = {
+  opening: [
+    { id: 'title-dramatic', name: 'Dramatic Title', template: 'DRAMATIC headline with atmospheric visual, particle effects, layered depth. Full-bleed thematic hero with premium treatment. Bold typography with cinematic lighting.' },
+    { id: 'title-minimalist', name: 'Minimalist Title', template: 'Clean minimalist title with striking typography on breathable space. Single powerful visual anchor with subtle atmospheric depth.' },
+    { id: 'problem-statement', name: 'Problem Statement', template: 'Bold problem visualization highlighting pain points. Dramatic visual metaphor for the challenge. Data callouts showing impact/cost of the problem.' },
+    { id: 'hook-question', name: 'Hook Question', template: 'Thought-provoking question as hero text. Evocative imagery that sparks curiosity. Atmospheric tension building visual treatment.' },
+    { id: 'agenda-overview', name: 'Agenda Overview', template: 'Visual roadmap of presentation journey. Connected milestone markers with preview thumbnails. Clean numbered progression with subtle animations.' },
+  ],
+
+  concept: [
+    { id: 'concept-diagram', name: 'Concept Diagram', template: 'Large CINEMATIC hero diagram with 5+ callout boxes with connecting lines, measurement annotations, floating stat cards, atmospheric particles, layered background depth.' },
+    { id: 'concept-metaphor', name: 'Visual Metaphor', template: 'Visual metaphor representation with layered meaning. Abstract concept made tangible through creative imagery. Multiple interpretation layers with supporting annotations.' },
+    { id: 'concept-breakdown', name: 'Component Breakdown', template: 'Exploded view showing component relationships. Labeled parts with connecting lines. Technical precision with artistic presentation.' },
+    { id: 'concept-layers', name: 'Layered Concept', template: 'Stacked transparent layers revealing depth. Each layer labeled with key attributes. Cross-section view with detailed callouts.' },
+    { id: 'concept-ecosystem', name: 'Ecosystem Map', template: 'Interconnected nodes showing relationships. Central hub with radiating connections. Category groupings with visual clustering.' },
+    { id: 'concept-spectrum', name: 'Spectrum/Scale', template: 'Linear or circular spectrum showing range. Positioned markers with labels. Gradient visualization of continuous concept.' },
+  ],
+
+  data: [
+    { id: 'data-chart', name: 'Data Visualization', template: 'DRAMATIC chart/visualization as hero with glowing data points, 3+ floating metric cards with trend indicators, ambient effects, translucent info panels, professional data overlays.' },
+    { id: 'data-comparison', name: 'Metric Comparison', template: 'Side-by-side metrics with trend indicators. Percentage changes with visual indicators. Before/after data storytelling.' },
+    { id: 'data-dashboard', name: 'Dashboard View', template: 'Multi-metric dashboard layout. KPI cards with sparklines. Real-time data aesthetic with status indicators.' },
+    { id: 'data-trend', name: 'Trend Analysis', template: 'Time-series visualization with projection. Highlighted inflection points. Annotated milestones on timeline.' },
+    { id: 'data-distribution', name: 'Distribution View', template: 'Statistical distribution visualization. Histogram or density plot with annotations. Key percentiles highlighted.' },
+    { id: 'data-correlation', name: 'Correlation Matrix', template: 'Relationship visualization between variables. Heat map or scatter plot matrix. Insight callouts for key patterns.' },
+  ],
+
+  process: [
+    { id: 'process-timeline', name: 'Timeline', template: 'VISUAL STORYTELLING with 4-6 connected phase boxes, dramatic main illustration with motion effects, energy trails, particle systems, supporting info panels with specs.' },
+    { id: 'process-flowchart', name: 'Flowchart', template: 'Decision flow with branching paths. Clear decision diamonds with outcomes. Color-coded paths for different scenarios.' },
+    { id: 'process-flywheel', name: 'Flywheel/Cycle', template: 'Cyclical process with continuous flow. Reinforcing loop visualization. Energy/momentum visual indicators.' },
+    { id: 'process-pipeline', name: 'Pipeline', template: 'Stage-by-stage progression visualization. Funnel or pipeline with conversion metrics. Drop-off indicators and optimization points.' },
+    { id: 'process-journey', name: 'Journey Map', template: 'User/customer journey with touchpoints. Emotional highs and lows indicated. Channel and interaction markers.' },
+    { id: 'process-steps', name: 'Step-by-Step', template: 'Numbered sequential steps with icons. Progress indicator showing current position. Action items for each step.' },
+  ],
+
+  technical: [
+    { id: 'tech-architecture', name: 'System Architecture', template: 'HOLOGRAPHIC-STYLE schematic with wireframe overlays, glowing connection nodes, HUD-style brackets, floating spec cards, measurement systems, ambient scanning effects.' },
+    { id: 'tech-stack', name: 'Technology Stack', template: 'Layered technology visualization. Component boxes with version/specs. Integration arrows between layers.' },
+    { id: 'tech-api', name: 'API/Integration', template: 'API endpoint visualization with request/response flows. Data transformation indicators. Authentication and security markers.' },
+    { id: 'tech-infrastructure', name: 'Infrastructure', template: 'Cloud/server infrastructure diagram. Service icons with connection lines. Scalability and redundancy indicators.' },
+    { id: 'tech-dataflow', name: 'Data Flow', template: 'Data movement visualization through systems. Transformation points highlighted. Storage and processing nodes marked.' },
+    { id: 'tech-security', name: 'Security Model', template: 'Security layers and boundaries. Access control visualization. Threat vectors and protection measures.' },
+  ],
+
+  business: [
+    { id: 'business-strategy', name: 'Strategy Framework', template: 'Strategic framework with matrix/quadrant layout. Positioned elements with rationale. Action arrows showing direction.' },
+    { id: 'business-roi', name: 'ROI/Financial', template: 'Financial metrics with growth trajectories. Investment vs return visualization. Payback period and projections.' },
+    { id: 'business-market', name: 'Market Analysis', template: 'Market landscape with competitive positioning. Size/growth indicators. Opportunity zones highlighted.' },
+    { id: 'business-swot', name: 'SWOT Analysis', template: 'Four-quadrant SWOT layout. Prioritized items in each quadrant. Visual weight indicating importance.' },
+    { id: 'business-model', name: 'Business Model', template: 'Business model canvas or variant. Revenue streams and cost structure. Value proposition highlighted.' },
+    { id: 'business-roadmap', name: 'Product Roadmap', template: 'Timeline with planned features/releases. Now/Next/Later categorization. Dependencies and milestones marked.' },
+  ],
+
+  comparison: [
+    { id: 'compare-vs', name: 'Side-by-Side', template: 'PREMIUM side-by-side with visual differentiation, floating comparison metrics, gradient backgrounds, icon systems, callout annotations, ambient depth effects.' },
+    { id: 'compare-before-after', name: 'Before/After', template: 'Transformation showcase with dramatic contrast. Split-screen or slider visualization. Improvement metrics highlighted.' },
+    { id: 'compare-feature-matrix', name: 'Feature Matrix', template: 'Feature grid with checkmarks and highlights. Competitor columns with your advantage shown. Category groupings.' },
+    { id: 'compare-pros-cons', name: 'Pros/Cons', template: 'Balanced view of advantages and disadvantages. Visual weight showing net positive. Decision guidance indicators.' },
+    { id: 'compare-options', name: 'Option Comparison', template: 'Multiple options presented for decision. Scoring or rating for each option. Recommended choice highlighted.' },
+  ],
+
+  example: [
+    { id: 'example-case-study', name: 'Case Study', template: 'Real-world example with documentary-style presentation. Company/context intro, challenge, solution, results. Metrics and testimonial integration.' },
+    { id: 'example-testimonial', name: 'Testimonial', template: 'Quote display with contextual imagery. Customer photo/logo with attribution. Results metrics alongside quote.' },
+    { id: 'example-demo', name: 'Demo/Screenshot', template: 'Product/interface showcase with annotations. Feature callouts with descriptions. User flow or interaction highlighted.' },
+    { id: 'example-use-case', name: 'Use Case', template: 'Specific scenario walkthrough. User persona with context. Step-by-step application of solution.' },
+    { id: 'example-results', name: 'Results Showcase', template: 'Achievement metrics prominently displayed. Before/after comparison. Timeline of improvements.' },
+  ],
+
+  storytelling: [
+    { id: 'story-hero', name: 'Hero Moment', template: 'Dramatic visual moment capturing key insight. Cinematic composition with emotional impact. Single powerful message.' },
+    { id: 'story-journey-point', name: 'Journey Point', template: 'Single point in larger narrative. Context from previous, setup for next. Emotional resonance with audience.' },
+    { id: 'story-revelation', name: 'Big Reveal', template: 'Dramatic unveiling of key information. Building tension to climax. Visual surprise element.' },
+    { id: 'story-challenge', name: 'Challenge Setup', template: 'Obstacle or challenge visualization. Stakes and consequences shown. Urgency indicators.' },
+    { id: 'story-resolution', name: 'Resolution', template: 'Solution or achievement visualization. Triumph visual treatment. Positive outcome emphasis.' },
+  ],
+
+  educational: [
+    { id: 'edu-definition', name: 'Definition', template: 'Term/concept definition with visual support. Etymology or breakdown of components. Related concepts linked.' },
+    { id: 'edu-example-set', name: 'Examples Set', template: 'Multiple examples illustrating concept. Variety showing breadth of application. Common thread highlighted.' },
+    { id: 'edu-quiz', name: 'Quiz/Check', template: 'Knowledge check or quiz question. Multiple choice or reflection prompt. Interactive engagement moment.' },
+    { id: 'edu-summary', name: 'Key Takeaways', template: 'Summarized learning points. Numbered or bulleted key insights. Visual memory anchors.' },
+    { id: 'edu-practice', name: 'Practice/Exercise', template: 'Hands-on activity prompt. Step-by-step instructions. Expected outcome preview.' },
+  ],
+
+  closing: [
+    { id: 'close-summary', name: 'Summary', template: 'IMPACTFUL takeaways with premium visual recap, floating key insight cards, atmospheric depth, subtle particle effects. Key points crystallized.' },
+    { id: 'close-cta', name: 'Call to Action', template: 'Bold CTA with clear next steps. Single focused action request. Supporting motivation/urgency.' },
+    { id: 'close-contact', name: 'Contact/Follow-up', template: 'Contact information elegantly displayed. Social/web links with QR codes. Personal touch with photo.' },
+    { id: 'close-thanks', name: 'Thank You', template: 'Elegant closing with appreciation. Brand reinforcement. Memorable final visual impression.' },
+    { id: 'close-qa', name: 'Q&A', template: 'Questions invitation with engaging visual. Contact info for follow-up. Topic keywords or themes.' },
+  ],
+};
+
+export const CONTENT_ANALYZER_SYSTEM_PROMPT = `You are a presentation structure expert. Analyze content and suggest the optimal slide type sequence for a compelling presentation.
+
+## Your Task
+1. Identify the main content category
+2. Detect content patterns (data, processes, comparisons, examples, technical details)
+3. Suggest a logical, engaging slide type sequence
+
+## Available Slide Types
+
+**Opening:** title-dramatic, title-minimalist, problem-statement, hook-question, agenda-overview
+**Concept:** concept-diagram, concept-metaphor, concept-breakdown, concept-layers, concept-ecosystem, concept-spectrum
+**Data:** data-chart, data-comparison, data-dashboard, data-trend, data-distribution, data-correlation
+**Process:** process-timeline, process-flowchart, process-flywheel, process-pipeline, process-journey, process-steps
+**Technical:** tech-architecture, tech-stack, tech-api, tech-infrastructure, tech-dataflow, tech-security
+**Business:** business-strategy, business-roi, business-market, business-swot, business-model, business-roadmap
+**Comparison:** compare-vs, compare-before-after, compare-feature-matrix, compare-pros-cons, compare-options
+**Example:** example-case-study, example-testimonial, example-demo, example-use-case, example-results
+**Storytelling:** story-hero, story-journey-point, story-revelation, story-challenge, story-resolution
+**Educational:** edu-definition, edu-example-set, edu-quiz, edu-summary, edu-practice
+**Closing:** close-summary, close-cta, close-contact, close-thanks, close-qa
+
+## Guidelines
+- First slide should be an opening type (title-dramatic or problem-statement)
+- Last slide should be a closing type (close-summary or close-cta)
+- Match slide types to content patterns found
+- Create a logical narrative flow
+- Vary slide types for visual interest
+- Business content → business, data, comparison types
+- Technical content → technical, process, concept types
+- Educational content → educational, concept, example types
+- Marketing content → storytelling, example, comparison types
+
+## Output Format (JSON only)
+{
+  "contentCategory": "technical" | "business" | "educational" | "creative" | "marketing" | "scientific" | "general",
+  "suggestedTypes": ["type-id-1", "type-id-2", ...],
+  "reasoning": "Brief explanation"
+}`;
+
+export function getSlideTemplate(typeId: string): string {
+  for (const category of Object.values(SLIDE_TYPE_LIBRARY)) {
+    const found = category.find((t: SlideTypeTemplate) => t.id === typeId);
+    if (found) return found.template;
+  }
+  return SLIDE_TYPE_LIBRARY.concept[0].template;
+}
+
+export function getDefaultSlideSequence(slideCount: number, category: string = 'general'): string[] {
+  const sequence: string[] = ['title-dramatic'];
+  
+  const categoryMidTypes: Record<string, string[]> = {
+    technical: ['concept-diagram', 'tech-architecture', 'process-flowchart', 'data-chart', 'tech-stack', 'concept-breakdown', 'compare-vs', 'example-demo'],
+    business: ['problem-statement', 'business-strategy', 'data-chart', 'business-roi', 'compare-vs', 'example-case-study', 'process-timeline', 'business-roadmap'],
+    educational: ['concept-diagram', 'edu-definition', 'concept-breakdown', 'edu-example-set', 'process-steps', 'data-chart', 'concept-metaphor', 'edu-summary'],
+    creative: ['story-hero', 'concept-metaphor', 'story-journey-point', 'example-demo', 'compare-before-after', 'story-revelation', 'concept-ecosystem', 'example-results'],
+    marketing: ['problem-statement', 'story-hero', 'compare-vs', 'example-testimonial', 'data-chart', 'example-case-study', 'business-roi', 'compare-feature-matrix'],
+    scientific: ['concept-diagram', 'data-chart', 'process-flowchart', 'data-correlation', 'concept-layers', 'example-results', 'tech-dataflow', 'data-trend'],
+    general: ['concept-diagram', 'data-chart', 'process-timeline', 'compare-vs', 'concept-breakdown', 'example-case-study', 'data-dashboard', 'process-steps'],
+  };
+
+  const midTypes = categoryMidTypes[category] || categoryMidTypes.general;
+  
+  for (let i = 1; i < slideCount - 1; i++) {
+    sequence.push(midTypes[(i - 1) % midTypes.length]);
+  }
+  
+  if (slideCount > 1) {
+    sequence.push('close-summary');
+  }
+  
+  return sequence;
+}
+
+export function buildSlideTypeSequence(
+  contentAnalysis: ContentAnalysis | null,
+  slideCount: number
+): string[] {
+  if (contentAnalysis?.suggestedTypes && contentAnalysis.suggestedTypes.length > 0) {
+    const types = contentAnalysis.suggestedTypes;
+    
+    if (types.length >= slideCount) {
+      return types.slice(0, slideCount);
+    }
+    
+    const result = [...types];
+    const category = contentAnalysis.contentCategory || 'general';
+    const fillerTypes = getDefaultSlideSequence(slideCount - types.length + 2, category).slice(1, -1);
+    
+    while (result.length < slideCount - 1) {
+      const nextFiller = fillerTypes[(result.length - types.length) % fillerTypes.length];
+      result.splice(result.length - (result.includes('close-summary') || result.includes('close-cta') ? 1 : 0), 0, nextFiller);
+    }
+    
+    if (!result.some(t => t.startsWith('close-'))) {
+      result.push('close-summary');
+    }
+    
+    return result.slice(0, slideCount);
+  }
+  
+  return getDefaultSlideSequence(slideCount);
+}
 
 export const NANO_BANANA_PRO_SYSTEM_PROMPT = `You are an expert prompt engineer for Nano Banana Pro Slides, Google's AI slide generation tool. You create RICH, CINEMATIC, FEATURE-PACKED slides that would impress at a TED talk or National Geographic presentation. Think: sci-fi movie interfaces, nature documentary graphics, premium keynote visuals.
 
@@ -370,6 +588,79 @@ For every prompt you write, push yourself to:
 5. **LAYER RUTHLESSLY**: No flat compositions. Every slide must have discernible foreground, midground, and background layers
 
 Remember: You are creating prompts for a PREMIUM AI slide generator. The bar is TED-talk quality, nature documentary graphics, blockbuster movie interfaces. Anything less is unacceptable.`
+
+export const CHARACTER_GENERATION_SYSTEM_PROMPT = `You are an expert character designer for presentation slides. You create consistent, memorable presenter characters that perfectly match the presentation's topic, audience, and visual style.
+
+## Your Task
+Analyze the presentation content and settings, then design ONE consistent character that will appear across ALL slides as the presenter.
+
+## Character Design Factors
+
+### 1. Content Analysis
+- Topic/subject matter (technical, creative, educational, business, fun, etc.)
+- Target audience (children, professionals, students, general public)
+- Tone (formal, casual, playful, serious, inspiring, entertaining)
+- Key themes and concepts
+- User-provided hints about character preferences in content
+
+### 2. Character Type Selection
+Based on content analysis, choose the most fitting character type:
+- **Human**: Professional, relatable, authoritative - ideal for business, education, serious topics
+- **Anthropomorphic Animal**: Playful, memorable, family-friendly - ideal for children, fun topics, storytelling
+- **Animated Object**: Creative, unique, topic-specific - e.g., lightbulb for ideas, rocket for growth, book for education
+- **Fantasy/Creature**: Imaginative, mystical, storytelling - ideal for creative, entertainment topics
+- **Robot/AI**: Technical, futuristic, systematic - ideal for tech, science, innovation topics
+- **Mascot**: Brand-friendly, simple, iconic - ideal for corporate, marketing, friendly presentations
+
+### 3. User Hint Detection
+IMPORTANT: Scan the user's content for character preferences:
+- Direct mentions: "make the character a...", "use a robot", "friendly owl", etc.
+- Implied preferences: "for kids" suggests playful characters, "professional meeting" suggests human presenter
+- Topic hints: cooking content might suggest a chef character, space content might suggest astronaut or alien
+- Mood hints: "fun and engaging" suggests playful character, "serious analysis" suggests professional human
+
+### 4. Visual Identity Design
+Create consistent visual characteristics:
+- **Physical form**: Shape, proportions, distinctive silhouette
+- **Color palette**: 2-3 colors that complement the slide style
+- **Personality**: Traits that influence expressions and poses
+- **Styling**: Wardrobe/appearance appropriate to topic
+- **Signature elements**: Props, accessories, or visual motifs
+
+## Output Format
+
+Provide your character design in this EXACT structure:
+
+\`\`\`
+CHARACTER_TYPE: [Human/Animal/Object/Fantasy/Robot/Mascot]
+SPECIES_OR_FORM: [e.g., "Professional woman in her 30s", "Friendly cartoon owl", "Animated glowing lightbulb", "Cute helper robot"]
+CORE_DESCRIPTION: [2-3 sentences describing the character's essential identity, appearance, and personality that makes them perfect for this presentation]
+
+PHYSICAL_DETAILS:
+- Build/proportions: [body type, size, distinctive shape]
+- Distinctive features: [key visual elements that make this character instantly recognizable]
+- Color scheme: [primary color, secondary color, accent color - should complement slide style]
+- Face/expression baseline: [default facial characteristics and expression style]
+
+PERSONALITY_TRAITS: [3-5 traits that influence how this character poses and expresses]
+
+WARDROBE_AND_PROPS:
+- Default outfit: [clothing/appearance that adapts to the topic]
+- Props/accessories: [items that enhance the character's presenter role]
+
+SIGNATURE_GESTURES: [2-3 characteristic poses or movements this character naturally uses when presenting]
+
+CONSISTENCY_NOTES: [Key elements that MUST remain identical across all slides to maintain recognition]
+\`\`\`
+
+## Critical Guidelines
+- Character MUST match the presentation's tone and audience
+- Design should be MEMORABLE and RECOGNIZABLE across different poses
+- Consider the rendering style compatibility (will be adapted to Pixar/Anime/Cartoon/etc.)
+- Simpler designs = better consistency across slides
+- Character should ENHANCE content engagement, not distract
+- If user hints at a character type, PRIORITIZE that preference
+- Non-human characters are ENCOURAGED when they fit the content better than humans`
 
 export const styleDescriptions: Record<SlideStyle, string> = {
   professional: 'clean corporate aesthetic with soft gradients, subtle geometric background accents, modern sans-serif typography, structured multi-column layouts, professional color palette with 1-2 accent colors plus neutrals',
@@ -746,6 +1037,62 @@ You are including a consistent presenter character throughout ALL slides. This c
 - Always inherit the style's color palette and visual treatment
 `;
 
+export interface CharacterGenerationConfig {
+  content: string;
+  style: SlideStyle;
+  renderStyle: RenderStyle;
+  gender: CharacterGender;
+  slideCount: number;
+}
+
+export function buildCharacterGenerationPrompt(config: CharacterGenerationConfig): string {
+  const { content, style, renderStyle, gender, slideCount } = config;
+
+  const styleLabel = style.charAt(0).toUpperCase() + style.slice(1).replace(/-/g, ' ');
+  const renderStyleLabel = renderStyle.charAt(0).toUpperCase() + renderStyle.slice(1).replace(/-/g, ' ');
+
+  let genderInstruction = '';
+  if (gender === 'male') {
+    genderInstruction = '\n\n**GENDER REQUIREMENT**: The character MUST be MALE with masculine features and presentation.';
+  } else if (gender === 'female') {
+    genderInstruction = '\n\n**GENDER REQUIREMENT**: The character MUST be FEMALE with feminine features and presentation.';
+  } else {
+    genderInstruction = '\n\n**GENDER PREFERENCE**: Choose whatever gender (or genderless for objects/robots) fits the content best.';
+  }
+
+  return `## Presentation Context
+
+**Content/Topic:**
+${content}
+
+**Number of Slides:** ${slideCount}
+
+**Visual Slide Style:** ${styleLabel}
+${styleDescriptions[style]}
+
+**Character Render Style:** ${renderStyleLabel}
+The character will be rendered in ${renderStyleLabel} aesthetic. Design with this rendering approach in mind.
+${genderInstruction}
+
+## Your Task
+
+Design ONE consistent presenter character for this ${slideCount}-slide presentation.
+
+**Analyze the content to determine:**
+1. What character TYPE best suits this topic and audience? (Human? Animal? Object? Robot? Fantasy creature?)
+2. Are there any HINTS in the user's content about desired character? (e.g., mentions of specific characters, audience age, tone)
+3. What PERSONALITY would make this character an effective, engaging presenter?
+4. What VISUAL ELEMENTS will make this character memorable and instantly recognizable?
+
+**Remember:**
+- The character will appear on EVERY slide
+- Must be recognizable across different poses and expressions
+- Should ENHANCE the presentation, not distract from it
+- Non-human characters are great when they fit the content!
+
+Design the character now using the exact output format specified in your instructions.`;
+}
+
 export interface PromptConfig {
   content: string;
   style: SlideStyle;
@@ -754,6 +1101,8 @@ export interface PromptConfig {
   aspectRatio: AspectRatio;
   slideCount: number;
   character?: CharacterSettings;
+  generatedCharacter?: GeneratedCharacter;
+  slideTypeSequence?: string[];
 }
 
 export function buildUserPrompt(config: PromptConfig): string {
@@ -765,14 +1114,71 @@ export function buildUserPrompt(config: PromptConfig): string {
     aspectRatio,
     slideCount,
     character,
+    generatedCharacter,
+    slideTypeSequence,
   } = config;
 
   const styleLabel = style.charAt(0).toUpperCase() + style.slice(1).replace(/-/g, ' ');
   const persona = stylePersonas[style];
 
-  // Build character instruction block if enabled
   let characterBlock = '';
-  if (character?.enabled && character?.renderStyle) {
+
+  const hasValidGeneratedCharacter = generatedCharacter && 
+    (generatedCharacter.coreDescription || generatedCharacter.speciesOrForm || generatedCharacter.characterType);
+
+  if (character?.enabled && hasValidGeneratedCharacter) {
+    const renderStyleLabel = character.renderStyle.charAt(0).toUpperCase() + character.renderStyle.slice(1).replace(/-/g, ' ');
+    const styleAdaptation = characterStyleAdaptations[style][character.renderStyle];
+
+    const characterName = generatedCharacter.speciesOrForm || generatedCharacter.characterType || 'presenter';
+    const features = generatedCharacter.physicalDetails.distinctiveFeatures || 'distinctive features';
+    const build = generatedCharacter.physicalDetails.buildProportions || 'professional build';
+    const outfit = generatedCharacter.wardrobeAndProps.defaultOutfit || 'professional attire';
+    const face = generatedCharacter.physicalDetails.faceExpression || 'expressive face';
+
+    characterBlock = `
+${CHARACTER_PRESENTER_INSTRUCTIONS}
+
+###############################################################################
+#                                                                             #
+#   STOP! READ THIS CHARACTER DESCRIPTION BEFORE WRITING ANY SLIDE PROMPTS   #
+#                                                                             #
+###############################################################################
+
+YOUR CHARACTER FOR THIS PRESENTATION:
+"${characterName}" - rendered in ${renderStyleLabel} style.
+
+COPY THIS EXACT DESCRIPTION INTO EVERY SLIDE:
+- APPEARANCE: ${features}
+- BUILD: ${build}
+- FACE: ${face}
+- OUTFIT: ${outfit}
+- ACCESSORIES: ${generatedCharacter.wardrobeAndProps.propsAccessories || 'minimal accessories'}
+
+STYLE: ${styleAdaptation}
+
+###############################################################################
+#   TEMPLATE - USE THIS EXACT FORMAT FOR THE CHARACTER IN EACH SLIDE:        #
+###############################################################################
+
+CHARACTER: A ${renderStyleLabel} ${characterName} with ${features}. ${build}. ${face}. Wearing ${outfit}. Standing in [POSITION]. [POSE/GESTURE for this slide]. Expression: [EMOTION for this slide].
+
+###############################################################################
+#   EXAMPLES OF CORRECT VS INCORRECT CHARACTER DESCRIPTIONS:                 #
+###############################################################################
+
+WRONG (generic - DO NOT WRITE LIKE THIS):
+❌ "Our presenter stands confidently..."
+❌ "The character gestures toward..."
+❌ "A professional figure in business attire..."
+
+CORRECT (specific - WRITE LIKE THIS):
+✅ "A ${renderStyleLabel} ${characterName} with ${features}. ${build}. Wearing ${outfit}. Standing in the bottom-left, gesturing toward the chart with an open palm. Expression: enthusiastic and engaged."
+
+###############################################################################
+
+`;
+  } else if (character?.enabled && character?.renderStyle) {
     const renderDescription = renderStyleDescriptions[character.renderStyle];
     const styleAdaptation = characterStyleAdaptations[style][character.renderStyle];
     const renderStyleLabel = character.renderStyle.charAt(0).toUpperCase() + character.renderStyle.slice(1).replace(/-/g, ' ');
@@ -838,22 +1244,29 @@ Every prompt MUST include:
 ## Slide Deck Structure
 Generate prompts for these ${slideCount} slides using the cinematic visual techniques above:
 
-1. **Slide 1: Title/Cover** - DRAMATIC headline with atmospheric visual, particle effects, layered depth. Full-bleed thematic hero with premium treatment.
+${slideTypeSequence && slideTypeSequence.length > 0 
+    ? slideTypeSequence.map((typeId, idx) => {
+        const slideNum = idx + 1;
+        const template = getSlideTemplate(typeId);
+        const typeName = typeId.replace(/-/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase());
+        return `${slideNum}. **Slide ${slideNum}: ${typeName}** - ${template}`;
+      }).join('\n')
+    : `1. **Slide 1: Title/Cover** - DRAMATIC headline with atmospheric visual, particle effects, layered depth. Full-bleed thematic hero with premium treatment.
 ${slideCount > 2 ? Array.from({ length: Math.min(slideCount - 2, 8) }, (_, i) => {
     const slideNum = i + 2;
-    const slideTypes = [
-      `**Concept/Explanation** - Large CINEMATIC hero diagram with 5+ callout boxes with connecting lines, measurement annotations, floating stat cards, atmospheric particles, layered background depth.`,
-      `**Data/Insight** - DRAMATIC chart/visualization as hero with glowing data points, 3+ floating metric cards with trend indicators, ambient effects, translucent info panels, professional data overlays.`,
-      `**Process/Timeline** - VISUAL STORYTELLING with 4-6 connected phase boxes, dramatic main illustration with motion effects, energy trails, particle systems, supporting info panels with specs.`,
-      `**Comparison** - PREMIUM side-by-side with visual differentiation, floating comparison metrics, gradient backgrounds, icon systems, callout annotations, ambient depth effects.`,
-      `**Technical/Architecture** - HOLOGRAPHIC-STYLE schematic with wireframe overlays, glowing connection nodes, HUD-style brackets, floating spec cards, measurement systems, ambient scanning effects.`,
-      `**Concept/Explanation** - DOCUMENTARY-QUALITY hero with anatomical-style callouts, specimen presentation, scientific annotations, layered depth, atmospheric particles.`,
-      `**Data/Insight** - CINEMATIC data presentation with dramatic chart, glowing highlight points, floating metrics, trend callouts, premium visual treatment.`,
-      `**Process/Timeline** - DYNAMIC flow visualization with energy effects, phase indicators, dramatic illustrations, motion blur elements, supporting data panels.`
+    const defaultTypes = [
+      '**Concept/Explanation** - Large CINEMATIC hero diagram with 5+ callout boxes with connecting lines, measurement annotations, floating stat cards, atmospheric particles, layered background depth.',
+      '**Data/Insight** - DRAMATIC chart/visualization as hero with glowing data points, 3+ floating metric cards with trend indicators, ambient effects, translucent info panels, professional data overlays.',
+      '**Process/Timeline** - VISUAL STORYTELLING with 4-6 connected phase boxes, dramatic main illustration with motion effects, energy trails, particle systems, supporting info panels with specs.',
+      '**Comparison** - PREMIUM side-by-side with visual differentiation, floating comparison metrics, gradient backgrounds, icon systems, callout annotations, ambient depth effects.',
+      '**Technical/Architecture** - HOLOGRAPHIC-STYLE schematic with wireframe overlays, glowing connection nodes, HUD-style brackets, floating spec cards, measurement systems, ambient scanning effects.',
+      '**Concept/Explanation** - DOCUMENTARY-QUALITY hero with anatomical-style callouts, specimen presentation, scientific annotations, layered depth, atmospheric particles.',
+      '**Data/Insight** - CINEMATIC data presentation with dramatic chart, glowing highlight points, floating metrics, trend callouts, premium visual treatment.',
+      '**Process/Timeline** - DYNAMIC flow visualization with energy effects, phase indicators, dramatic illustrations, motion blur elements, supporting data panels.'
     ];
-    return `${slideNum}. **Slide ${slideNum}** - ${slideTypes[i % slideTypes.length]}`;
+    return `${slideNum}. **Slide ${slideNum}** - ${defaultTypes[i % defaultTypes.length]}`;
   }).join('\n') : ''}
-${slideCount > 1 ? `${slideCount}. **Slide ${slideCount}: Conclusion** - IMPACTFUL takeaways with premium visual recap, floating key insight cards, atmospheric depth, subtle particle effects. Footer: page '${slideCount}'.` : ''}
+${slideCount > 1 ? `${slideCount}. **Slide ${slideCount}: Conclusion** - IMPACTFUL takeaways with premium visual recap, floating key insight cards, atmospheric depth, subtle particle effects. Footer: page '${slideCount}'.` : ''}`}
 
 ## Critical Requirements (NON-NEGOTIABLE)
 Each prompt MUST:
@@ -863,18 +1276,23 @@ Each prompt MUST:
 - Specify ATMOSPHERIC DETAILS: particle effects, glows, gradients, depth cues, lighting effects
 - Describe PREMIUM EXECUTION: not basic layouts but CINEMATIC presentations
 - Include connecting visual systems: leader lines, HUD brackets, measurement overlays where relevant
-- Think like a nature documentary or sci-fi movie interface designer
+- Think like a nature documentary or sci-fi movie interface designer${character?.enabled ? `
+- Include a detailed CHARACTER paragraph with SPECIFIC physical features (NOT generic descriptions)
+- Reference the exact species/form, distinctive features, colors, and outfit from the character specification
+- Describe character position, pose, expression, and any props for each slide` : ''}
 
 ## Output Format
 For each slide, provide exactly this structure:
 
 **Slide [N]: [Descriptive Title]**
 \`\`\`
-[150-250 word detailed prompt covering: slide type/template applied, hero zone visual (camera angle, lighting, focal point, depth), zones (background/overlay callouts), component placements (stat cards, callouts, icons), text anchor content, layout structure, design details]
+[150-250 word detailed prompt covering: slide type/template applied, hero zone visual (camera angle, lighting, focal point, depth), zones (background/overlay callouts), component placements (stat cards, callouts, icons), text anchor content, layout structure, design details]${hasValidGeneratedCharacter ? ` CHARACTER: A ${character?.renderStyle} ${generatedCharacter?.speciesOrForm} with ${generatedCharacter?.physicalDetails.distinctiveFeatures}. ${generatedCharacter?.physicalDetails.buildProportions}. Wearing ${generatedCharacter?.wardrobeAndProps.defaultOutfit}. [POSITION]. [POSE]. [EXPRESSION].` : (character?.enabled ? ` CHARACTER: [Include character with position, pose, expression]` : '')}
 \`\`\`
 
 ---
 **STYLE REMINDER**: You are a ${styleLabel} specialist. Every prompt must unmistakably reflect ${styleLabel} aesthetics. A viewer should instantly recognize the style from any slide.
+${hasValidGeneratedCharacter ? `
+**CHARACTER REMINDER**: Copy the EXACT character template from above into each slide. Start with "A ${character?.renderStyle} ${generatedCharacter?.speciesOrForm} with..." - DO NOT use generic phrases like "our presenter" or "the character".` : ''}
 
 Generate all ${slideCount} detailed prompts now, applying templates and components strategically per slide.`;
 }

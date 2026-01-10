@@ -4,6 +4,44 @@ Generate optimized prompts for Nano Banana Pro Slides - Generate slides using AI
 
 ![App Screenshot](./docs/samples/Screenshot.png)
 
+## 🆕 v1.0.6 Update - Dynamic Character & Slide Generation!
+
+Major improvements to character generation and slide type intelligence!
+
+**What's New:**
+- 🎭 **Dynamic Character Generation** - Characters are now generated based on your content, topic, and audience instead of using generic defaults
+- 🧠 **Content-Aware Slide Types** - LLM analyzes your content and selects optimal slide types from 50+ templates
+- 🎯 **Hybrid Slide System** - Smart fallback to category-based templates if analysis fails
+- 🦊 **Non-Human Characters** - Support for animals, robots, mascots, animated objects based on content context
+- ⚡ **Parallel Processing** - Character and content analysis run simultaneously for no added latency
+
+**Slide Type Categories (50+ templates):**
+- Opening: dramatic titles, problem statements, hooks
+- Concept: diagrams, metaphors, breakdowns, ecosystems
+- Data: charts, dashboards, trends, correlations
+- Process: timelines, flowcharts, flywheels, journeys
+- Technical: architecture, stacks, APIs, infrastructure
+- Business: strategy, ROI, market analysis, roadmaps
+- Comparison: side-by-side, before/after, feature matrices
+- Examples: case studies, testimonials, demos
+- Educational: definitions, examples, quizzes
+- Closing: summaries, CTAs, Q&A
+
+**New Sample Slides (v1.0.6):**
+
+<p>
+  <img src="./docs/samples/sample27.jpeg" width="240" alt="Sample 27"/>
+  <img src="./docs/samples/sample28.jpeg" width="240" alt="Sample 28"/>
+  <img src="./docs/samples/sample29.jpeg" width="240" alt="Sample 29"/>
+</p>
+<p>
+  <img src="./docs/samples/sample30.png" width="240" alt="Sample 30"/>
+  <img src="./docs/samples/sample31.png" width="240" alt="Sample 31"/>
+  <img src="./docs/samples/sample32.jpeg" width="240" alt="Sample 32"/>
+</p>
+
+---
+
 ## 🆕 v1.0.5 Update - Internationalization & Session Management!
 
 Major update with internationalization support and session management features!
@@ -222,4 +260,4 @@ docker-compose up -d
 
 ## Version
 
-v1.0.5
+v1.0.6

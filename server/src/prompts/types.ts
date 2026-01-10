@@ -65,6 +65,27 @@ export interface CharacterSettings {
   gender: CharacterGender;
 }
 
+// Generated character from LLM - dynamically created based on content/style
+export interface GeneratedCharacter {
+  characterType: string;
+  speciesOrForm: string;
+  coreDescription: string;
+  physicalDetails: {
+    buildProportions: string;
+    distinctiveFeatures: string;
+    colorScheme: string;
+    faceExpression: string;
+  };
+  personalityTraits: string;
+  wardrobeAndProps: {
+    defaultOutfit: string;
+    propsAccessories: string;
+  };
+  signatureGestures: string;
+  consistencyNotes: string;
+  rawDescription: string; // Full LLM output for reference
+}
+
 export interface ContentInput {
   type: ContentInputType;
   text?: string;
@@ -155,6 +176,64 @@ export function parseSlides(rawOutput: string): ParsedSlide[] {
   return slides.sort((a, b) => a.slideNumber - b.slideNumber);
 }
 
+export function parseCharacterDescription(llmOutput: string): GeneratedCharacter | null {
+  try {
+    const codeBlockMatch = llmOutput.match(/```\s*([\s\S]*?)\s*```/);
+    const content = codeBlockMatch ? codeBlockMatch[1] : llmOutput;
+
+    const extractValue = (patterns: string[]): string => {
+      for (const pattern of patterns) {
+        const regex = new RegExp(`${pattern}[:\\s]+([^\\n]+(?:\\n(?![A-Z_-]+:|\\n).*)*?)(?=\\n[A-Z_-]+:|\\nPHYSICAL|\\nPERSONALITY|\\nWARDROBE|\\nSIGNATURE|\\nCONSISTENCY|$)`, 'is');
+        const match = content.match(regex);
+        if (match && match[1]?.trim()) {
+          return match[1].trim().replace(/\n+/g, ' ');
+        }
+      }
+      return '';
+    };
+
+    const extractListValue = (patterns: string[]): string => {
+      for (const pattern of patterns) {
+        const regex = new RegExp(`${pattern}[:\\s]+(.+?)(?=\\n-|\\n[A-Z]|$)`, 'is');
+        const match = content.match(regex);
+        if (match && match[1]?.trim()) {
+          return match[1].trim();
+        }
+      }
+      return '';
+    };
+
+    const character: GeneratedCharacter = {
+      characterType: extractValue(['CHARACTER_TYPE', 'CHARACTER TYPE', 'Type']),
+      speciesOrForm: extractValue(['SPECIES_OR_FORM', 'SPECIES/FORM', 'Species', 'Form']),
+      coreDescription: extractValue(['CORE_DESCRIPTION', 'CORE DESCRIPTION', 'Description', 'Identity']),
+      physicalDetails: {
+        buildProportions: extractListValue(['Build/proportions', 'Build', 'Proportions', 'Body']),
+        distinctiveFeatures: extractListValue(['Distinctive features', 'Distinctive', 'Features', 'Key features']),
+        colorScheme: extractListValue(['Color scheme', 'Color palette', 'Colors', 'Palette']),
+        faceExpression: extractListValue(['Face/expression', 'Face', 'Expression baseline', 'Default expression']),
+      },
+      personalityTraits: extractValue(['PERSONALITY_TRAITS', 'PERSONALITY TRAITS', 'Personality', 'Traits']),
+      wardrobeAndProps: {
+        defaultOutfit: extractListValue(['Default outfit', 'Outfit', 'Clothing', 'Attire', 'Wardrobe']),
+        propsAccessories: extractListValue(['Props/accessories', 'Props', 'Accessories', 'Items']),
+      },
+      signatureGestures: extractValue(['SIGNATURE_GESTURES', 'SIGNATURE GESTURES', 'Gestures', 'Signature poses']),
+      consistencyNotes: extractValue(['CONSISTENCY_NOTES', 'CONSISTENCY NOTES', 'Consistency', 'Visual consistency']),
+      rawDescription: content,
+    };
+
+    if (!character.coreDescription) {
+      character.coreDescription = content.substring(0, 800).replace(/\n+/g, ' ');
+    }
+
+    return character;
+  } catch (error) {
+    console.error('Failed to parse character description:', error);
+    return null;
+  }
+}
+
 export interface ExtractUrlRequest {
   url: string;
 }
@@ -168,4 +247,36 @@ export interface ExtractUrlResponse {
     url: string;
   };
   error?: string;
+}
+
+export type ContentCategory = 'technical' | 'business' | 'educational' | 'creative' | 'marketing' | 'scientific' | 'general';
+
+export interface ContentAnalysis {
+  contentCategory: ContentCategory;
+  suggestedTypes: string[];
+  reasoning: string;
+}
+
+export function parseContentAnalysis(llmOutput: string): ContentAnalysis | null {
+  try {
+    const jsonMatch = llmOutput.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return null;
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
+    
+    if (!parsed.suggestedTypes || !Array.isArray(parsed.suggestedTypes)) {
+      return null;
+    }
+
+    return {
+      contentCategory: parsed.contentCategory || 'general',
+      suggestedTypes: parsed.suggestedTypes,
+      reasoning: parsed.reasoning || '',
+    };
+  } catch (error) {
+    console.error('Failed to parse content analysis:', error);
+    return null;
+  }
 }

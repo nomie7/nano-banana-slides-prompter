@@ -5,10 +5,15 @@ import { z } from 'zod';
 import { generateWithLLM, generateWithLLMStream } from '../services/llm';
 import {
   NANO_BANANA_PRO_SYSTEM_PROMPT,
+  CHARACTER_GENERATION_SYSTEM_PROMPT,
+  CONTENT_ANALYZER_SYSTEM_PROMPT,
   buildUserPrompt,
+  buildCharacterGenerationPrompt,
+  buildSlideTypeSequence,
+  getDefaultSlideSequence,
 } from '../prompts/system';
-import type { GeneratePromptResponse, ParsedSlide } from '../prompts/types';
-import { parseSlides } from '../prompts/types';
+import type { GeneratePromptResponse, ParsedSlide, GeneratedCharacter, ContentAnalysis } from '../prompts/types';
+import { parseSlides, parseCharacterDescription, parseContentAnalysis } from '../prompts/types';
 
 const generateSchema = z.object({
   content: z.object({
@@ -122,6 +127,55 @@ promptRouter.post(
       );
     }
 
+    let generatedCharacter: GeneratedCharacter | undefined;
+    let slideTypeSequence: string[];
+
+    const analysisPromise = (async () => {
+      try {
+        const analysisResponse = await generateWithLLM(
+          CONTENT_ANALYZER_SYSTEM_PROMPT,
+          `Analyze this content for a ${body.settings.slideCount}-slide presentation and suggest optimal slide types:\n\n${contentText}`,
+          undefined,
+          body.llmConfig
+        );
+        return parseContentAnalysis(analysisResponse);
+      } catch (error) {
+        console.error('Content analysis failed:', error);
+        return null;
+      }
+    })();
+
+    const characterPromise = (async () => {
+      if (body.settings.character?.enabled && body.settings.character?.renderStyle) {
+        try {
+          const characterPrompt = buildCharacterGenerationPrompt({
+            content: contentText,
+            style: body.style,
+            renderStyle: body.settings.character.renderStyle,
+            gender: body.settings.character.gender,
+            slideCount: body.settings.slideCount,
+          });
+
+          const characterResponse = await generateWithLLM(
+            CHARACTER_GENERATION_SYSTEM_PROMPT,
+            characterPrompt,
+            undefined,
+            body.llmConfig
+          );
+
+          return parseCharacterDescription(characterResponse) ?? undefined;
+        } catch (error) {
+          console.error('Character generation failed:', error);
+          return undefined;
+        }
+      }
+      return undefined;
+    })();
+
+    const [contentAnalysis, character] = await Promise.all([analysisPromise, characterPromise]);
+    generatedCharacter = character;
+    slideTypeSequence = buildSlideTypeSequence(contentAnalysis, body.settings.slideCount);
+
     const userPrompt = buildUserPrompt({
       content: contentText,
       style: body.style,
@@ -130,6 +184,8 @@ promptRouter.post(
       aspectRatio: body.settings.aspectRatio,
       slideCount: body.settings.slideCount,
       character: body.settings.character,
+      generatedCharacter,
+      slideTypeSequence,
     });
 
     try {
@@ -140,7 +196,6 @@ promptRouter.post(
         body.llmConfig
       );
 
-      // Parse the output into individual slides
       const slides = parseSlides(generatedPrompts);
 
       return c.json<GeneratePromptResponse>({
@@ -213,6 +268,55 @@ promptRouter.post(
       );
     }
 
+    let generatedCharacter: GeneratedCharacter | undefined;
+    let slideTypeSequence: string[];
+
+    const analysisPromise = (async () => {
+      try {
+        const analysisResponse = await generateWithLLM(
+          CONTENT_ANALYZER_SYSTEM_PROMPT,
+          `Analyze this content for a ${body.settings.slideCount}-slide presentation and suggest optimal slide types:\n\n${contentText}`,
+          undefined,
+          body.llmConfig
+        );
+        return parseContentAnalysis(analysisResponse);
+      } catch (error) {
+        console.error('Content analysis failed:', error);
+        return null;
+      }
+    })();
+
+    const characterPromise = (async () => {
+      if (body.settings.character?.enabled && body.settings.character?.renderStyle) {
+        try {
+          const characterPrompt = buildCharacterGenerationPrompt({
+            content: contentText,
+            style: body.style,
+            renderStyle: body.settings.character.renderStyle,
+            gender: body.settings.character.gender,
+            slideCount: body.settings.slideCount,
+          });
+
+          const characterResponse = await generateWithLLM(
+            CHARACTER_GENERATION_SYSTEM_PROMPT,
+            characterPrompt,
+            undefined,
+            body.llmConfig
+          );
+
+          return parseCharacterDescription(characterResponse) ?? undefined;
+        } catch (error) {
+          console.error('Character generation failed:', error);
+          return undefined;
+        }
+      }
+      return undefined;
+    })();
+
+    const [contentAnalysis, character] = await Promise.all([analysisPromise, characterPromise]);
+    generatedCharacter = character;
+    slideTypeSequence = buildSlideTypeSequence(contentAnalysis, body.settings.slideCount);
+
     const userPrompt = buildUserPrompt({
       content: contentText,
       style: body.style,
@@ -221,6 +325,8 @@ promptRouter.post(
       aspectRatio: body.settings.aspectRatio,
       slideCount: body.settings.slideCount,
       character: body.settings.character,
+      generatedCharacter,
+      slideTypeSequence,
     });
 
     return streamSSE(c, async (stream) => {
@@ -229,7 +335,6 @@ promptRouter.post(
       let eventId = 0;
 
       try {
-        // Start streaming from LLM
         for await (const chunk of generateWithLLMStream(
           NANO_BANANA_PRO_SYSTEM_PROMPT,
           userPrompt,
@@ -238,11 +343,9 @@ promptRouter.post(
         )) {
           buffer += chunk;
 
-          // Try to parse any complete slides
           const { newSlides, updatedBuffer } = parseNewSlides(buffer, emittedSlides);
           buffer = updatedBuffer;
 
-          // Emit each new slide as an SSE event
           for (const slide of newSlides) {
             await stream.writeSSE({
               id: String(++eventId),
@@ -252,7 +355,6 @@ promptRouter.post(
           }
         }
 
-        // Final parse for any remaining complete slides
         const finalSlides = parseSlides(buffer);
         for (const slide of finalSlides) {
           if (!emittedSlides.has(slide.slideNumber)) {
@@ -265,7 +367,6 @@ promptRouter.post(
           }
         }
 
-        // Send completion event
         await stream.writeSSE({
           id: String(++eventId),
           event: 'done',
