@@ -192,7 +192,8 @@
     "fillAll": "请填写所有字段",
     "loadFailed": "加载默认 LLM 设置失败。",
     "invalidURL": "无效的 API 地址格式",
-    "invalidModel": "无效的模型标识符"
+    "invalidModel": "无效的模型标识符。支持字母、数字、中文、连字符、下划线、点、冒号、斜杠、方括号和空格。",
+    "securityNote": "您的密钥仅存储在本浏览器中。清除存储即可删除。"
   },
   "sidebar": {
     "newSession": "新建会话",
@@ -220,7 +221,13 @@
   },
   "errors": {
     "loadSessionsTitle": "加载会话失败",
-    "loadSessionsDescription": "加载会话时发生错误。请重试。"
+    "loadSessionsDescription": "加载会话时发生错误。请重试。",
+    "rateLimitError": "API 请求频率超限。请稍等片刻后重试。",
+    "authError": "API 密钥无效。请检查您的 API 密钥配置。",
+    "connectionError": "无法连接到 API 服务器。请检查网络或 API 地址。",
+    "serverError": "API 服务器错误。请稍后重试。",
+    "badRequestError": "请求无效。请检查输入参数。",
+    "unknownError": "发生未知错误。请重试。"
   },
   "notFound": {
     "message": "页面未找到",

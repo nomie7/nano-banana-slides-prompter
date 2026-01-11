@@ -70,7 +70,7 @@ export function SettingsDialog() {
       toast({ title: t('settings.error'), description: t('settings.invalidURL', 'Invalid base URL format'), variant: 'destructive' });
       return;
     }
-    if (!/^[a-zA-Z0-9][a-zA-Z0-9\-_.:/]*$/.test(model.trim())) {
+    if (!/^[\w\u4e00-\u9fff\[\]][\w\u4e00-\u9fff\-_.:\/\[\] ]*$/.test(model.trim())) {
       toast({ title: t('settings.error'), description: t('settings.invalidModel', 'Invalid model identifier'), variant: 'destructive' });
       return;
     }

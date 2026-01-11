@@ -95,33 +95,17 @@ export function SessionSidebar({ isOpen }: SessionSidebarProps) {
                 )}
               >
                 <StatusIcon status={session.status} />
-                <div className="flex-1 min-w-0 pr-14 overflow-hidden">
+                <div className="flex-1 min-w-0 overflow-hidden">
                   {editingId === session.id ? (
-                    <div className="flex items-center gap-1 w-full ml-1 py-1 max-w-full">
+                    <div className="flex items-center py-1 pr-16">
                       <Input
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
                         onKeyDown={handleKeyDown}
                         onClick={(e) => e.stopPropagation()}
-                        className="h-7 text-sm py-0 px-1 flex-1 min-w-0 max-w-full"
+                        className="h-7 text-sm py-0 px-2 w-full ml-1"
                         autoFocus
                       />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-5 w-5 shrink-0"
-                        onClick={(e) => stopProp(e, saveEdit)}
-                      >
-                        <Check className="h-3 w-3 text-green-500" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-5 w-5 shrink-0"
-                        onClick={(e) => stopProp(e, () => setEditingId(null))}
-                      >
-                        <X className="h-3 w-3 text-muted-foreground" />
-                      </Button>
                     </div>
                   ) : (
                     <div className="max-w-full">
@@ -136,7 +120,26 @@ export function SessionSidebar({ isOpen }: SessionSidebarProps) {
                     </div>
                   )}
                 </div>
-                {editingId !== session.id && (
+                {editingId === session.id ? (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={(e) => stopProp(e, saveEdit)}
+                    >
+                      <Check className="h-4 w-4 text-green-500" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={(e) => stopProp(e, () => setEditingId(null))}
+                    >
+                      <X className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                  </div>
+                ) : (
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-card/90 backdrop-blur-sm rounded p-0.5 shadow-sm">
                     <Button
                       variant="ghost"

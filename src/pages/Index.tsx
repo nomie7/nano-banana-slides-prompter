@@ -236,7 +236,7 @@ export default function Index() {
               </section>
 
               <Button
-                onClick={isGenerating ? cancel : handleGenerate}
+                onClick={isGenerating ? () => cancel() : handleGenerate}
                 disabled={!isGenerating && !hasContent}
                 variant={isGenerating ? "destructive" : "default"}
                 size="lg"
@@ -258,7 +258,7 @@ export default function Index() {
               </Button>
             </div>
 
-            <div className="lg:sticky lg:top-8 lg:self-start animate-fade-in" style={{ animationDelay: '300ms' }}>
+            <div className="lg:sticky lg:top-4 lg:self-start animate-fade-in" style={{ animationDelay: '300ms' }}>
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/25">
                   5
@@ -275,7 +275,7 @@ export default function Index() {
           </div>
         </main>
 
-        <footer className="border-t border-border/50 bg-card/50 backdrop-blur-sm mt-16">
+        <footer className="border-t border-border/50 bg-card/50 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-8 text-center text-sm text-muted-foreground">
             {t('app.footer', { version: __APP_VERSION__ })}
           </div>

@@ -187,7 +187,8 @@
     "fillAll": "Please fill all fields",
     "loadFailed": "Failed to load default LLM settings.",
     "invalidURL": "Invalid base URL format",
-    "invalidModel": "Invalid model identifier"
+    "invalidModel": "Invalid model identifier. Supports letters, numbers, Chinese characters, hyphens, underscores, dots, colons, slashes, brackets, and spaces.",
+    "securityNote": "Your key is stored locally in this browser only. Clear storage to remove it."
   },
   "sidebar": {
     "newSession": "New Session",
@@ -215,7 +216,13 @@
   },
   "errors": {
     "loadSessionsTitle": "Failed to load sessions",
-    "loadSessionsDescription": "An error occurred while loading your sessions. Please try again."
+    "loadSessionsDescription": "An error occurred while loading your sessions. Please try again.",
+    "rateLimitError": "API rate limit exceeded. Please wait a moment and try again.",
+    "authError": "Invalid API key. Please check your API key configuration.",
+    "connectionError": "Failed to connect to API server. Please check your network or API base URL.",
+    "serverError": "API server error. Please try again later.",
+    "badRequestError": "Invalid request. Please check your input parameters.",
+    "unknownError": "An unexpected error occurred. Please try again."
   },
   "notFound": {
     "message": "Page not found",
