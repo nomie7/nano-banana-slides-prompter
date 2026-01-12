@@ -152,7 +152,9 @@
       "visual-heavy": { "label": "Visual Heavy", "description": "70% images" },
       "balanced": { "label": "Balanced", "description": "50/50 mix" },
       "text-heavy": { "label": "Text Heavy", "description": "70% text" }
-    }
+    },
+    "outputLanguage": "Output Language",
+    "outputLanguageDescription": "Language for generated prompts"
   },
   "promptOutput": {
     "noPrompt": "No prompt generated yet",

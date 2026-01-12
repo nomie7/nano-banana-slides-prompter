@@ -6,7 +6,8 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import type { PresentationSettings as PresentationSettingsType, AspectRatio, ColorPalette, LayoutStructure } from '@/types/slidePrompt';
+import type { PresentationSettings as PresentationSettingsType, AspectRatio, ColorPalette, LayoutStructure, OutputLanguage } from '@/types/slidePrompt';
+import { OUTPUT_LANGUAGES } from '@/types/slidePrompt';
 
 const aspectRatioValues: AspectRatio[] = ['16:9', '4:3', '1:1', '9:16'];
 
@@ -162,6 +163,28 @@ export function PresentationSettings({ value, onChange }: PresentationSettingsPr
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>{t('presentationSettings.outputLanguage')}</Label>
+          <Select
+            value={value.outputLanguage || 'en'}
+            onValueChange={(v: OutputLanguage) => onChange({ ...value, outputLanguage: v })}
+          >
+            <SelectTrigger className="transition-all duration-300 hover:border-primary/50">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {OUTPUT_LANGUAGES.map((lang) => (
+                <SelectItem key={lang.code} value={lang.code}>
+                  {lang.nativeLabel}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            {t('presentationSettings.outputLanguageDescription')}
+          </p>
         </div>
       </CardContent>
     </Card>

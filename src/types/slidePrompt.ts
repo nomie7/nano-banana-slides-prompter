@@ -41,6 +41,31 @@ export type ColorPalette =
   | 'arctic-frost'
   | 'neon-night';
 
+export type OutputLanguage =
+  | 'en'
+  | 'vi'
+  | 'zh'
+  | 'ja'
+  | 'ko'
+  | 'th'
+  | 'id'
+  | 'fr'
+  | 'de'
+  | 'es';
+
+export const OUTPUT_LANGUAGES: { code: OutputLanguage; label: string; nativeLabel: string }[] = [
+  { code: 'en', label: 'English', nativeLabel: 'English' },
+  { code: 'vi', label: 'Vietnamese', nativeLabel: 'Tiếng Việt' },
+  { code: 'zh', label: 'Chinese', nativeLabel: '中文' },
+  { code: 'ja', label: 'Japanese', nativeLabel: '日本語' },
+  { code: 'ko', label: 'Korean', nativeLabel: '한국어' },
+  { code: 'th', label: 'Thai', nativeLabel: 'ภาษาไทย' },
+  { code: 'id', label: 'Indonesian', nativeLabel: 'Bahasa Indonesia' },
+  { code: 'fr', label: 'French', nativeLabel: 'Français' },
+  { code: 'de', label: 'German', nativeLabel: 'Deutsch' },
+  { code: 'es', label: 'Spanish', nativeLabel: 'Español' },
+];
+
 export type RenderStyle =
   | 'pixar'
   | 'real'
@@ -76,6 +101,7 @@ export interface PresentationSettings {
   colorPalette: ColorPalette;
   layoutStructure: LayoutStructure;
   character?: CharacterSettings;
+  outputLanguage?: OutputLanguage;
 }
 
 export interface SlidePromptConfig {
