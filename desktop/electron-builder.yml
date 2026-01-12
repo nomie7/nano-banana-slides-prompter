@@ -10,9 +10,6 @@ files:
   - dist/**/*
   - renderer/**/*
   - resources/**/*
-  - "!node_modules/**/*"
-  - node_modules/electron-updater/**/*
-  - node_modules/electron-log/**/*
 
 extraResources:
   - from: backend/
