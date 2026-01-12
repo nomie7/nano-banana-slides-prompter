@@ -1,6 +1,6 @@
 {
   "name": "nano-banana-slides-prompter-desktop",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Desktop application for Nano Banana Slides Prompter",
   "homepage": "https://github.com/nomie7/nano-banana-slides-prompter",
   "main": "dist/main.js",
