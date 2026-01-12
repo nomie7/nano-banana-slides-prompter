@@ -6,6 +6,7 @@ import packageJson from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? './' : '/',
   define: {
     '__APP_VERSION__': JSON.stringify(packageJson.version)
   },

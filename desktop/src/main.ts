@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
+import * as fs from 'fs';
 import { BackendManager } from './backend-manager';
 import { setupConfigIPC, getConfigManager } from './config-manager';
 import { setupAutoUpdater, setupUpdateIPC, checkForUpdates } from './auto-updater';
@@ -74,6 +75,24 @@ async function createWindow(): Promise<void> {
     } else {
       // Production: load from local files
       const indexPath = path.join(__dirname, '../renderer/index.html');
+
+      // Diagnostic logging for debugging blank screen issues
+      log.info('=== Renderer Loading Diagnostics ===');
+      log.info('__dirname:', __dirname);
+      log.info('Index path:', indexPath);
+      log.info('Index exists:', fs.existsSync(indexPath));
+      log.info('App path:', app.getAppPath());
+      log.info('Resources path:', process.resourcesPath);
+      log.info('Is packaged:', app.isPackaged);
+
+      // List renderer directory contents
+      const rendererDir = path.join(__dirname, '../renderer');
+      if (fs.existsSync(rendererDir)) {
+        const files = fs.readdirSync(rendererDir);
+        log.info('Renderer dir contents:', files);
+      }
+      log.info('=== End Diagnostics ===');
+
       await mainWindow.loadFile(indexPath);
     }
   } catch (error) {
