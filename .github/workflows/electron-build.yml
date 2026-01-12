@@ -95,15 +95,11 @@ jobs:
 
       - name: Build Electron app (Linux)
         if: matrix.platform == 'linux'
-        run: cd desktop && npx electron-builder --linux
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd desktop && npx electron-builder --linux --publish never
 
       - name: Build Electron app (Windows)
         if: matrix.platform == 'win'
-        run: cd desktop && npx electron-builder --win
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cd desktop && npx electron-builder --win --publish never
 
       - name: Upload artifacts (Linux)
         uses: actions/upload-artifact@v4
