@@ -178,12 +178,13 @@ Output files are generated in `desktop/release/`.
 
 ## Version
 
-**v1.2.3** - Fork-compatible auto-release workflow
+**v1.2.4** - Remove redundant PromptPreview, add export dropdown
 
 ### Changelog
 
 | Version | Highlights                                                                                |
 | ------- | ----------------------------------------------------------------------------------------- |
+| 1.2.4   | Remove redundant PromptPreview component, add export dropdown (MD, TXT, JSON)             |
 | 1.2.3   | Fix auto-release workflow for fork compatibility                                          |
 | 1.2.2   | Settings hot-reload using Zustand store                                                   |
 | 1.2.1   | CI workflow fixes, auto-release                                                           |
