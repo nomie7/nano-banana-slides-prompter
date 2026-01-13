@@ -1,5 +1,6 @@
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
+import * as fs from 'fs';
 import { app } from 'electron';
 import log from 'electron-log';
 
@@ -61,6 +62,28 @@ export class BackendManager {
     return new Promise((resolve, reject) => {
       const backendPath = this.getBackendPath();
       const args = this.getBackendArgs();
+      const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+      const cwd = app.isPackaged ? undefined : path.join(app.getAppPath(), '..', 'server');
+
+      // Pre-spawn diagnostics for debugging
+      log.info('=== Backend Startup Diagnostics ===');
+      log.info(`Mode: ${isDev ? 'Development' : 'Production'}`);
+      log.info(`Backend path: ${backendPath}`);
+      log.info(`Arguments: ${args.join(' ') || '(none)'}`);
+      log.info(`Working directory: ${cwd || '(default)'}`);
+      log.info(`Resources path: ${process.resourcesPath}`);
+
+      // Check if binary exists (production only)
+      if (!isDev) {
+        const binaryExists = fs.existsSync(backendPath);
+        log.info(`Binary exists: ${binaryExists}`);
+        if (binaryExists) {
+          const stats = fs.statSync(backendPath);
+          log.info(`Binary size: ${stats.size} bytes`);
+        } else {
+          log.error(`CRITICAL: Backend binary not found at ${backendPath}`);
+        }
+      }
 
       log.info(`Starting backend: ${backendPath} ${args.join(' ')}`);
 
@@ -74,10 +97,15 @@ export class BackendManager {
       this.process = spawn(backendPath, args, {
         env,
         stdio: ['ignore', 'pipe', 'pipe'],
-        cwd: app.isPackaged ? undefined : path.join(app.getAppPath(), '..', 'server'),
+        cwd,
       });
 
       const timeout = setTimeout(() => {
+        log.error('=== Backend Startup Timeout ===');
+        log.error(`Timeout after ${BACKEND_START_TIMEOUT}ms`);
+        log.error(`stdout buffer: ${this.stdoutBuffer || '(empty)'}`);
+        log.error(`Port discovered: ${this.port || 'none'}`);
+        log.error(`Process running: ${this.process ? !this.process.killed : false}`);
         this.stop();
         reject(new Error('Backend startup timeout'));
       }, BACKEND_START_TIMEOUT);
