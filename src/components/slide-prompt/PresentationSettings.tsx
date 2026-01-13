@@ -20,6 +20,8 @@ import type {
   OutputLanguage,
 } from '@/types/slidePrompt';
 import { OUTPUT_LANGUAGES } from '@/types/slidePrompt';
+import { BrandKitEditor } from '@/components/brand-kit/BrandKitEditor';
+import { CourseBuilderToggle } from '@/components/course-builder/CourseBuilderToggle';
 
 const aspectRatioValues: AspectRatio[] = ['16:9', '4:3', '1:1', '9:16'];
 
@@ -206,6 +208,14 @@ export function PresentationSettings({ value, onChange }: PresentationSettingsPr
           <p className="text-xs text-muted-foreground">
             {t('presentationSettings.outputLanguageDescription')}
           </p>
+        </div>
+
+        <div className="pt-2">
+          <BrandKitEditor />
+        </div>
+
+        <div className="pt-2 border-t border-border/50">
+          <CourseBuilderToggle />
         </div>
       </CardContent>
     </Card>

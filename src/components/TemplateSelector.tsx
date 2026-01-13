@@ -1,6 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Presentation, GraduationCap, Briefcase, Palette, LayoutTemplate, Loader2 } from 'lucide-react';
+import {
+  Presentation,
+  GraduationCap,
+  Briefcase,
+  Palette,
+  LayoutTemplate,
+  Loader2,
+  HelpCircle,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,6 +30,7 @@ const categoryIcons: Record<TemplateCategory, React.ReactNode> = {
   education: <GraduationCap className="h-4 w-4" />,
   business: <Briefcase className="h-4 w-4" />,
   creative: <Palette className="h-4 w-4" />,
+  quiz: <HelpCircle className="h-4 w-4" />,
 };
 
 interface TemplateSelectorProps {
@@ -47,11 +56,18 @@ export function TemplateSelector({ onApplyTemplate }: TemplateSelectorProps) {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    if (open) {
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
       loadCategory(activeCategory);
     }
-  }, [open, activeCategory, loadCategory]);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    const newCategory = category as TemplateCategory;
+    setActiveCategory(newCategory);
+    loadCategory(newCategory);
+  };
 
   const handleApplyTemplate = (template: PromptTemplate) => {
     const config: Partial<SlidePromptConfig> = {};
@@ -89,7 +105,7 @@ export function TemplateSelector({ onApplyTemplate }: TemplateSelectorProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <LayoutTemplate className="h-4 w-4" />
@@ -100,12 +116,8 @@ export function TemplateSelector({ onApplyTemplate }: TemplateSelectorProps) {
         <DialogHeader>
           <DialogTitle>{t('templates.title')}</DialogTitle>
         </DialogHeader>
-        <Tabs
-          value={activeCategory}
-          onValueChange={(v) => setActiveCategory(v as TemplateCategory)}
-          className="w-full"
-        >
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs value={activeCategory} onValueChange={handleCategoryChange} className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
             {TEMPLATE_CATEGORIES.map((cat) => (
               <TabsTrigger key={cat.id} value={cat.id} className="gap-2">
                 {categoryIcons[cat.id]}

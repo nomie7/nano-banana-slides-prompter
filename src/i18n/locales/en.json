@@ -271,7 +271,8 @@
       "presentation": "Presentation",
       "education": "Education",
       "business": "Business",
-      "creative": "Creative"
+      "creative": "Creative",
+      "quiz": "Quiz"
     },
     "presentation": {
       "startupPitch": {
@@ -360,6 +361,24 @@
         "name": "Art Exhibition",
         "description": "Art gallery and exhibition showcase"
       }
+    },
+    "quiz": {
+      "multipleChoice": {
+        "name": "Multiple Choice Quiz",
+        "description": "Interactive multiple choice questions with options"
+      },
+      "trueFalse": {
+        "name": "True/False Quiz",
+        "description": "Simple true or false question format"
+      },
+      "fillInBlank": {
+        "name": "Fill-in-the-Blank",
+        "description": "Complete the sentence with missing words"
+      },
+      "matching": {
+        "name": "Matching Quiz",
+        "description": "Match items from two columns together"
+      }
     }
   },
   "batch": {
@@ -403,5 +422,36 @@
     "noApiKey": "Please configure Gemini API key in settings",
     "generationFailed": "Image generation failed",
     "generationSuccess": "Generated {{count}} images"
+  },
+  "brandKit": {
+    "title": "Brand Kit",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Your Company",
+    "primaryColor": "Primary Color",
+    "secondaryColor": "Secondary Color",
+    "fontFamily": "Font Family",
+    "fontSize": "Font Size",
+    "fontSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "logo": "Logo",
+    "logoHint": "Max 500KB, PNG/JPG/SVG",
+    "removeLogo": "Remove",
+    "reset": "Reset",
+    "preview": "Preview"
+  },
+  "courseBuilder": {
+    "title": "Course Mode",
+    "beta": "Beta",
+    "description": "Organize slides into lessons for structured course content.",
+    "courseTitle": "Course Title",
+    "courseTitlePlaceholder": "e.g., Introduction to Machine Learning",
+    "lessons": "Lessons",
+    "slides": "slides",
+    "noLessons": "No lessons yet. Add your first lesson below.",
+    "lessonPlaceholder": "Lesson title...",
+    "futureNote": "Full course builder with lesson-based generation coming in v2.1"
   }
 }

@@ -1,6 +1,14 @@
-import type { SlideStyle, AspectRatio, ColorPalette, LayoutStructure, RenderStyle, CharacterGender, OutputLanguage } from '@/types/slidePrompt';
+import type {
+  SlideStyle,
+  AspectRatio,
+  ColorPalette,
+  LayoutStructure,
+  RenderStyle,
+  CharacterGender,
+  OutputLanguage,
+} from '@/types/slidePrompt';
 
-export type TemplateCategory = 'presentation' | 'education' | 'business' | 'creative';
+export type TemplateCategory = 'presentation' | 'education' | 'business' | 'creative' | 'quiz';
 
 export interface TemplateConfig {
   style?: SlideStyle;
@@ -38,4 +46,5 @@ export const TEMPLATE_CATEGORIES: { id: TemplateCategory; labelKey: string; icon
   { id: 'education', labelKey: 'templates.categories.education', icon: 'GraduationCap' },
   { id: 'business', labelKey: 'templates.categories.business', icon: 'Briefcase' },
   { id: 'creative', labelKey: 'templates.categories.creative', icon: 'Palette' },
+  { id: 'quiz', labelKey: 'templates.categories.quiz', icon: 'HelpCircle' },
 ];

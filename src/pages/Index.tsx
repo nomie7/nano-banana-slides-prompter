@@ -15,6 +15,7 @@ import { BatchPanel } from '@/components/batch';
 import { useStreamingGeneration } from '@/hooks/useStreamingGeneration';
 import { useSessionStore } from '@/stores/sessionStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useBrandKitStore } from '@/stores/brandKitStore';
 import { useToast } from '@/hooks/use-toast';
 import type {
   ContentInput as ContentInputType,
@@ -43,6 +44,7 @@ export default function Index() {
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { settings: llmSettings } = useSettingsStore();
+  const { getBrandPromptText } = useBrandKitStore();
 
   const {
     sessions,
@@ -106,8 +108,12 @@ export default function Index() {
 
     await syncToServer();
 
+    // Include brand kit text in content if enabled
+    const brandText = getBrandPromptText();
+    const contentWithBrand = brandText ? { ...content, text: content.text + brandText } : content;
+
     generate({
-      content,
+      content: contentWithBrand,
       style,
       settings,
       llmConfig: llmSettings || undefined,

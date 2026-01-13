@@ -7,7 +7,7 @@
 | Attribute    | Value                       |
 | ------------ | --------------------------- |
 | Name         | Nano Banana Slides Prompter |
-| Version      | 1.2.2                       |
+| Version      | 1.2.5                       |
 | License      | GPL-3.0-or-later            |
 | Repository   | nano-banana-slides-prompter |
 | Last Updated | 2026-01-13                  |
@@ -71,7 +71,24 @@
 - **User Overrides**: Per-user API key and model settings
 - **Streaming Support**: Real-time prompt generation via SSE
 
-## Product Requirements
+### 9. Quiz Templates (v1.2.5+)
+
+- **4 Quiz Types**: Multiple Choice, True/False, Fill-in-Blank, Matching
+- **Pre-configured Styles**: Educational and assessment-focused layouts
+- **i18n Support**: Full translations in EN, VI, ZH
+
+### 10. Brand Kit (v1.2.5+)
+
+- **Color Configuration**: Primary and secondary brand colors
+- **Typography**: Font family and size selection
+- **Logo Upload**: Image upload with localStorage persistence
+- **Company Branding**: Name and visual identity
+
+### 11. Course Builder Mode (v1.2.5+ Beta)
+
+- **Course Structure**: Title, description, lesson organization
+- **Lesson Management**: Add, remove, reorder lessons
+- **Persistent State**: localStorage for course data
 
 ### Functional Requirements
 
@@ -92,6 +109,9 @@
 | FR-13 | Copy individual slide prompts            | High     | Done   |
 | FR-14 | Desktop application                      | Medium   | Done   |
 | FR-15 | Auto-updater for desktop                 | Low      | Done   |
+| FR-16 | Quiz templates (4 types)                 | Medium   | Done   |
+| FR-17 | Brand Kit with localStorage persistence  | Medium   | Done   |
+| FR-18 | Course Builder Mode (Beta)               | Low      | Done   |
 
 ### Non-Functional Requirements
 
@@ -140,6 +160,9 @@
 
 | Version | Date    | Highlights                                                  |
 | ------- | ------- | ----------------------------------------------------------- |
+| 1.2.5   | 2026-01 | Quiz Templates, Brand Kit, Course Builder Mode              |
+| 1.2.4   | 2026-01 | Gemini Image Generation integration                         |
+| 1.2.3   | 2026-01 | PDF/DOCX import, PPTX/PDF export, batch processing          |
 | 1.2.2   | 2026-01 | Settings hot-reload using Zustand store                     |
 | 1.2.1   | 2026-01 | CI workflow fixes, auto-release                             |
 | 1.2.0   | 2026-01 | Vitest testing, Vietnamese i18n, output language (10 langs) |
@@ -162,6 +185,9 @@
 - [x] Vietnamese language support (Done in v1.2.0)
 - [x] Output language selection (Done in v1.2.0)
 - [x] Desktop application (Done in v1.1.x)
+- [x] Quiz Templates (Done in v1.2.5)
+- [x] Brand Kit (Done in v1.2.5)
+- [x] Course Builder Mode (Done in v1.2.5)
 - [ ] Template library with pre-built configurations
 - [ ] Export prompts to various formats (JSON, Markdown)
 - [ ] Team collaboration features

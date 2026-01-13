@@ -268,7 +268,8 @@
       "presentation": "Trình Bày",
       "education": "Giáo Dục",
       "business": "Kinh Doanh",
-      "creative": "Sáng Tạo"
+      "creative": "Sáng Tạo",
+      "quiz": "Trắc Nghiệm"
     },
     "presentation": {
       "startupPitch": {
@@ -357,6 +358,24 @@
         "name": "Triển Lãm Nghệ Thuật",
         "description": "Trưng bày phòng trưng bày và triển lãm nghệ thuật"
       }
+    },
+    "quiz": {
+      "multipleChoice": {
+        "name": "Trắc Nghiệm Nhiều Đáp Án",
+        "description": "Câu hỏi trắc nghiệm tương tác với nhiều lựa chọn"
+      },
+      "trueFalse": {
+        "name": "Trắc Nghiệm Đúng/Sai",
+        "description": "Định dạng câu hỏi đúng hoặc sai đơn giản"
+      },
+      "fillInBlank": {
+        "name": "Điền Vào Chỗ Trống",
+        "description": "Hoàn thành câu với các từ còn thiếu"
+      },
+      "matching": {
+        "name": "Trắc Nghiệm Nối Cặp",
+        "description": "Nối các mục từ hai cột với nhau"
+      }
     }
   },
   "batch": {
@@ -400,5 +419,36 @@
     "noApiKey": "Vui lòng cấu hình Gemini API key trong cài đặt",
     "generationFailed": "Tạo hình ảnh thất bại",
     "generationSuccess": "Đã tạo {{count}} hình ảnh"
+  },
+  "brandKit": {
+    "title": "Bộ Thương Hiệu",
+    "companyName": "Tên Công Ty",
+    "companyNamePlaceholder": "Công Ty Của Bạn",
+    "primaryColor": "Màu Chính",
+    "secondaryColor": "Màu Phụ",
+    "fontFamily": "Phông Chữ",
+    "fontSize": "Cỡ Chữ",
+    "fontSizes": {
+      "small": "Nhỏ",
+      "medium": "Vừa",
+      "large": "Lớn"
+    },
+    "logo": "Logo",
+    "logoHint": "Tối đa 500KB, PNG/JPG/SVG",
+    "removeLogo": "Xóa",
+    "reset": "Đặt Lại",
+    "preview": "Xem Trước"
+  },
+  "courseBuilder": {
+    "title": "Chế Độ Khóa Học",
+    "beta": "Beta",
+    "description": "Tổ chức slide thành các bài học cho nội dung khóa học có cấu trúc.",
+    "courseTitle": "Tiêu Đề Khóa Học",
+    "courseTitlePlaceholder": "VD: Giới thiệu về Machine Learning",
+    "lessons": "Bài Học",
+    "slides": "slide",
+    "noLessons": "Chưa có bài học. Thêm bài học đầu tiên bên dưới.",
+    "lessonPlaceholder": "Tiêu đề bài học...",
+    "futureNote": "Trình xây dựng khóa học đầy đủ với tạo theo bài học sẽ có trong v2.1"
   }
 }

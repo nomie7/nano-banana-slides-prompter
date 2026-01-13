@@ -4,7 +4,7 @@
 
 ## Overview
 
-The Nano Banana Slides Prompter is a full-stack application with a React frontend (~9,000 LOC), Hono backend (~2,553 LOC), and Electron desktop shell (~1,094 LOC). Total codebase is approximately 13,000 LOC.
+The Nano Banana Slides Prompter is a full-stack application with a React frontend (~10,000 LOC), Hono backend (~2,553 LOC), and Electron desktop shell (~1,094 LOC). Total codebase is approximately 14,000 LOC.
 
 ## Project Structure
 
@@ -13,11 +13,16 @@ nano-banana-slides-prompter/
 ├── src/                    # Frontend source
 │   ├── components/         # React components
 │   │   ├── ui/             # shadcn/ui primitives (48 files)
-│   │   └── slide-prompt/   # Domain components (6 files)
+│   │   ├── slide-prompt/   # Domain components (6 files)
+│   │   ├── brand-kit/      # Brand Kit components (1 file)
+│   │   └── course-builder/ # Course Builder components (1 file)
 │   ├── pages/              # Route pages (2 files)
-│   ├── stores/             # Zustand state (1 file)
+│   ├── stores/             # Zustand state (4 files)
 │   ├── hooks/              # Custom hooks (3 files)
 │   ├── lib/                # Utilities (3 files)
+│   ├── data/               # Static data files
+│   │   └── templates/      # Template definitions
+│   │       └── categories/ # Template categories (5 files)
 │   ├── types/              # TypeScript types (1 file)
 │   └── i18n/               # Internationalization (4 files: index + 3 locales)
 ├── server/                 # Backend source
@@ -87,6 +92,25 @@ nano-banana-slides-prompter/
 - Current session tracking
 - Abort controller management
 - Server sync with debouncing
+
+**Settings Store** (`src/stores/settingsStore.ts`):
+
+- LLM configuration settings
+- User preferences
+
+**Brand Kit Store** (`src/stores/brandKitStore.ts`):
+
+- Brand colors (primary/secondary)
+- Font family and size
+- Logo URL (base64)
+- Company name
+- localStorage persistence
+
+**Course Builder Store** (`src/stores/courseBuilderStore.ts`):
+
+- Course structure (title, description)
+- Lesson management (CRUD)
+- localStorage persistence
 
 ### Custom Hooks
 
@@ -230,22 +254,25 @@ Return Structured Content → Update ContentInput
 
 ## File Count Summary
 
-| Directory                      | Files | Purpose                          |
-| ------------------------------ | ----- | -------------------------------- |
-| `src/components/ui/`           | 48    | UI primitives                    |
-| `src/components/slide-prompt/` | 6     | Domain components                |
-| `src/components/`              | 4     | App components                   |
-| `src/pages/`                   | 2     | Route pages                      |
-| `src/stores/`                  | 2     | State stores (session, settings) |
-| `src/hooks/`                   | 3     | Custom hooks                     |
-| `src/lib/`                     | 3     | Utilities                        |
-| `src/types/`                   | 1     | Type definitions                 |
-| `src/i18n/`                    | 4     | i18n config + 3 locales          |
-| `server/src/routes/`           | 5     | API routes                       |
-| `server/src/services/`         | 3     | Services                         |
-| `server/src/prompts/`          | 3     | Prompt logic                     |
-| `desktop/src/`                 | 6     | Electron main process            |
-| `desktop/scripts/`             | 1     | Build scripts                    |
+| Directory                        | Files | Purpose                 |
+| -------------------------------- | ----- | ----------------------- |
+| `src/components/ui/`             | 48    | UI primitives           |
+| `src/components/slide-prompt/`   | 6     | Domain components       |
+| `src/components/brand-kit/`      | 1     | Brand Kit editor        |
+| `src/components/course-builder/` | 1     | Course Builder toggle   |
+| `src/components/`                | 4     | App components          |
+| `src/pages/`                     | 2     | Route pages             |
+| `src/stores/`                    | 4     | State stores            |
+| `src/hooks/`                     | 3     | Custom hooks            |
+| `src/lib/`                       | 3     | Utilities               |
+| `src/data/templates/categories/` | 5     | Template categories     |
+| `src/types/`                     | 1     | Type definitions        |
+| `src/i18n/`                      | 4     | i18n config + 3 locales |
+| `server/src/routes/`             | 5     | API routes              |
+| `server/src/services/`           | 3     | Services                |
+| `server/src/prompts/`            | 3     | Prompt logic            |
+| `desktop/src/`                   | 6     | Electron main process   |
+| `desktop/scripts/`               | 1     | Build scripts           |
 
 ## Desktop Architecture
 

@@ -260,7 +260,8 @@
       "presentation": "演示",
       "education": "教育",
       "business": "商务",
-      "creative": "创意"
+      "creative": "创意",
+      "quiz": "测验"
     },
     "presentation": {
       "startupPitch": {
@@ -349,6 +350,24 @@
         "name": "艺术展览",
         "description": "艺术画廊和展览展示"
       }
+    },
+    "quiz": {
+      "multipleChoice": {
+        "name": "选择题测验",
+        "description": "带多个选项的互动选择题"
+      },
+      "trueFalse": {
+        "name": "判断题测验",
+        "description": "简单的对错判断题格式"
+      },
+      "fillInBlank": {
+        "name": "填空题",
+        "description": "用缺失的词语完成句子"
+      },
+      "matching": {
+        "name": "配对题测验",
+        "description": "将两列的项目进行匹配"
+      }
     }
   },
   "gemini": {
@@ -375,5 +394,36 @@
     "noApiKey": "请在设置中配置 Gemini API 密钥",
     "generationFailed": "图像生成失败",
     "generationSuccess": "已生成 {{count}} 张图像"
+  },
+  "brandKit": {
+    "title": "品牌套件",
+    "companyName": "公司名称",
+    "companyNamePlaceholder": "您的公司",
+    "primaryColor": "主色调",
+    "secondaryColor": "辅助色",
+    "fontFamily": "字体",
+    "fontSize": "字号",
+    "fontSizes": {
+      "small": "小",
+      "medium": "中",
+      "large": "大"
+    },
+    "logo": "Logo",
+    "logoHint": "最大 500KB，PNG/JPG/SVG",
+    "removeLogo": "移除",
+    "reset": "重置",
+    "preview": "预览"
+  },
+  "courseBuilder": {
+    "title": "课程模式",
+    "beta": "Beta",
+    "description": "将幻灯片组织成课程以获得结构化的课程内容。",
+    "courseTitle": "课程标题",
+    "courseTitlePlaceholder": "例如：机器学习入门",
+    "lessons": "课程",
+    "slides": "张幻灯片",
+    "noLessons": "暂无课程。在下方添加您的第一个课程。",
+    "lessonPlaceholder": "课程标题...",
+    "futureNote": "完整的课程构建器及按课程生成功能将在 v2.1 推出"
   }
 }
