@@ -18,9 +18,22 @@ const createDefaultSession = (): Session => ({
   createdAt: Date.now(),
   updatedAt: Date.now(),
   config: {
-    content: { type: 'text', text: '', topic: '', fileContent: '', fileName: '', url: '', urlContent: '' },
+    content: {
+      type: 'text',
+      text: '',
+      topic: '',
+      fileContent: '',
+      fileName: '',
+      url: '',
+      urlContent: '',
+    },
     style: 'professional',
-    settings: { aspectRatio: '16:9', slideCount: 10, colorPalette: 'auto', layoutStructure: 'balanced' },
+    settings: {
+      aspectRatio: '16:9',
+      slideCount: 10,
+      colorPalette: 'auto',
+      layoutStructure: 'balanced',
+    },
   },
   status: 'idle',
   slides: [],
@@ -35,6 +48,7 @@ interface SessionStore {
   isLoading: boolean;
   syncTimeoutId: ReturnType<typeof setTimeout> | null;
   syncInFlight: boolean;
+  showPromptPreview: boolean;
 
   loadSessions: () => Promise<void>;
   getCurrentSession: () => Session | null;
@@ -48,6 +62,7 @@ interface SessionStore {
   updateSessionError: (id: string, error: string | null) => void;
   updateSessionTitle: (id: string, title: string) => void;
   syncToServer: () => Promise<void>;
+  setShowPromptPreview: (show: boolean) => void;
 
   getAbortController: (id: string) => AbortController | undefined;
   setAbortController: (id: string, controller: AbortController) => void;
@@ -61,6 +76,7 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   isLoading: true,
   syncTimeoutId: null,
   syncInFlight: false,
+  showPromptPreview: true,
 
   loadSessions: async () => {
     try {
@@ -74,9 +90,9 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
               ? session.isDefaultTitle
               : session.title === 'New Session',
         }));
-        const normalizedCurrent = normalizedSessions.find(s => s.id === data.currentSessionId)
+        const normalizedCurrent = normalizedSessions.find((s) => s.id === data.currentSessionId)
           ? data.currentSessionId
-          : normalizedSessions[0]?.id ?? null;
+          : (normalizedSessions[0]?.id ?? null);
         set({
           sessions: normalizedSessions,
           currentSessionId: normalizedCurrent,
@@ -94,12 +110,12 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   getCurrentSession: () => {
     const { sessions, currentSessionId } = get();
     if (!currentSessionId) return null;
-    return sessions.find(s => s.id === currentSessionId) || null;
+    return sessions.find((s) => s.id === currentSessionId) || null;
   },
 
   createSession: async () => {
     const newSession = createDefaultSession();
-    set(state => ({
+    set((state) => ({
       sessions: [newSession, ...state.sessions],
       currentSessionId: newSession.id,
     }));
@@ -121,15 +137,15 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
     const controller = get().abortControllers.get(id);
     if (controller) {
       controller.abort();
-      set(state => {
+      set((state) => {
         const newAbortControllers = new Map(state.abortControllers);
         newAbortControllers.delete(id);
         return { abortControllers: newAbortControllers };
       });
     }
 
-    set(state => {
-      const newSessions = state.sessions.filter(s => s.id !== id);
+    set((state) => {
+      const newSessions = state.sessions.filter((s) => s.id !== id);
       let newCurrentId = state.currentSessionId;
       if (state.currentSessionId === id) {
         newCurrentId = newSessions[0]?.id || null;
@@ -148,21 +164,23 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
     set({ currentSessionId: id });
     try {
       await fetch(`${API_BASE}/api/sessions/current/${id}`, { method: 'PUT' });
-      
+
       const res = await fetch(`${API_BASE}/api/sessions`);
       if (res.ok) {
         const data = await res.json();
         const freshSession = data.sessions.find((s: Session) => s.id === id);
         if (freshSession) {
-          set(state => ({
-            sessions: state.sessions.map(s =>
-              s.id === id ? {
-                ...freshSession,
-                isDefaultTitle:
-                  typeof freshSession.isDefaultTitle === 'boolean'
-                    ? freshSession.isDefaultTitle
-                    : freshSession.title === 'New Session',
-              } : s
+          set((state) => ({
+            sessions: state.sessions.map((s) =>
+              s.id === id
+                ? {
+                    ...freshSession,
+                    isDefaultTitle:
+                      typeof freshSession.isDefaultTitle === 'boolean'
+                        ? freshSession.isDefaultTitle
+                        : freshSession.title === 'New Session',
+                  }
+                : s
             ),
           }));
         }
@@ -173,16 +191,16 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionConfig: (id, config) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, config: { ...s.config, ...config }, updatedAt: Date.now() } : s
       ),
     }));
   },
 
   updateSessionStatus: (id, status) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, status, updatedAt: Date.now() } : s
       ),
     }));
@@ -190,8 +208,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionSlides: (id, slides) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, slides, updatedAt: Date.now() } : s
       ),
     }));
@@ -199,8 +217,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionPrompt: (id, generatedPrompt) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, generatedPrompt, updatedAt: Date.now() } : s
       ),
     }));
@@ -208,8 +226,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionError: (id, error) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, error, updatedAt: Date.now() } : s
       ),
     }));
@@ -217,8 +235,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionTitle: (id, title) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, title, isDefaultTitle: false, updatedAt: Date.now() } : s
       ),
     }));
@@ -253,7 +271,7 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   getAbortController: (id) => get().abortControllers.get(id),
 
   setAbortController: (id, controller) => {
-    set(state => {
+    set((state) => {
       const abortControllers = new Map(state.abortControllers);
       abortControllers.set(id, controller);
       return { abortControllers };
@@ -261,10 +279,14 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   removeAbortController: (id) => {
-    set(state => {
+    set((state) => {
       const abortControllers = new Map(state.abortControllers);
       abortControllers.delete(id);
       return { abortControllers };
     });
+  },
+
+  setShowPromptPreview: (show) => {
+    set({ showPromptPreview: show });
   },
 }));

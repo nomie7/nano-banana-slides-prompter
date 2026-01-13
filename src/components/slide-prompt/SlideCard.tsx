@@ -13,7 +13,12 @@ interface SlideCardProps {
   animationDelay?: number;
 }
 
-export function SlideCard({ slide, defaultOpen = false, isNew = false, animationDelay = 0 }: SlideCardProps) {
+export function SlideCard({
+  slide,
+  defaultOpen = false,
+  isNew = false,
+  animationDelay = 0,
+}: SlideCardProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -53,13 +58,9 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
     }
   };
 
-  const animationClass = isNew && !hasAnimated
-    ? 'animate-slide-up'
-    : '';
+  const animationClass = isNew && !hasAnimated ? 'animate-slide-up' : '';
 
-  const animationStyle = isNew && !hasAnimated
-    ? { animationDelay: `${animationDelay}ms` }
-    : {};
+  const animationStyle = isNew && !hasAnimated ? { animationDelay: `${animationDelay}ms` } : {};
 
   return (
     <Collapsible

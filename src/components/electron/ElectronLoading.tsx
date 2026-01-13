@@ -69,13 +69,9 @@ export function ElectronLoading({ onReady, onError }: ElectronLoadingProps) {
           <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
             <span className="text-3xl">⚠️</span>
           </div>
-          <h1 className="text-xl font-semibold text-foreground mb-2">
-            Failed to Start
-          </h1>
+          <h1 className="text-xl font-semibold text-foreground mb-2">Failed to Start</h1>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={handleRetry}>
-            Retry
-          </Button>
+          <Button onClick={handleRetry}>Retry</Button>
         </div>
       </div>
     );
@@ -87,15 +83,9 @@ export function ElectronLoading({ onReady, onError }: ElectronLoadingProps) {
         <div className="mx-auto mb-6">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
         </div>
-        <h1 className="text-xl font-semibold text-foreground mb-2">
-          Nano Banana Slides Prompter
-        </h1>
+        <h1 className="text-xl font-semibold text-foreground mb-2">Nano Banana Slides Prompter</h1>
         <p className="text-muted-foreground">{status}</p>
-        {appVersion && (
-          <p className="text-xs text-muted-foreground mt-4">
-            Version {appVersion}
-          </p>
-        )}
+        {appVersion && <p className="text-xs text-muted-foreground mt-4">Version {appVersion}</p>}
       </div>
     </div>
   );

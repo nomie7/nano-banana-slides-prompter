@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
-import { generatePromptStream, type GeneratePromptRequest } from "@/lib/api";
-import { useSessionStore } from "@/stores/sessionStore";
-import type { ParsedSlide, GeneratedPrompt } from "@/types/slidePrompt";
+import { useState, useCallback, useEffect } from 'react';
+import { generatePromptStream, type GeneratePromptRequest } from '@/lib/api';
+import { useSessionStore } from '@/stores/sessionStore';
+import type { ParsedSlide, GeneratedPrompt } from '@/types/slidePrompt';
 
 export interface UseStreamingGenerationState {
   isGenerating: boolean;
@@ -10,8 +10,7 @@ export interface UseStreamingGenerationState {
   generatedPrompt: GeneratedPrompt | null;
 }
 
-export interface UseStreamingGenerationReturn
-  extends UseStreamingGenerationState {
+export interface UseStreamingGenerationReturn extends UseStreamingGenerationState {
   generate: (request: GeneratePromptRequest) => Promise<void>;
   cancel: (sessionId?: string) => void;
   reset: () => void;
@@ -42,7 +41,7 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
       setLocalSlides(currentSession.slides);
       setLocalPrompt(currentSession.generatedPrompt);
       setLocalError(currentSession.error);
-      setLocalIsGenerating(currentSession.status === "generating");
+      setLocalIsGenerating(currentSession.status === 'generating');
     } else {
       setLocalSlides([]);
       setLocalPrompt(null);
@@ -54,9 +53,7 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
   const cancel = useCallback(
     (targetId?: string) => {
       const sessionId =
-        typeof targetId === "string"
-          ? targetId
-          : useSessionStore.getState().currentSessionId;
+        typeof targetId === 'string' ? targetId : useSessionStore.getState().currentSessionId;
       if (!sessionId) return;
 
       const controller = getAbortController(sessionId);
@@ -65,7 +62,7 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
         removeAbortController(sessionId);
       }
 
-      updateSessionStatus(sessionId, "idle");
+      updateSessionStatus(sessionId, 'idle');
       if (useSessionStore.getState().currentSessionId === sessionId) {
         setLocalIsGenerating(false);
       }
@@ -83,13 +80,7 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
     setLocalSlides([]);
     setLocalError(null);
     setLocalPrompt(null);
-  }, [
-    cancel,
-    currentSessionId,
-    updateSessionSlides,
-    updateSessionPrompt,
-    updateSessionError,
-  ]);
+  }, [cancel, currentSessionId, updateSessionSlides, updateSessionPrompt, updateSessionError]);
 
   const generate = useCallback(
     async (request: GeneratePromptRequest) => {
@@ -101,7 +92,7 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
       updateSessionSlides(targetSessionId, []);
       updateSessionPrompt(targetSessionId, null);
       updateSessionError(targetSessionId, null);
-      updateSessionStatus(targetSessionId, "generating");
+      updateSessionStatus(targetSessionId, 'generating');
 
       setLocalSlides([]);
       setLocalError(null);
@@ -117,12 +108,9 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
       try {
         const collectedSlides: ParsedSlide[] = [];
 
-        for await (const event of generatePromptStream(
-          request,
-          controller.signal
-        )) {
+        for await (const event of generatePromptStream(request, controller.signal)) {
           switch (event.type) {
-            case "slide": {
+            case 'slide': {
               const slide = event.data as ParsedSlide;
               collectedSlides.push(slide);
               const sortedSlides = [...collectedSlides].sort(
@@ -132,17 +120,21 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
               updateSessionSlides(targetSessionId, sortedSlides);
               break;
             }
-            case "done": {
-              const sortedSlides = [...collectedSlides].sort((a, b) => a.slideNumber - b.slideNumber);
-              const plainText = sortedSlides.map(s => `**Slide ${s.slideNumber}: ${s.title}**\n\`\`\`\n${s.prompt}\n\`\`\``).join("\n\n");
+            case 'done': {
+              const sortedSlides = [...collectedSlides].sort(
+                (a, b) => a.slideNumber - b.slideNumber
+              );
+              const plainText = sortedSlides
+                .map((s) => `**Slide ${s.slideNumber}: ${s.title}**\n\`\`\`\n${s.prompt}\n\`\`\``)
+                .join('\n\n');
               const prompt: GeneratedPrompt = {
                 plainText,
                 slides: sortedSlides,
                 jsonFormat: {
-                  model: "nano-banana-pro",
+                  model: 'nano-banana-pro',
                   messages: [
-                    { role: "system", content: "Nano Banana Pro optimized prompts" },
-                    { role: "user", content: plainText },
+                    { role: 'system', content: 'Nano Banana Pro optimized prompts' },
+                    { role: 'user', content: plainText },
                   ],
                 },
               };
@@ -151,38 +143,42 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
                 setLocalIsGenerating(false);
               }
               updateSessionPrompt(targetSessionId, prompt);
-              updateSessionStatus(targetSessionId, "completed");
+              updateSessionStatus(targetSessionId, 'completed');
 
               if (sortedSlides.length > 0) {
                 const session = getCurrentSession();
                 if (session?.id === targetSessionId && session?.isDefaultTitle) {
-                  updateSessionTitle(targetSessionId, sortedSlides[0].title.slice(0, 30) + (sortedSlides[0].title.length > 30 ? "..." : ""));
+                  updateSessionTitle(
+                    targetSessionId,
+                    sortedSlides[0].title.slice(0, 30) +
+                      (sortedSlides[0].title.length > 30 ? '...' : '')
+                  );
                 }
               }
               break;
             }
-            case "error": {
+            case 'error': {
               const errorData = event.data as { error: string };
               if (isCurrentSession()) {
                 setLocalError(errorData.error);
                 setLocalIsGenerating(false);
               }
               updateSessionError(targetSessionId, errorData.error);
-              updateSessionStatus(targetSessionId, "error");
+              updateSessionStatus(targetSessionId, 'error');
               break;
             }
           }
         }
       } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return;
-        const errorMsg = err instanceof Error ? err.message : "Failed to generate prompts";
+        if (err instanceof Error && err.name === 'AbortError') return;
+        const errorMsg = err instanceof Error ? err.message : 'Failed to generate prompts';
         const store = useSessionStore.getState();
         if (store.currentSessionId === targetSessionId) {
           setLocalError(errorMsg);
           setLocalIsGenerating(false);
         }
         updateSessionError(targetSessionId, errorMsg);
-        updateSessionStatus(targetSessionId, "error");
+        updateSessionStatus(targetSessionId, 'error');
       } finally {
         const store = useSessionStore.getState();
         if (store.currentSessionId === targetSessionId) {
@@ -191,7 +187,18 @@ export function useStreamingGeneration(): UseStreamingGenerationReturn {
         removeAbortController(targetSessionId);
       }
     },
-    [currentSessionId, cancel, setAbortController, removeAbortController, updateSessionStatus, updateSessionSlides, updateSessionPrompt, updateSessionError, updateSessionTitle, getCurrentSession]
+    [
+      currentSessionId,
+      cancel,
+      setAbortController,
+      removeAbortController,
+      updateSessionStatus,
+      updateSessionSlides,
+      updateSessionPrompt,
+      updateSessionError,
+      updateSessionTitle,
+      getCurrentSession,
+    ]
   );
 
   return {

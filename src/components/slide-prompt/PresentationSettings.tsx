@@ -4,9 +4,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import type { PresentationSettings as PresentationSettingsType, AspectRatio, ColorPalette, LayoutStructure, OutputLanguage } from '@/types/slidePrompt';
+import type {
+  PresentationSettings as PresentationSettingsType,
+  AspectRatio,
+  ColorPalette,
+  LayoutStructure,
+  OutputLanguage,
+} from '@/types/slidePrompt';
 import { OUTPUT_LANGUAGES } from '@/types/slidePrompt';
 
 const aspectRatioValues: AspectRatio[] = ['16:9', '4:3', '1:1', '9:16'];
@@ -17,13 +29,16 @@ const colorPaletteValues: { value: ColorPalette; colors: string[] }[] = [
   { value: 'nature-green', colors: ['hsl(140 50% 25%)', 'hsl(140 60% 65%)', 'hsl(40 30% 95%)'] },
   { value: 'warm-orange', colors: ['hsl(25 80% 45%)', 'hsl(25 90% 60%)', 'hsl(40 30% 95%)'] },
   { value: 'elegant-monochrome', colors: ['hsl(0 0% 10%)', 'hsl(0 0% 50%)', 'hsl(0 0% 95%)'] },
-  { value: 'vibrant-gradient', colors: ['hsl(180 80% 50%)', 'hsl(280 80% 60%)', 'hsl(320 80% 60%)'] },
+  {
+    value: 'vibrant-gradient',
+    colors: ['hsl(180 80% 50%)', 'hsl(280 80% 60%)', 'hsl(320 80% 60%)'],
+  },
   { value: 'ocean-teal', colors: ['hsl(172 66% 30%)', 'hsl(168 80% 60%)', 'hsl(45 40% 90%)'] },
   { value: 'sunset-pink', colors: ['hsl(330 80% 55%)', 'hsl(40 90% 55%)', 'hsl(15 80% 90%)'] },
   { value: 'forest-earth', colors: ['hsl(30 75% 25%)', 'hsl(35 80% 50%)', 'hsl(80 30% 45%)'] },
   { value: 'royal-gold', colors: ['hsl(225 70% 35%)', 'hsl(40 95% 50%)', 'hsl(220 30% 95%)'] },
   { value: 'arctic-frost', colors: ['hsl(200 90% 60%)', 'hsl(215 20% 60%)', 'hsl(270 30% 95%)'] },
-  { value: 'neon-night', colors: ['hsl(270 80% 60%)', 'hsl(140 70% 50%)', 'hsl(330 90% 60%)'] }
+  { value: 'neon-night', colors: ['hsl(270 80% 60%)', 'hsl(140 70% 50%)', 'hsl(330 90% 60%)'] },
 ];
 
 const layoutStructureValues: LayoutStructure[] = ['visual-heavy', 'balanced', 'text-heavy'];
@@ -95,7 +110,9 @@ export function PresentationSettings({ value, onChange }: PresentationSettingsPr
             <Label>{t('presentationSettings.colorPalette')}</Label>
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">
-                {value.colorPalette === 'auto' ? t('presentationSettings.colorAuto') : t('presentationSettings.colorCustom')}
+                {value.colorPalette === 'auto'
+                  ? t('presentationSettings.colorAuto')
+                  : t('presentationSettings.colorCustom')}
               </span>
               <Switch
                 checked={value.colorPalette !== 'auto'}
@@ -136,7 +153,9 @@ export function PresentationSettings({ value, onChange }: PresentationSettingsPr
                       />
                     ))}
                   </div>
-                  <span className="text-xs font-medium text-center">{t(`presentationSettings.palettes.${palette.value}`)}</span>
+                  <span className="text-xs font-medium text-center">
+                    {t(`presentationSettings.palettes.${palette.value}`)}
+                  </span>
                 </button>
               ))}
             </div>
@@ -157,7 +176,9 @@ export function PresentationSettings({ value, onChange }: PresentationSettingsPr
                 <SelectItem key={layout} value={layout}>
                   <div className="flex items-center gap-2">
                     <span>{t(`presentationSettings.layouts.${layout}.label`)}</span>
-                    <span className="text-muted-foreground">- {t(`presentationSettings.layouts.${layout}.description`)}</span>
+                    <span className="text-muted-foreground">
+                      - {t(`presentationSettings.layouts.${layout}.description`)}
+                    </span>
                   </div>
                 </SelectItem>
               ))}

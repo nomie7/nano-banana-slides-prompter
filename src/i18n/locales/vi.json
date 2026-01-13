@@ -1,0 +1,353 @@
+{
+  "app": {
+    "title": "Nano Banana Slides Prompter",
+    "subtitle": "Tạo prompt tối ưu cho việc tạo slide bằng AI",
+    "footer": "Nano Banana Slides Prompter v{{version}} - Tạo prompt tối ưu cho Nano Banana Pro Slides"
+  },
+  "steps": {
+    "addContent": "Thêm Nội Dung",
+    "allSourcesCombined": "(tất cả nguồn được kết hợp)",
+    "selectStyle": "Chọn Phong Cách",
+    "characterHost": "Nhân Vật Dẫn Chương Trình",
+    "optional": "(tùy chọn)",
+    "configureSettings": "Cấu Hình Thiết Lập",
+    "generatedPrompt": "Prompt Của Bạn"
+  },
+  "buttons": {
+    "generate": "Tạo Prompt",
+    "cancel": "Hủy Tạo",
+    "copy": "Sao chép",
+    "copyAll": "Sao chép tất cả",
+    "copied": "Đã sao chép!",
+    "extract": "Trích xuất",
+    "extracting": "Đang trích xuất...",
+    "expandAll": "Mở rộng tất cả",
+    "collapseAll": "Thu gọn tất cả"
+  },
+  "contentInput": {
+    "tabs": {
+      "text": "Prompt",
+      "topic": "Chủ đề",
+      "file": "Tệp",
+      "url": "URL"
+    },
+    "text": {
+      "label": "Nhập prompt của bạn",
+      "placeholder": "Mô tả những gì bạn muốn trong slide. Bạn cũng có thể thêm nội dung từ tab Chủ đề, Tệp hoặc URL - tất cả nguồn sẽ được kết hợp!",
+      "charCount": "{{count}} ký tự"
+    },
+    "topic": {
+      "label": "Chọn một chủ đề",
+      "placeholder": "Chọn chủ đề trình bày...",
+      "hint": "AI sẽ tạo nội dung dựa trên chủ đề \"{{topic}}\".",
+      "options": {
+        "businessStrategy": "Chiến Lược Kinh Doanh",
+        "productLaunch": "Ra Mắt Sản Phẩm",
+        "quarterlyReport": "Báo Cáo Quý",
+        "teamIntro": "Giới Thiệu Đội Nhóm",
+        "techOverview": "Tổng Quan Công Nghệ",
+        "marketAnalysis": "Phân Tích Thị Trường",
+        "projectProposal": "Đề Xuất Dự Án",
+        "trainingCourse": "Buổi Đào Tạo",
+        "salesPitch": "Thuyết Trình Bán Hàng",
+        "companyCulture": "Văn Hóa Công Ty",
+        "researchResults": "Kết Quả Nghiên Cứu",
+        "eventDemo": "Trình Bày Sự Kiện"
+      }
+    },
+    "file": {
+      "label": "Tải lên tài liệu",
+      "dropHint": "Nhấp để tải lên hoặc kéo thả",
+      "supportedFormats": "Tệp TXT, MD, CSV hoặc PDF",
+      "pdfReady": "PDF sẵn sàng để AI phân tích",
+      "extracted": "Đã trích xuất {{count}} ký tự"
+    },
+    "url": {
+      "label": "Nhập URL",
+      "placeholder": "https://example.com/article",
+      "hint": "Nhấp \"Trích xuất\" để lấy và phân tích nội dung từ URL.",
+      "success": "Trích xuất nội dung thành công",
+      "extracted": "Đã trích xuất {{count}} ký tự"
+    }
+  },
+  "styleSelector": {
+    "title": "Phong Cách Hình Ảnh",
+    "styles": {
+      "professional": { "name": "Chuyên Nghiệp", "description": "Thiết kế sạch, doanh nghiệp" },
+      "technical": { "name": "Kỹ Thuật", "description": "Bản vẽ & sơ đồ" },
+      "creative": { "name": "Sáng Tạo", "description": "Đậm nét & nghệ thuật" },
+      "infographic": { "name": "Infographic", "description": "Hình ảnh dựa trên dữ liệu" },
+      "educational": { "name": "Giáo Dục", "description": "Rõ ràng & dễ tiếp cận" },
+      "pixel-art": { "name": "Pixel Art", "description": "Phong cách 8-bit retro" },
+      "minimalist": { "name": "Tối Giản", "description": "Đơn giản cực độ" },
+      "dark-neon": { "name": "Neon Tối", "description": "Phát sáng cyberpunk" },
+      "hand-drawn": { "name": "Vẽ Tay", "description": "Phác thảo & tự nhiên" },
+      "glassmorphism": { "name": "Glassmorphism", "description": "Hiệu ứng kính mờ" },
+      "vintage": { "name": "Cổ Điển", "description": "Phong cách 70/80" },
+      "3d-isometric": { "name": "3D Isometric", "description": "Đồ họa chiều sâu" },
+      "watercolor": { "name": "Màu Nước", "description": "Kết cấu vẽ mềm mại" },
+      "newspaper": { "name": "Báo Chí", "description": "Biên tập & đậm nét" },
+      "flat-design": { "name": "Thiết Kế Phẳng", "description": "Đậm & hình học" },
+      "gradient-mesh": { "name": "Gradient Mesh", "description": "Pha trộn màu sắc mượt" },
+      "sci-fi-hud": { "name": "Sci-Fi HUD", "description": "Giao diện công nghệ cyberpunk" },
+      "deep-ocean": { "name": "Đại Dương Sâu", "description": "Phong cách phim tài liệu" },
+      "dev-console": { "name": "Dev Console", "description": "Tài liệu kiến trúc phần mềm" },
+      "neon-scientific": { "name": "Khoa Học Neon", "description": "Hình ảnh hóa sinh học sci-fi" }
+    }
+  },
+  "characterSelector": {
+    "title": "Nhân Vật Dẫn Chương Trình",
+    "subtitle": "Thêm người dẫn chương trình nhất quán trên tất cả slide",
+    "toggle": { "on": "Bật", "off": "Tắt" },
+    "styleLabel": "Phong Cách Nhân Vật",
+    "genderLabel": "Giới Tính",
+    "genderOptional": "(tùy chọn)",
+    "note": "Cùng một nhân vật sẽ xuất hiện trên tất cả slide với tư thế, biểu cảm và phong cách render phù hợp.",
+    "renderStyles": {
+      "pixar": { "name": "Pixar", "description": "Hoạt hình 3D (Disney/Pixar)" },
+      "real": { "name": "Thực Tế", "description": "Con người chân thực" },
+      "anime": { "name": "Anime", "description": "Hoạt hình Nhật Bản" },
+      "cartoon": { "name": "Hoạt Hình", "description": "Hoạt hình 2D phương Tây" },
+      "sketch": { "name": "Phác Thảo", "description": "Vẽ tay bút chì/mực" },
+      "chibi": { "name": "Chibi", "description": "Tỷ lệ nhỏ dễ thương" },
+      "low-poly": { "name": "Low-Poly", "description": "Phong cách 3D hình học" },
+      "mascot": { "name": "Mascot", "description": "Phong cách linh vật công ty" }
+    },
+    "genders": {
+      "none": { "name": "Không Chỉ Định", "description": "Để AI quyết định" },
+      "male": { "name": "Nam", "description": "Đặc điểm nam tính" },
+      "female": { "name": "Nữ", "description": "Đặc điểm nữ tính" }
+    }
+  },
+  "presentationSettings": {
+    "title": "Thiết Lập Trình Bày",
+    "aspectRatio": "Tỷ Lệ Khung Hình",
+    "slideCount": "Số Lượng Slide",
+    "colorPalette": "Bảng Màu",
+    "colorAuto": "AI chọn",
+    "colorCustom": "Tùy chỉnh",
+    "colorAutoHint": "AI sẽ tự động chọn màu tốt nhất dựa trên nội dung và phong cách của bạn",
+    "layoutStructure": "Cấu Trúc Bố Cục",
+    "aspectRatios": {
+      "16:9": "Màn hình rộng",
+      "4:3": "Tiêu chuẩn",
+      "1:1": "Vuông",
+      "9:16": "Dọc"
+    },
+    "palettes": {
+      "corporate-blue": "Xanh Doanh Nghiệp",
+      "modern-purple": "Tím Hiện Đại",
+      "nature-green": "Xanh Tự Nhiên",
+      "warm-orange": "Cam Ấm",
+      "elegant-monochrome": "Đơn Sắc Thanh Lịch",
+      "vibrant-gradient": "Gradient Rực Rỡ",
+      "ocean-teal": "Xanh Đại Dương",
+      "sunset-pink": "Hồng Hoàng Hôn",
+      "forest-earth": "Đất Rừng",
+      "royal-gold": "Vàng Hoàng Gia",
+      "arctic-frost": "Băng Bắc Cực",
+      "neon-night": "Neon Đêm"
+    },
+    "layouts": {
+      "visual-heavy": { "label": "Nhiều Hình Ảnh", "description": "70% hình ảnh" },
+      "balanced": { "label": "Cân Bằng", "description": "50/50 kết hợp" },
+      "text-heavy": { "label": "Nhiều Văn Bản", "description": "70% văn bản" }
+    },
+    "outputLanguage": "Ngôn Ngữ Đầu Ra",
+    "outputLanguageDescription": "Ngôn ngữ cho prompt được tạo"
+  },
+  "promptOutput": {
+    "noPrompt": "Chưa có prompt nào được tạo",
+    "noPromptHint": "Thêm nội dung, chọn phong cách và cấu hình thiết lập, sau đó nhấp \"Tạo Prompt\" để tạo prompt slide của bạn.",
+    "generating": "Đang tạo...",
+    "slideCount": "({{count}} slide)",
+    "title": "Prompt Đã Tạo",
+    "tabs": {
+      "slides": "Slide",
+      "raw": "Đầu Ra Thô"
+    },
+    "streamingHint": "Slide xuất hiện khi được tạo. Nhấp để mở rộng từng slide.",
+    "slidesHint": "Nhấp vào từng slide để mở rộng. Sao chép từng prompt hoặc tất cả cùng lúc.",
+    "rawHint": "Đầu ra LLM thô để gỡ lỗi hoặc xử lý tùy chỉnh."
+  },
+  "slideCard": {
+    "copiedSlide": "Prompt slide {{number}} đã được sao chép vào clipboard."
+  },
+  "settings": {
+    "title": "Cài Đặt AI",
+    "baseURL": "URL API Cơ Sở",
+    "baseURLHint": "Không cần thêm /v1 (Mặc định: {{default}})",
+    "model": "Mô Hình",
+    "modelHint": "Mặc định: {{default}}",
+    "apiKey": "API Key",
+    "apiKeyHint": "Để trống để sử dụng key đã cấu hình trên server",
+    "save": "Lưu",
+    "resetDefault": "Khôi Phục Mặc Định",
+    "saved": "Đã lưu cài đặt",
+    "reset": "Đã khôi phục cài đặt mặc định",
+    "error": "Lỗi",
+    "fillAll": "Vui lòng điền tất cả các trường",
+    "loadFailed": "Không thể tải cài đặt LLM mặc định.",
+    "invalidURL": "Định dạng URL cơ sở không hợp lệ",
+    "invalidModel": "Định danh mô hình không hợp lệ"
+  },
+  "sidebar": {
+    "newSession": "Phiên Mới",
+    "noSessions": "Chưa có phiên nào",
+    "slideCount": "{{count}} slide",
+    "time": {
+      "justNow": "Vừa xong",
+      "minutesAgo": "{{count}} phút trước",
+      "hoursAgo": "{{count}} giờ trước",
+      "daysAgo": "{{count}} ngày trước"
+    }
+  },
+  "toast": {
+    "generateFailed": "Tạo Thất Bại",
+    "extractSuccess": "Trích Xuất Nội Dung Thành Công",
+    "extractSuccessDesc": "Đã trích xuất {{count}} ký tự từ \"{{title}}\"",
+    "extractFailed": "Trích Xuất Thất Bại",
+    "extractFailedDefault": "Không thể trích xuất nội dung từ URL",
+    "connectionFailed": "Không thể kết nối đến server",
+    "copyFailed": "Sao chép thất bại",
+    "copyFailedHint": "Vui lòng chọn và sao chép văn bản thủ công.",
+    "copiedAll": "Đã Sao Chép Tất Cả!",
+    "copiedAllDesc": "Đã sao chép {{count}} prompt slide vào clipboard.",
+    "copiedSlide": "Đã Sao Chép!"
+  },
+  "errors": {
+    "loadSessionsTitle": "Không thể tải các phiên",
+    "loadSessionsDescription": "Đã xảy ra lỗi khi tải các phiên của bạn. Vui lòng thử lại."
+  },
+  "notFound": {
+    "message": "Không tìm thấy trang",
+    "returnHome": "Quay Về Trang Chủ"
+  },
+  "language": {
+    "label": "Ngôn Ngữ",
+    "zh": "中文",
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "export": {
+    "asJSON": "Xuất dạng JSON",
+    "asMarkdown": "Xuất dạng Markdown",
+    "asText": "Xuất dạng Text",
+    "noSession": "Không Có Phiên",
+    "noSessionDesc": "Vui lòng chọn một phiên để xuất.",
+    "noContent": "Không Có Nội Dung",
+    "noContentDesc": "Phiên này không có nội dung được tạo để xuất.",
+    "success": "Xuất Thành Công",
+    "successDesc": "Phiên đã được xuất dạng {{format}}.",
+    "failed": "Xuất Thất Bại",
+    "failedDesc": "Không thể xuất phiên. Vui lòng thử lại."
+  },
+  "promptPreview": {
+    "title": "Xem Trước Prompt",
+    "slides": "slide",
+    "formatted": "Đã Định Dạng",
+    "raw": "Thô",
+    "copied": "Đã Sao Chép!",
+    "copiedDesc": "Nội dung prompt đã được sao chép vào clipboard.",
+    "hint": "Chuyển đổi giữa chế độ xem định dạng và thô. Sao chép để sử dụng trong Nano Banana Pro Slides."
+  },
+  "templates": {
+    "button": "Mẫu",
+    "title": "Chọn Mẫu",
+    "slides": "slide",
+    "categories": {
+      "presentation": "Trình Bày",
+      "education": "Giáo Dục",
+      "business": "Kinh Doanh",
+      "creative": "Sáng Tạo"
+    },
+    "presentation": {
+      "startupPitch": {
+        "name": "Pitch Startup",
+        "description": "Bộ pitch hấp dẫn cho nhà đầu tư và các bên liên quan"
+      },
+      "productLaunch": {
+        "name": "Ra Mắt Sản Phẩm",
+        "description": "Trình bày công bố sản phẩm hấp dẫn"
+      },
+      "quarterlyReview": {
+        "name": "Đánh Giá Quý",
+        "description": "Tổng quan hiệu suất và chỉ số kinh doanh"
+      },
+      "conferenceTalk": {
+        "name": "Bài Nói Hội Nghị",
+        "description": "Bài phát biểu hấp dẫn cho hội nghị và sự kiện"
+      },
+      "teamMeeting": {
+        "name": "Họp Nhóm",
+        "description": "Cập nhật nội bộ và hợp tác nhóm"
+      }
+    },
+    "education": {
+      "lectureSlides": {
+        "name": "Slide Bài Giảng",
+        "description": "Bài giảng học thuật với giải thích rõ ràng"
+      },
+      "tutorial": {
+        "name": "Hướng Dẫn",
+        "description": "Hướng dẫn từng bước"
+      },
+      "researchPresentation": {
+        "name": "Trình Bày Nghiên Cứu",
+        "description": "Kết quả và phân tích nghiên cứu học thuật"
+      },
+      "workshop": {
+        "name": "Workshop",
+        "description": "Buổi học tương tác thực hành"
+      },
+      "studentProject": {
+        "name": "Dự Án Sinh Viên",
+        "description": "Trình bày bài tập hoặc dự án sinh viên"
+      }
+    },
+    "business": {
+      "salesProposal": {
+        "name": "Đề Xuất Bán Hàng",
+        "description": "Bộ đề xuất và bán hàng thuyết phục"
+      },
+      "companyOverview": {
+        "name": "Tổng Quan Công Ty",
+        "description": "Hồ sơ và năng lực công ty"
+      },
+      "projectStatus": {
+        "name": "Trạng Thái Dự Án",
+        "description": "Cập nhật tiến độ và mốc dự án"
+      },
+      "strategyPlanning": {
+        "name": "Lập Kế Hoạch Chiến Lược",
+        "description": "Lộ trình và phiên lập kế hoạch chiến lược"
+      },
+      "financialReport": {
+        "name": "Báo Cáo Tài Chính",
+        "description": "Dữ liệu tài chính và chỉ số kinh doanh"
+      }
+    },
+    "creative": {
+      "portfolioShowcase": {
+        "name": "Trưng Bày Portfolio",
+        "description": "Portfolio sáng tạo và mẫu công việc"
+      },
+      "eventWedding": {
+        "name": "Sự Kiện / Đám Cưới",
+        "description": "Sự kiện đặc biệt hoặc lễ kỷ niệm đám cưới"
+      },
+      "storytelling": {
+        "name": "Kể Chuyện",
+        "description": "Câu chuyện hình ảnh theo tường thuật"
+      },
+      "travelBlog": {
+        "name": "Blog Du Lịch",
+        "description": "Cuộc phiêu lưu và điểm đến du lịch"
+      },
+      "artExhibition": {
+        "name": "Triển Lãm Nghệ Thuật",
+        "description": "Trưng bày phòng trưng bày và triển lãm nghệ thuật"
+      }
+    }
+  }
+}

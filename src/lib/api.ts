@@ -1,4 +1,9 @@
-import type { ContentInput, SlideStyle, PresentationSettings, ParsedSlide } from '@/types/slidePrompt';
+import type {
+  ContentInput,
+  SlideStyle,
+  PresentationSettings,
+  ParsedSlide,
+} from '@/types/slidePrompt';
 
 // Type declarations for Electron API exposed via preload
 interface ElectronLLMConfig {
@@ -78,7 +83,7 @@ async function getElectronBackendPort(): Promise<number | null> {
   if (portPromise) return portPromise;
 
   if (typeof window !== 'undefined' && window.electronAPI) {
-    portPromise = window.electronAPI.getBackendPort().then(port => {
+    portPromise = window.electronAPI.getBackendPort().then((port) => {
       cachedBackendPort = port;
       return port;
     });
@@ -108,13 +113,40 @@ async function getBaseUrl(): Promise<string> {
 // Synchronous API_BASE for backward compatibility (used where async isn't possible)
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
-export interface LLMConfig { apiKey: string; baseURL: string; model: string; }
-export interface GeneratePromptRequest { content: ContentInput; style: SlideStyle; settings: PresentationSettings; llmConfig?: LLMConfig; }
-export interface GeneratePromptResponse { success: boolean; prompts?: string; slides?: ParsedSlide[]; error?: string; metadata?: { style: SlideStyle; slideCount: number; aspectRatio: string; }; }
-export interface ExtractUrlResponse { success: boolean; data?: { title: string; content: string; description?: string; url: string; }; error?: string; }
-export interface StreamEvent { type: 'slide' | 'done' | 'error'; data: ParsedSlide | { totalSlides: number; style: string; aspectRatio: string } | { error: string }; }
+export interface LLMConfig {
+  apiKey: string;
+  baseURL: string;
+  model: string;
+}
+export interface GeneratePromptRequest {
+  content: ContentInput;
+  style: SlideStyle;
+  settings: PresentationSettings;
+  llmConfig?: LLMConfig;
+}
+export interface GeneratePromptResponse {
+  success: boolean;
+  prompts?: string;
+  slides?: ParsedSlide[];
+  error?: string;
+  metadata?: { style: SlideStyle; slideCount: number; aspectRatio: string };
+}
+export interface ExtractUrlResponse {
+  success: boolean;
+  data?: { title: string; content: string; description?: string; url: string };
+  error?: string;
+}
+export interface StreamEvent {
+  type: 'slide' | 'done' | 'error';
+  data:
+    | ParsedSlide
+    | { totalSlides: number; style: string; aspectRatio: string }
+    | { error: string };
+}
 
-export async function generatePrompt(request: GeneratePromptRequest): Promise<GeneratePromptResponse> {
+export async function generatePrompt(
+  request: GeneratePromptRequest
+): Promise<GeneratePromptResponse> {
   const baseUrl = await getBaseUrl();
   const response = await fetch(`${baseUrl}/api/generate-prompt`, {
     method: 'POST',
@@ -128,7 +160,10 @@ export async function generatePrompt(request: GeneratePromptRequest): Promise<Ge
   return response.json();
 }
 
-export async function* generatePromptStream(request: GeneratePromptRequest, signal?: AbortSignal): AsyncGenerator<StreamEvent> {
+export async function* generatePromptStream(
+  request: GeneratePromptRequest,
+  signal?: AbortSignal
+): AsyncGenerator<StreamEvent> {
   const baseUrl = await getBaseUrl();
   const response = await fetch(`${baseUrl}/api/generate-prompt-stream`, {
     method: 'POST',
@@ -157,11 +192,18 @@ export async function* generatePromptStream(request: GeneratePromptRequest, sign
         if (line.startsWith('event:')) currentEvent = line.slice(6).trim();
         else if (line.startsWith('data:') && currentEvent) {
           const data = line.slice(5).trim();
-          try { yield { type: currentEvent as 'slide' | 'done' | 'error', data: JSON.parse(data) }; currentEvent = ''; } catch { /* ignore */ }
+          try {
+            yield { type: currentEvent as 'slide' | 'done' | 'error', data: JSON.parse(data) };
+            currentEvent = '';
+          } catch {
+            /* ignore */
+          }
         }
       }
     }
-  } finally { reader.releaseLock(); }
+  } finally {
+    reader.releaseLock();
+  }
 }
 
 export async function extractUrl(url: string): Promise<ExtractUrlResponse> {

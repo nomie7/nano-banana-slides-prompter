@@ -124,18 +124,14 @@ export function UpdateNotification() {
         <div className="flex-1">
           {state.downloaded ? (
             <>
-              <h4 className="font-semibold text-foreground">
-                Update Ready
-              </h4>
+              <h4 className="font-semibold text-foreground">Update Ready</h4>
               <p className="text-sm text-muted-foreground mt-1">
                 Version {state.version} is ready to install. Restart to apply.
               </p>
             </>
           ) : state.downloading ? (
             <>
-              <h4 className="font-semibold text-foreground">
-                Downloading Update...
-              </h4>
+              <h4 className="font-semibold text-foreground">Downloading Update...</h4>
               <Progress value={state.progress} className="mt-2" />
               <p className="text-xs text-muted-foreground mt-1">
                 {state.progress.toFixed(0)}% complete
@@ -143,18 +139,14 @@ export function UpdateNotification() {
             </>
           ) : (
             <>
-              <h4 className="font-semibold text-foreground">
-                Update Available
-              </h4>
+              <h4 className="font-semibold text-foreground">Update Available</h4>
               <p className="text-sm text-muted-foreground mt-1">
                 Version {state.version} is available.
               </p>
             </>
           )}
 
-          {state.error && (
-            <p className="text-sm text-destructive mt-2">{state.error}</p>
-          )}
+          {state.error && <p className="text-sm text-destructive mt-2">{state.error}</p>}
         </div>
 
         {!state.downloading && (

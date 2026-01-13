@@ -6,10 +6,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { extractUrl } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
-import type { ContentInput as ContentInputType, ContentInputType as InputType } from '@/types/slidePrompt';
+import type {
+  ContentInput as ContentInputType,
+  ContentInputType as InputType,
+} from '@/types/slidePrompt';
 
 const topicKeys = [
   'businessStrategy',
@@ -23,7 +32,7 @@ const topicKeys = [
   'salesPitch',
   'companyCulture',
   'researchResults',
-  'eventDemo'
+  'eventDemo',
 ] as const;
 
 interface ContentInputProps {
@@ -68,7 +77,10 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
         });
         toast({
           title: t('toast.extractSuccess'),
-          description: t('toast.extractSuccessDesc', { title: result.data.title || 'Page', count: result.data.content.length }),
+          description: t('toast.extractSuccessDesc', {
+            title: result.data.title || 'Page',
+            count: result.data.content.length,
+          }),
         });
       } else {
         toast({
@@ -98,35 +110,35 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
 
     const fileName = file.name.toLowerCase();
     const reader = new FileReader();
-    
+
     if (fileName.endsWith('.pdf')) {
       reader.onload = (event) => {
         onChange({
           ...value,
           fileName: file.name,
           fileContent: event.target?.result as string,
-          fileType: 'pdf'
+          fileType: 'pdf',
         });
       };
       reader.readAsDataURL(file);
     } else {
       const isCsv = fileName.endsWith('.csv');
       const isMarkdown = fileName.endsWith('.md') || fileName.endsWith('.markdown');
-      
+
       reader.onload = (event) => {
         let content = event.target?.result as string;
-        
+
         if (isCsv) {
           content = `[CSV DATA - Parse this tabular data for presentation content]\n${content}`;
         } else if (isMarkdown) {
           content = `[MARKDOWN CONTENT]\n${content}`;
         }
-        
+
         onChange({
           ...value,
           fileName: file.name,
           fileContent: content,
-          fileType: isCsv ? 'csv' : 'text'
+          fileType: isCsv ? 'csv' : 'text',
         });
       };
       reader.readAsText(file);
@@ -240,9 +252,7 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
               ) : (
                 <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors">
                   <Upload className="h-10 w-10 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    {t('contentInput.file.dropHint')}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{t('contentInput.file.dropHint')}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {t('contentInput.file.supportedFormats')}
                   </p>
@@ -310,9 +320,7 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
                   </p>
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">
-                  {t('contentInput.url.hint')}
-                </p>
+                <p className="text-xs text-muted-foreground">{t('contentInput.url.hint')}</p>
               )}
             </div>
           </TabsContent>

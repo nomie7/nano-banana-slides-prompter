@@ -92,7 +92,10 @@
       "sci-fi-hud": { "name": "Sci-Fi HUD", "description": "Cyberpunk tech schematics" },
       "deep-ocean": { "name": "Deep Ocean", "description": "Nature documentary style" },
       "dev-console": { "name": "Dev Console", "description": "Software architecture docs" },
-      "neon-scientific": { "name": "Neon Scientific", "description": "Bioluminescent sci-fi visualization" }
+      "neon-scientific": {
+        "name": "Neon Scientific",
+        "description": "Bioluminescent sci-fi visualization"
+      }
     }
   },
   "characterSelector": {
@@ -226,6 +229,128 @@
   "language": {
     "label": "Language",
     "zh": "中文",
-    "en": "English"
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "export": {
+    "asJSON": "Export as JSON",
+    "asMarkdown": "Export as Markdown",
+    "asText": "Export as Text",
+    "noSession": "No Session",
+    "noSessionDesc": "Please select a session to export.",
+    "noContent": "No Content",
+    "noContentDesc": "This session has no generated content to export.",
+    "success": "Export Successful",
+    "successDesc": "Session exported as {{format}}.",
+    "failed": "Export Failed",
+    "failedDesc": "Could not export the session. Please try again."
+  },
+  "promptPreview": {
+    "title": "Prompt Preview",
+    "slides": "slides",
+    "formatted": "Formatted",
+    "raw": "Raw",
+    "copied": "Copied!",
+    "copiedDesc": "Prompt content copied to clipboard.",
+    "hint": "Toggle between formatted and raw view. Copy to use in Nano Banana Pro Slides."
+  },
+  "templates": {
+    "button": "Templates",
+    "title": "Choose Template",
+    "slides": "slides",
+    "categories": {
+      "presentation": "Presentation",
+      "education": "Education",
+      "business": "Business",
+      "creative": "Creative"
+    },
+    "presentation": {
+      "startupPitch": {
+        "name": "Startup Pitch",
+        "description": "Compelling pitch deck for investors and stakeholders"
+      },
+      "productLaunch": {
+        "name": "Product Launch",
+        "description": "Exciting product announcement presentation"
+      },
+      "quarterlyReview": {
+        "name": "Quarterly Review",
+        "description": "Business performance and metrics overview"
+      },
+      "conferenceTalk": {
+        "name": "Conference Talk",
+        "description": "Engaging keynote for conferences and events"
+      },
+      "teamMeeting": {
+        "name": "Team Meeting",
+        "description": "Internal team updates and collaboration"
+      }
+    },
+    "education": {
+      "lectureSlides": {
+        "name": "Lecture Slides",
+        "description": "Academic lecture with clear explanations"
+      },
+      "tutorial": {
+        "name": "Tutorial",
+        "description": "Step-by-step instructional guide"
+      },
+      "researchPresentation": {
+        "name": "Research Presentation",
+        "description": "Academic research findings and analysis"
+      },
+      "workshop": {
+        "name": "Workshop",
+        "description": "Interactive hands-on learning session"
+      },
+      "studentProject": {
+        "name": "Student Project",
+        "description": "Student assignment or project presentation"
+      }
+    },
+    "business": {
+      "salesProposal": {
+        "name": "Sales Proposal",
+        "description": "Persuasive sales and proposal deck"
+      },
+      "companyOverview": {
+        "name": "Company Overview",
+        "description": "Company profile and capabilities"
+      },
+      "projectStatus": {
+        "name": "Project Status",
+        "description": "Project progress and milestone updates"
+      },
+      "strategyPlanning": {
+        "name": "Strategy Planning",
+        "description": "Strategic roadmap and planning session"
+      },
+      "financialReport": {
+        "name": "Financial Report",
+        "description": "Financial data and business metrics"
+      }
+    },
+    "creative": {
+      "portfolioShowcase": {
+        "name": "Portfolio Showcase",
+        "description": "Creative portfolio and work samples"
+      },
+      "eventWedding": {
+        "name": "Event / Wedding",
+        "description": "Special event or wedding celebration"
+      },
+      "storytelling": {
+        "name": "Storytelling",
+        "description": "Narrative-driven visual story"
+      },
+      "travelBlog": {
+        "name": "Travel Blog",
+        "description": "Travel adventures and destinations"
+      },
+      "artExhibition": {
+        "name": "Art Exhibition",
+        "description": "Art gallery and exhibition showcase"
+      }
+    }
   }
 }

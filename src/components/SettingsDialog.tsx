@@ -4,7 +4,13 @@ import { Settings, RotateCcw, Save, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '');
@@ -23,7 +29,9 @@ export function useLLMSettings() {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) setSettings(JSON.parse(stored));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   return { settings };
@@ -34,7 +42,9 @@ export function SettingsDialog() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
-  const [defaultConfig, setDefaultConfig] = useState<{ baseURL: string; model: string } | null>(null);
+  const [defaultConfig, setDefaultConfig] = useState<{ baseURL: string; model: string } | null>(
+    null
+  );
   const [apiKey, setApiKey] = useState('');
   const [baseURL, setBaseURL] = useState('');
   const [model, setModel] = useState('');
@@ -42,8 +52,8 @@ export function SettingsDialog() {
   useEffect(() => {
     if (!open) return;
     fetch(`${API_BASE}/api/settings/llm`)
-      .then(res => res.ok ? res.json() : Promise.reject(new Error(`${res.status}`)))
-      .then(data => {
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`${res.status}`))))
+      .then((data) => {
         setDefaultConfig(data);
         try {
           const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
@@ -57,24 +67,45 @@ export function SettingsDialog() {
         }
       })
       .catch(() => {
-        toast({ title: t('settings.error'), description: t('settings.loadFailed', 'Failed to load default LLM settings.'), variant: 'destructive' });
+        toast({
+          title: t('settings.error'),
+          description: t('settings.loadFailed', 'Failed to load default LLM settings.'),
+          variant: 'destructive',
+        });
       });
   }, [open, toast, t]);
 
   const handleSave = () => {
     if (!baseURL.trim() || !model.trim()) {
-      toast({ title: t('settings.error'), description: t('settings.fillAll'), variant: 'destructive' });
+      toast({
+        title: t('settings.error'),
+        description: t('settings.fillAll'),
+        variant: 'destructive',
+      });
       return;
     }
-    try { new URL(baseURL.trim()); } catch {
-      toast({ title: t('settings.error'), description: t('settings.invalidURL', 'Invalid base URL format'), variant: 'destructive' });
+    try {
+      new URL(baseURL.trim());
+    } catch {
+      toast({
+        title: t('settings.error'),
+        description: t('settings.invalidURL', 'Invalid base URL format'),
+        variant: 'destructive',
+      });
       return;
     }
     if (!/^[a-zA-Z0-9][a-zA-Z0-9\-_.:/]*$/.test(model.trim())) {
-      toast({ title: t('settings.error'), description: t('settings.invalidModel', 'Invalid model identifier'), variant: 'destructive' });
+      toast({
+        title: t('settings.error'),
+        description: t('settings.invalidModel', 'Invalid model identifier'),
+        variant: 'destructive',
+      });
       return;
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ apiKey: apiKey.trim(), baseURL: baseURL.trim(), model: model.trim() }));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ apiKey: apiKey.trim(), baseURL: baseURL.trim(), model: model.trim() })
+    );
     toast({ title: t('settings.saved') });
     setOpen(false);
   };
@@ -107,17 +138,15 @@ export function SettingsDialog() {
               placeholder="https://api.openai.com"
             />
             <p className="text-xs text-muted-foreground">
-              {t('settings.baseURLHint', { default: defaultConfig?.baseURL || 'https://api.openai.com' })}
+              {t('settings.baseURLHint', {
+                default: defaultConfig?.baseURL || 'https://api.openai.com',
+              })}
             </p>
           </div>
 
           <div className="space-y-2">
             <Label>{t('settings.model')}</Label>
-            <Input
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              placeholder="gpt-4o"
-            />
+            <Input value={model} onChange={(e) => setModel(e.target.value)} placeholder="gpt-4o" />
             <p className="text-xs text-muted-foreground">
               {t('settings.modelHint', { default: defaultConfig?.model || 'gpt-4o' })}
             </p>
@@ -145,7 +174,10 @@ export function SettingsDialog() {
             </div>
             <p className="text-xs text-muted-foreground">{t('settings.apiKeyHint')}</p>
             <p className="text-[11px] text-muted-foreground">
-              {t('settings.securityNote', 'Your key is stored locally in this browser only. Clear storage to remove it.')}
+              {t(
+                'settings.securityNote',
+                'Your key is stored locally in this browser only. Clear storage to remove it.'
+              )}
             </p>
           </div>
 

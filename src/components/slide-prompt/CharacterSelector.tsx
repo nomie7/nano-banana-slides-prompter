@@ -57,25 +57,25 @@ export function CharacterSelector({ value, onChange }: CharacterSelectorProps) {
       <CardContent className="pt-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-foreground">{t('characterSelector.title')}</h3>
+            <h3 className="text-lg font-semibold text-foreground">
+              {t('characterSelector.title')}
+            </h3>
             <p className="text-sm text-muted-foreground">{t('characterSelector.subtitle')}</p>
           </div>
           <div className="flex items-center gap-2">
             <Label htmlFor="character-toggle" className="text-sm text-muted-foreground">
               {isEnabled ? t('characterSelector.toggle.on') : t('characterSelector.toggle.off')}
             </Label>
-            <Switch
-              id="character-toggle"
-              checked={isEnabled}
-              onCheckedChange={handleToggle}
-            />
+            <Switch id="character-toggle" checked={isEnabled} onCheckedChange={handleToggle} />
           </div>
         </div>
 
         {isEnabled && (
           <div className="space-y-5 pt-2 border-t border-border/50">
             <div className="pt-3">
-              <Label className="text-sm font-medium block mb-3">{t('characterSelector.styleLabel')}</Label>
+              <Label className="text-sm font-medium block mb-3">
+                {t('characterSelector.styleLabel')}
+              </Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {renderStyleOptions.map((style) => {
                   const isSelected = selectedStyle === style.id;
@@ -93,17 +93,21 @@ export function CharacterSelector({ value, onChange }: CharacterSelectorProps) {
                           : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-accent/50'
                       )}
                     >
-                      <div className={cn(
-                        'w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-transform duration-300 group-hover:scale-110 bg-gradient-to-br',
-                        style.gradient
-                      )}>
+                      <div
+                        className={cn(
+                          'w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-transform duration-300 group-hover:scale-110 bg-gradient-to-br',
+                          style.gradient
+                        )}
+                      >
                         <Icon className="h-5 w-5 text-white" />
                       </div>
 
-                      <span className={cn(
-                        'font-medium text-sm transition-colors duration-300',
-                        isSelected ? 'text-primary' : 'text-foreground'
-                      )}>
+                      <span
+                        className={cn(
+                          'font-medium text-sm transition-colors duration-300',
+                          isSelected ? 'text-primary' : 'text-foreground'
+                        )}
+                      >
                         {t(`characterSelector.renderStyles.${style.id}.name`)}
                       </span>
 
@@ -122,7 +126,10 @@ export function CharacterSelector({ value, onChange }: CharacterSelectorProps) {
 
             <div>
               <Label className="text-sm font-medium block mb-3">
-                {t('characterSelector.genderLabel')} <span className="text-muted-foreground font-normal">{t('characterSelector.genderOptional')}</span>
+                {t('characterSelector.genderLabel')}{' '}
+                <span className="text-muted-foreground font-normal">
+                  {t('characterSelector.genderOptional')}
+                </span>
               </Label>
               <div className="grid grid-cols-3 gap-3">
                 {genderKeys.map((gender) => {
@@ -140,10 +147,12 @@ export function CharacterSelector({ value, onChange }: CharacterSelectorProps) {
                           : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-accent/50'
                       )}
                     >
-                      <span className={cn(
-                        'font-medium text-sm transition-colors duration-300',
-                        isSelected ? 'text-primary' : 'text-foreground'
-                      )}>
+                      <span
+                        className={cn(
+                          'font-medium text-sm transition-colors duration-300',
+                          isSelected ? 'text-primary' : 'text-foreground'
+                        )}
+                      >
                         {t(`characterSelector.genders.${gender}.name`)}
                       </span>
 
@@ -160,9 +169,7 @@ export function CharacterSelector({ value, onChange }: CharacterSelectorProps) {
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground italic">
-              {t('characterSelector.note')}
-            </p>
+            <p className="text-xs text-muted-foreground italic">{t('characterSelector.note')}</p>
           </div>
         )}
       </CardContent>

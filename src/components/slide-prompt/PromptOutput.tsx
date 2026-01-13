@@ -1,24 +1,12 @@
-import { useState, useRef, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import {
-  Check,
-  Copy,
-  FileText,
-  Code,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { SlideCard } from "./SlideCard";
-import type {
-  GeneratedPrompt,
-  OutputFormat,
-  ParsedSlide,
-} from "@/types/slidePrompt";
+import { useState, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Check, Copy, FileText, Code, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
+import { SlideCard } from './SlideCard';
+import type { GeneratedPrompt, OutputFormat, ParsedSlide } from '@/types/slidePrompt';
 
 interface PromptOutputProps {
   prompt: GeneratedPrompt | null;
@@ -51,42 +39,45 @@ export function PromptOutput({
   expectedSlideCount = 10,
 }: PromptOutputProps) {
   const { t } = useTranslation();
-  const [format, setFormat] = useState<OutputFormat>("text");
+  const [format, setFormat] = useState<OutputFormat>('text');
   const [copied, setCopied] = useState(false);
   const [allExpanded, setAllExpanded] = useState(true);
   const { toast } = useToast();
 
   const seenSlidesRef = useRef<Set<number>>(new Set());
-  const [newSlides, setNewSlides] = useState<Set<number>>(new Set());
+  const prevStreamingRef = useRef(false);
+  const prevSlidesLengthRef = useRef(0);
 
-  useEffect(() => {
+  // Compute new slides using useMemo instead of useEffect + setState
+  const newSlides = useMemo(() => {
+    // Reset when streaming starts fresh
+    if (isStreaming && streamingSlides.length === 0) {
+      seenSlidesRef.current = new Set();
+      return new Set<number>();
+    }
+
+    // Reset when streaming ends
+    if (!isStreaming && prevStreamingRef.current && prompt) {
+      seenSlidesRef.current = new Set(prompt.slides.map((s) => s.slideNumber));
+      prevStreamingRef.current = false;
+      return new Set<number>();
+    }
+
+    // Track new slides during streaming
     if (isStreaming) {
-      const currentNewSlides = new Set<number>();
+      prevStreamingRef.current = true;
+      const currentNew = new Set<number>();
       streamingSlides.forEach((slide) => {
         if (!seenSlidesRef.current.has(slide.slideNumber)) {
-          currentNewSlides.add(slide.slideNumber);
+          currentNew.add(slide.slideNumber);
           seenSlidesRef.current.add(slide.slideNumber);
         }
       });
-      if (currentNewSlides.size > 0) {
-        setNewSlides((prev) => new Set([...prev, ...currentNewSlides]));
-      }
+      return currentNew;
     }
-  }, [streamingSlides, isStreaming]);
 
-  useEffect(() => {
-    if (!isStreaming && prompt) {
-      seenSlidesRef.current = new Set(prompt.slides.map((s) => s.slideNumber));
-      setNewSlides(new Set());
-    }
-  }, [isStreaming, prompt]);
-
-  useEffect(() => {
-    if (isStreaming && streamingSlides.length === 0) {
-      seenSlidesRef.current = new Set();
-      setNewSlides(new Set());
-    }
-  }, [isStreaming, streamingSlides.length]);
+    return new Set<number>();
+  }, [isStreaming, streamingSlides, prompt]);
 
   const displaySlides = isStreaming ? streamingSlides : prompt?.slides || [];
   const hasSlides = displaySlides.length > 0;
@@ -101,12 +92,8 @@ export function PromptOutput({
           <div className="p-4 rounded-2xl bg-muted/50 mb-4">
             <FileText className="h-10 w-10 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-medium text-foreground mb-2">
-            {t("promptOutput.noPrompt")}
-          </h3>
-          <p className="text-sm text-muted-foreground max-w-sm">
-            {t("promptOutput.noPromptHint")}
-          </p>
+          <h3 className="text-lg font-medium text-foreground mb-2">{t('promptOutput.noPrompt')}</h3>
+          <p className="text-sm text-muted-foreground max-w-sm">{t('promptOutput.noPromptHint')}</p>
         </CardContent>
       </Card>
     );
@@ -122,15 +109,15 @@ export function PromptOutput({
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       toast({
-        title: t("toast.copiedAll"),
-        description: t("toast.copiedAllDesc", { count: prompt.slides.length }),
+        title: t('toast.copiedAll'),
+        description: t('toast.copiedAllDesc', { count: prompt.slides.length }),
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: t("toast.copyFailed"),
-        description: t("toast.copyFailedHint"),
-        variant: "destructive",
+        title: t('toast.copyFailed'),
+        description: t('toast.copyFailedHint'),
+        variant: 'destructive',
       });
     }
   };
@@ -143,19 +130,19 @@ export function PromptOutput({
             {isStreaming ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                <span>{t("promptOutput.generating")}</span>
+                <span>{t('promptOutput.generating')}</span>
                 <span className="text-sm font-normal text-muted-foreground">
-                  {t("promptOutput.slideCount", {
+                  {t('promptOutput.slideCount', {
                     count: streamingSlides.length,
                   })}
                 </span>
               </>
             ) : (
               <>
-                {t("promptOutput.title")}
+                {t('promptOutput.title')}
                 {hasSlides && (
                   <span className="ml-2 text-sm font-normal text-muted-foreground">
-                    {t("promptOutput.slideCount", {
+                    {t('promptOutput.slideCount', {
                       count: displaySlides.length,
                     })}
                   </span>
@@ -164,21 +151,17 @@ export function PromptOutput({
             )}
           </CardTitle>
           <div className="flex items-center gap-2">
-            {hasSlides && format === "text" && !isStreaming && (
-              <Button
-                onClick={() => setAllExpanded(!allExpanded)}
-                variant="ghost"
-                size="sm"
-              >
+            {hasSlides && format === 'text' && !isStreaming && (
+              <Button onClick={() => setAllExpanded(!allExpanded)} variant="ghost" size="sm">
                 {allExpanded ? (
                   <>
                     <ChevronUp className="h-4 w-4 mr-1" />
-                    {t("buttons.collapseAll")}
+                    {t('buttons.collapseAll')}
                   </>
                 ) : (
                   <>
                     <ChevronDown className="h-4 w-4 mr-1" />
-                    {t("buttons.expandAll")}
+                    {t('buttons.expandAll')}
                   </>
                 )}
               </Button>
@@ -195,29 +178,22 @@ export function PromptOutput({
                 ) : (
                   <Copy className="h-4 w-4 mr-2" />
                 )}
-                {copied ? t("buttons.copied") : t("buttons.copyAll")}
+                {copied ? t('buttons.copied') : t('buttons.copyAll')}
               </Button>
             )}
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs
-          value={format}
-          onValueChange={(v) => setFormat(v as OutputFormat)}
-        >
+        <Tabs value={format} onValueChange={(v) => setFormat(v as OutputFormat)}>
           <TabsList className="grid w-full grid-cols-2 mb-4 bg-muted/50">
             <TabsTrigger value="text" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              {t("promptOutput.tabs.slides")}
+              {t('promptOutput.tabs.slides')}
             </TabsTrigger>
-            <TabsTrigger
-              value="json"
-              className="flex items-center gap-2"
-              disabled={isStreaming}
-            >
+            <TabsTrigger value="json" className="flex items-center gap-2" disabled={isStreaming}>
               <Code className="h-4 w-4" />
-              {t("promptOutput.tabs.raw")}
+              {t('promptOutput.tabs.raw')}
             </TabsTrigger>
           </TabsList>
 
@@ -257,10 +233,10 @@ export function PromptOutput({
 
         <p className="text-xs text-muted-foreground mt-4">
           {isStreaming
-            ? t("promptOutput.streamingHint")
-            : format === "text"
-            ? t("promptOutput.slidesHint")
-            : t("promptOutput.rawHint")}
+            ? t('promptOutput.streamingHint')
+            : format === 'text'
+              ? t('promptOutput.slidesHint')
+              : t('promptOutput.rawHint')}
         </p>
       </CardContent>
     </Card>

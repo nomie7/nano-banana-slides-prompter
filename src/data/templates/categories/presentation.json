@@ -1,0 +1,95 @@
+{
+  "category": "presentation",
+  "templates": [
+    {
+      "id": "startup-pitch",
+      "name": "Startup Pitch",
+      "nameKey": "templates.presentation.startupPitch.name",
+      "category": "presentation",
+      "description": "Compelling pitch deck for investors and stakeholders",
+      "descriptionKey": "templates.presentation.startupPitch.description",
+      "tags": ["startup", "pitch", "investor", "funding"],
+      "config": {
+        "style": "professional",
+        "aspectRatio": "16:9",
+        "slideCount": 12,
+        "colorPalette": "modern-purple",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "product-launch",
+      "name": "Product Launch",
+      "nameKey": "templates.presentation.productLaunch.name",
+      "category": "presentation",
+      "description": "Exciting product announcement presentation",
+      "descriptionKey": "templates.presentation.productLaunch.description",
+      "tags": ["product", "launch", "marketing", "announcement"],
+      "config": {
+        "style": "creative",
+        "aspectRatio": "16:9",
+        "slideCount": 10,
+        "colorPalette": "vibrant-gradient",
+        "layoutStructure": "visual-heavy"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "quarterly-review",
+      "name": "Quarterly Review",
+      "nameKey": "templates.presentation.quarterlyReview.name",
+      "category": "presentation",
+      "description": "Business performance and metrics overview",
+      "descriptionKey": "templates.presentation.quarterlyReview.description",
+      "tags": ["quarterly", "review", "metrics", "performance"],
+      "config": {
+        "style": "infographic",
+        "aspectRatio": "16:9",
+        "slideCount": 15,
+        "colorPalette": "corporate-blue",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "conference-talk",
+      "name": "Conference Talk",
+      "nameKey": "templates.presentation.conferenceTalk.name",
+      "category": "presentation",
+      "description": "Engaging keynote for conferences and events",
+      "descriptionKey": "templates.presentation.conferenceTalk.description",
+      "tags": ["conference", "keynote", "speaker", "event"],
+      "config": {
+        "style": "minimalist",
+        "aspectRatio": "16:9",
+        "slideCount": 20,
+        "colorPalette": "elegant-monochrome",
+        "layoutStructure": "visual-heavy",
+        "character": {
+          "enabled": true,
+          "renderStyle": "pixar",
+          "gender": "none"
+        }
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "team-meeting",
+      "name": "Team Meeting",
+      "nameKey": "templates.presentation.teamMeeting.name",
+      "category": "presentation",
+      "description": "Internal team updates and collaboration",
+      "descriptionKey": "templates.presentation.teamMeeting.description",
+      "tags": ["team", "meeting", "internal", "update"],
+      "config": {
+        "style": "professional",
+        "aspectRatio": "16:9",
+        "slideCount": 8,
+        "colorPalette": "ocean-teal",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

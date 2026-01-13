@@ -176,7 +176,8 @@
   "language": {
     "label": "语言",
     "zh": "中文",
-    "en": "English"
+    "en": "English",
+    "vi": "Tiếng Việt"
   },
   "settings": {
     "title": "AI 设置",
@@ -227,5 +228,126 @@
   "notFound": {
     "message": "页面未找到",
     "returnHome": "返回首页"
+  },
+  "export": {
+    "asJSON": "导出为 JSON",
+    "asMarkdown": "导出为 Markdown",
+    "asText": "导出为文本",
+    "noSession": "无会话",
+    "noSessionDesc": "请选择要导出的会话。",
+    "noContent": "无内容",
+    "noContentDesc": "此会话没有可导出的生成内容。",
+    "success": "导出成功",
+    "successDesc": "会话已导出为 {{format}}。",
+    "failed": "导出失败",
+    "failedDesc": "无法导出会话，请重试。"
+  },
+  "promptPreview": {
+    "title": "提示词预览",
+    "slides": "张幻灯片",
+    "formatted": "格式化",
+    "raw": "原始",
+    "copied": "已复制!",
+    "copiedDesc": "提示词内容已复制到剪贴板。",
+    "hint": "切换格式化和原始视图。复制后可在 Nano Banana Pro Slides 中使用。"
+  },
+  "templates": {
+    "button": "模板",
+    "title": "选择模板",
+    "slides": "张幻灯片",
+    "categories": {
+      "presentation": "演示",
+      "education": "教育",
+      "business": "商务",
+      "creative": "创意"
+    },
+    "presentation": {
+      "startupPitch": {
+        "name": "创业路演",
+        "description": "面向投资者和利益相关者的精彩演示"
+      },
+      "productLaunch": {
+        "name": "产品发布",
+        "description": "令人兴奋的产品发布演示"
+      },
+      "quarterlyReview": {
+        "name": "季度回顾",
+        "description": "业务绩效和指标概览"
+      },
+      "conferenceTalk": {
+        "name": "会议演讲",
+        "description": "会议和活动的精彩主题演讲"
+      },
+      "teamMeeting": {
+        "name": "团队会议",
+        "description": "内部团队更新和协作"
+      }
+    },
+    "education": {
+      "lectureSlides": {
+        "name": "课程幻灯片",
+        "description": "解释清晰的学术讲座"
+      },
+      "tutorial": {
+        "name": "教程",
+        "description": "分步说明指南"
+      },
+      "researchPresentation": {
+        "name": "研究报告",
+        "description": "学术研究成果和分析"
+      },
+      "workshop": {
+        "name": "工作坊",
+        "description": "互动实践学习课程"
+      },
+      "studentProject": {
+        "name": "学生项目",
+        "description": "学生作业或项目演示"
+      }
+    },
+    "business": {
+      "salesProposal": {
+        "name": "销售提案",
+        "description": "有说服力的销售和提案演示"
+      },
+      "companyOverview": {
+        "name": "公司概览",
+        "description": "公司简介和能力展示"
+      },
+      "projectStatus": {
+        "name": "项目状态",
+        "description": "项目进度和里程碑更新"
+      },
+      "strategyPlanning": {
+        "name": "战略规划",
+        "description": "战略路线图和规划会议"
+      },
+      "financialReport": {
+        "name": "财务报告",
+        "description": "财务数据和业务指标"
+      }
+    },
+    "creative": {
+      "portfolioShowcase": {
+        "name": "作品集展示",
+        "description": "创意作品集和作品样本"
+      },
+      "eventWedding": {
+        "name": "活动/婚礼",
+        "description": "特殊活动或婚礼庆典"
+      },
+      "storytelling": {
+        "name": "故事叙述",
+        "description": "以叙事驱动的视觉故事"
+      },
+      "travelBlog": {
+        "name": "旅行博客",
+        "description": "旅行冒险和目的地"
+      },
+      "artExhibition": {
+        "name": "艺术展览",
+        "description": "艺术画廊和展览展示"
+      }
+    }
   }
 }

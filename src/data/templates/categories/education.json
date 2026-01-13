@@ -1,0 +1,100 @@
+{
+  "category": "education",
+  "templates": [
+    {
+      "id": "lecture-slides",
+      "name": "Lecture Slides",
+      "nameKey": "templates.education.lectureSlides.name",
+      "category": "education",
+      "description": "Academic lecture with clear explanations",
+      "descriptionKey": "templates.education.lectureSlides.description",
+      "tags": ["lecture", "academic", "teaching", "course"],
+      "config": {
+        "style": "educational",
+        "aspectRatio": "16:9",
+        "slideCount": 15,
+        "colorPalette": "nature-green",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "tutorial",
+      "name": "Tutorial",
+      "nameKey": "templates.education.tutorial.name",
+      "category": "education",
+      "description": "Step-by-step instructional guide",
+      "descriptionKey": "templates.education.tutorial.description",
+      "tags": ["tutorial", "how-to", "guide", "instructions"],
+      "config": {
+        "style": "technical",
+        "aspectRatio": "16:9",
+        "slideCount": 12,
+        "colorPalette": "corporate-blue",
+        "layoutStructure": "balanced",
+        "character": {
+          "enabled": true,
+          "renderStyle": "cartoon",
+          "gender": "none"
+        }
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "research-presentation",
+      "name": "Research Presentation",
+      "nameKey": "templates.education.researchPresentation.name",
+      "category": "education",
+      "description": "Academic research findings and analysis",
+      "descriptionKey": "templates.education.researchPresentation.description",
+      "tags": ["research", "academic", "thesis", "findings"],
+      "config": {
+        "style": "professional",
+        "aspectRatio": "16:9",
+        "slideCount": 18,
+        "colorPalette": "elegant-monochrome",
+        "layoutStructure": "text-heavy"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "workshop",
+      "name": "Workshop",
+      "nameKey": "templates.education.workshop.name",
+      "category": "education",
+      "description": "Interactive hands-on learning session",
+      "descriptionKey": "templates.education.workshop.description",
+      "tags": ["workshop", "hands-on", "interactive", "training"],
+      "config": {
+        "style": "creative",
+        "aspectRatio": "16:9",
+        "slideCount": 10,
+        "colorPalette": "warm-orange",
+        "layoutStructure": "visual-heavy",
+        "character": {
+          "enabled": true,
+          "renderStyle": "chibi",
+          "gender": "none"
+        }
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "student-project",
+      "name": "Student Project",
+      "nameKey": "templates.education.studentProject.name",
+      "category": "education",
+      "description": "Student assignment or project presentation",
+      "descriptionKey": "templates.education.studentProject.description",
+      "tags": ["student", "project", "assignment", "school"],
+      "config": {
+        "style": "flat-design",
+        "aspectRatio": "16:9",
+        "slideCount": 8,
+        "colorPalette": "modern-purple",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

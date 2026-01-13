@@ -9,6 +9,7 @@ import { StyleSelector } from '@/components/slide-prompt/StyleSelector';
 import { CharacterSelector } from '@/components/slide-prompt/CharacterSelector';
 import { PresentationSettings } from '@/components/slide-prompt/PresentationSettings';
 import { PromptOutput } from '@/components/slide-prompt/PromptOutput';
+import { PromptPreview } from '@/components/PromptPreview';
 import { SessionSidebar } from '@/components/SessionSidebar';
 import { SettingsDialog, useLLMSettings } from '@/components/SettingsDialog';
 import { useStreamingGeneration } from '@/hooks/useStreamingGeneration';
@@ -20,8 +21,21 @@ import type {
   PresentationSettings as PresentationSettingsType,
 } from '@/types/slidePrompt';
 
-const defaultContent: ContentInputType = { type: 'text', text: '', topic: '', fileContent: '', fileName: '', url: '', urlContent: '' };
-const defaultSettings: PresentationSettingsType = { aspectRatio: '16:9', slideCount: 10, colorPalette: 'auto', layoutStructure: 'balanced' };
+const defaultContent: ContentInputType = {
+  type: 'text',
+  text: '',
+  topic: '',
+  fileContent: '',
+  fileName: '',
+  url: '',
+  urlContent: '',
+};
+const defaultSettings: PresentationSettingsType = {
+  aspectRatio: '16:9',
+  slideCount: 10,
+  colorPalette: 'auto',
+  layoutStructure: 'balanced',
+};
 
 export default function Index() {
   const { t } = useTranslation();
@@ -38,6 +52,8 @@ export default function Index() {
     loadSessions,
     isLoading,
     syncToServer,
+    showPromptPreview,
+    setShowPromptPreview,
   } = useSessionStore();
 
   const currentSession = getCurrentSession();
@@ -47,7 +63,10 @@ export default function Index() {
       toast({
         variant: 'destructive',
         title: t('errors.loadSessionsTitle', 'Failed to load sessions'),
-        description: t('errors.loadSessionsDescription', 'An error occurred while loading your sessions. Please try again.'),
+        description: t(
+          'errors.loadSessionsDescription',
+          'An error occurred while loading your sessions. Please try again.'
+        ),
       });
     });
   }, [loadSessions, toast, t]);
@@ -80,20 +99,14 @@ export default function Index() {
     }
   };
 
-  const {
-    isGenerating,
-    slides,
-    error,
-    generatedPrompt,
-    generate,
-    cancel,
-  } = useStreamingGeneration();
+  const { isGenerating, slides, error, generatedPrompt, generate, cancel } =
+    useStreamingGeneration();
 
   const handleGenerate = async () => {
     if (!currentSessionId) return;
 
     await syncToServer();
-    
+
     generate({
       content,
       style,
@@ -113,19 +126,18 @@ export default function Index() {
   }, [error, toast, t]);
 
   const hasContent =
-    content.text.trim() ||
-    content.topic ||
-    content.fileContent ||
-    content.url.trim();
+    content.text.trim() || content.topic || content.fileContent || content.url.trim();
 
   return (
     <div className="min-h-screen bg-background">
       <SessionSidebar isOpen={sidebarOpen} />
 
-      <div className={cn(
-        "flex flex-col min-h-screen transition-all duration-300 ease-in-out",
-        sidebarOpen ? "ml-64" : "ml-0"
-      )}>
+      <div
+        className={cn(
+          'flex flex-col min-h-screen transition-all duration-300 ease-in-out',
+          sidebarOpen ? 'ml-64' : 'ml-0'
+        )}
+      >
         <header className="relative overflow-hidden border-b border-border/50">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-accent/20" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
@@ -137,7 +149,7 @@ export default function Index() {
             style={{
               backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
                                 linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-              backgroundSize: '60px 60px'
+              backgroundSize: '60px 60px',
             }}
           />
 
@@ -163,9 +175,7 @@ export default function Index() {
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
                     {t('app.title')}
                   </h1>
-                  <p className="text-muted-foreground mt-1">
-                    {t('app.subtitle')}
-                  </p>
+                  <p className="text-muted-foreground mt-1">{t('app.subtitle')}</p>
                 </div>
               </div>
 
@@ -177,7 +187,10 @@ export default function Index() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button variant="outline" className="gap-2 bg-background/50 backdrop-blur-sm border-primary/20 hover:bg-primary/10 hover:text-primary transition-all duration-300">
+                  <Button
+                    variant="outline"
+                    className="gap-2 bg-background/50 backdrop-blur-sm border-primary/20 hover:bg-primary/10 hover:text-primary transition-all duration-300"
+                  >
                     <Github className="h-4 w-4" />
                     <span className="hidden sm:inline">GitHub</span>
                   </Button>
@@ -196,7 +209,9 @@ export default function Index() {
                     1
                   </span>
                   <h2 className="text-xl font-semibold text-foreground">{t('steps.addContent')}</h2>
-                  <span className="text-xs text-muted-foreground">{t('steps.allSourcesCombined')}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {t('steps.allSourcesCombined')}
+                  </span>
                 </div>
                 <ContentInput value={content} onChange={setContent} />
               </section>
@@ -206,7 +221,9 @@ export default function Index() {
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/25">
                     2
                   </span>
-                  <h2 className="text-xl font-semibold text-foreground">{t('steps.selectStyle')}</h2>
+                  <h2 className="text-xl font-semibold text-foreground">
+                    {t('steps.selectStyle')}
+                  </h2>
                 </div>
                 <StyleSelector value={style} onChange={setStyle} />
               </section>
@@ -216,7 +233,9 @@ export default function Index() {
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/25">
                     3
                   </span>
-                  <h2 className="text-xl font-semibold text-foreground">{t('steps.characterHost')}</h2>
+                  <h2 className="text-xl font-semibold text-foreground">
+                    {t('steps.characterHost')}
+                  </h2>
                   <span className="text-xs text-muted-foreground">{t('steps.optional')}</span>
                 </div>
                 <CharacterSelector
@@ -230,7 +249,9 @@ export default function Index() {
                   <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/25">
                     4
                   </span>
-                  <h2 className="text-xl font-semibold text-foreground">{t('steps.configureSettings')}</h2>
+                  <h2 className="text-xl font-semibold text-foreground">
+                    {t('steps.configureSettings')}
+                  </h2>
                 </div>
                 <PresentationSettings value={settings} onChange={setSettings} />
               </section>
@@ -238,10 +259,12 @@ export default function Index() {
               <Button
                 onClick={isGenerating ? cancel : handleGenerate}
                 disabled={!isGenerating && !hasContent}
-                variant={isGenerating ? "destructive" : "default"}
+                variant={isGenerating ? 'destructive' : 'default'}
                 size="lg"
                 className={`w-full h-14 text-lg font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${
-                  !isGenerating ? "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-primary/25 hover:shadow-primary/30" : ""
+                  !isGenerating
+                    ? 'bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-primary/25 hover:shadow-primary/30'
+                    : ''
                 }`}
               >
                 {isGenerating ? (
@@ -258,12 +281,17 @@ export default function Index() {
               </Button>
             </div>
 
-            <div className="lg:sticky lg:top-8 lg:self-start animate-fade-in" style={{ animationDelay: '300ms' }}>
+            <div
+              className="lg:sticky lg:top-8 lg:self-start animate-fade-in"
+              style={{ animationDelay: '300ms' }}
+            >
               <div className="flex items-center gap-3 mb-4">
                 <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/25">
                   5
                 </span>
-                  <h2 className="text-xl font-semibold text-foreground">{t('steps.generatedPrompt')}</h2>
+                <h2 className="text-xl font-semibold text-foreground">
+                  {t('steps.generatedPrompt')}
+                </h2>
               </div>
               <PromptOutput
                 prompt={generatedPrompt}
@@ -271,6 +299,15 @@ export default function Index() {
                 streamingSlides={slides}
                 expectedSlideCount={settings.slideCount}
               />
+              {generatedPrompt && !isGenerating && (
+                <div className="mt-4">
+                  <PromptPreview
+                    prompt={generatedPrompt}
+                    isOpen={showPromptPreview}
+                    onOpenChange={setShowPromptPreview}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </main>

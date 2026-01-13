@@ -83,7 +83,9 @@ async function loadIndex(): Promise<SessionIndex> {
     if (existsSync(INDEX_FILE)) {
       return JSON.parse(await readFile(INDEX_FILE, 'utf-8'));
     }
-  } catch {}
+  } catch (error) {
+    console.error('Failed to load session index:', error);
+  }
   return { currentSessionId: null, sessionIds: [] };
 }
 
@@ -103,7 +105,9 @@ async function loadSession(id: string): Promise<Session | null> {
     if (existsSync(fp)) {
       return JSON.parse(await readFile(fp, 'utf-8'));
     }
-  } catch {}
+  } catch (error) {
+    console.error(`Failed to load session ${id}:`, error);
+  }
   return null;
 }
 
@@ -118,7 +122,9 @@ async function deleteSessionFile(id: string) {
   try {
     const fp = getSessionFilePath(id);
     if (existsSync(fp)) await unlink(fp);
-  } catch {}
+  } catch (error) {
+    console.error(`Failed to delete session file ${id}:`, error);
+  }
 }
 
 function validateSlide(s: { slideNumber: number; title: string; prompt: string }): boolean {

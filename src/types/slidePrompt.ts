@@ -41,17 +41,7 @@ export type ColorPalette =
   | 'arctic-frost'
   | 'neon-night';
 
-export type OutputLanguage =
-  | 'en'
-  | 'vi'
-  | 'zh'
-  | 'ja'
-  | 'ko'
-  | 'th'
-  | 'id'
-  | 'fr'
-  | 'de'
-  | 'es';
+export type OutputLanguage = 'en' | 'vi' | 'zh' | 'ja' | 'ko' | 'th' | 'id' | 'fr' | 'de' | 'es';
 
 export const OUTPUT_LANGUAGES: { code: OutputLanguage; label: string; nativeLabel: string }[] = [
   { code: 'en', label: 'English', nativeLabel: 'English' },
