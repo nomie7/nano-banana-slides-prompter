@@ -9,10 +9,15 @@ Generate optimized prompts for Nano Banana Pro Slides - AI-powered slide generat
 - **20 Visual Styles**: Professional, Technical, Creative, Educational, and more
 - **Character Presenter**: 8 render styles (Pixar, Anime, Cartoon, etc.) with dynamic generation
 - **50+ Slide Templates**: Content-aware selection from Opening, Concept, Data, Process, Technical, Business categories
-- **Multiple Input Methods**: Text, URL extraction, CSV upload
+- **Multiple Input Methods**: Text, URL extraction, CSV/PDF/DOCX upload
+- **Gemini Image Generation**: AI-powered image generation with Imagen 4 model
+- **Inline Prompt Editing**: Edit slide prompts before image generation (v2.0.4)
 - **Session Management**: Save, load, and manage multiple presentations
 - **Internationalization**: English, Vietnamese, and Chinese support
 - **Configurable LLM**: OpenAI, OpenRouter, Ollama compatible
+- **Quiz Templates**: Multiple Choice, True/False, Fill-in-Blank, Matching
+- **Brand Kit**: Custom colors, fonts, logo for consistent branding
+- **Course Builder**: Organize lessons and course structure (Beta)
 
 ## Sample Slides
 
@@ -62,6 +67,8 @@ OPENAI_API_BASE=https://api.openai.com/v1
 OPENAI_API_KEY=your-api-key
 OPENAI_MODEL=gpt-4o
 PORT=3001
+GEMINI_API_KEY=your-gemini-key
+GEMINI_API_BASE=https://generativelanguage.googleapis.com
 ```
 
 ### Development
@@ -91,7 +98,7 @@ Create `docker-compose.yml`:
 ```yaml
 services:
   frontend:
-    image: ghcr.io/nomie7/nano-banana-slides-prompter-frontend:latest
+    image: ghcr.io/xuan2261/nano-banana-slides-prompter-frontend:latest
     ports:
       - '80:80'
     depends_on:
@@ -99,7 +106,7 @@ services:
     restart: always
 
   backend:
-    image: ghcr.io/nomie7/nano-banana-slides-prompter-backend:latest
+    image: ghcr.io/xuan2261/nano-banana-slides-prompter-backend:latest
     environment:
       - PORT=3001
       - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
@@ -120,7 +127,7 @@ The application is also available as a cross-platform desktop app.
 
 ### Download
 
-Download the latest release from [GitHub Releases](https://github.com/nomie7/nano-banana-slides-prompter/releases).
+Download the latest release from [GitHub Releases](https://github.com/xuan2261/nano-banana-slides-prompter/releases).
 
 | Platform              | File                                                       |
 | --------------------- | ---------------------------------------------------------- |
@@ -179,25 +186,22 @@ Output files are generated in `desktop/release/`.
 
 ## Version
 
-**v2.0.0** - Phase 4: Education & Business Features (Quiz Templates, Brand Kit, Course Builder)
+**v2.0.6** - Backend port reliability and auto-updater improvements
 
 ### Changelog
 
-| Version | Highlights                                                                                |
-| ------- | ----------------------------------------------------------------------------------------- |
-| 2.0.0   | Quiz Templates (4 types), Brand Kit, Course Builder (Beta), Security enhancements         |
-| 1.3.0   | Gemini Image Generation integration                                                       |
-| 1.2.5   | Prompt Optimizer (self-refine), PDF Preview modal, Canva/Figma JSON export                |
-| 1.2.4   | Remove redundant PromptPreview component, add export dropdown (MD, TXT, JSON)             |
-| 1.2.3   | Fix auto-release workflow for fork compatibility                                          |
-| 1.2.2   | Settings hot-reload using Zustand store                                                   |
-| 1.2.1   | CI workflow fixes, auto-release                                                           |
-| 1.2.0   | System upgrade: Vitest testing, Vietnamese i18n, output language selection (10 languages) |
-| 1.1.x   | Desktop app improvements, electron-updater                                                |
-| 1.0.6   | Dynamic character generation, 50+ slide templates, content-aware selection                |
-| 1.0.5   | i18n (EN/ZH), session management, Zustand state, Vite 7                                   |
-| 1.0.4   | Character presenter with 8 render styles                                                  |
-| 1.0.3   | Style personas, expanded visual vocabulary, CSV support                                   |
+| Version | Highlights                                                                      |
+| ------- | ------------------------------------------------------------------------------- |
+| 2.0.6   | Fix backend port conflict with retry logic, update auto-updater config          |
+| 2.0.5   | DOMMatrix polyfill for pdfjs-dist compatibility                                 |
+| 2.0.4   | Inline edit for slide prompts before image generation                           |
+| 2.0.3   | Custom API base URL for Gemini Image Generation                                 |
+| 2.0.0   | Quiz Templates (4 types), Brand Kit, Course Builder (Beta), Gemini integration  |
+| 1.2.5   | Prompt Optimizer (self-refine), PDF Preview modal, Canva/Figma JSON export      |
+| 1.2.3   | PDF/DOCX import, PPTX/PDF export, batch processing                              |
+| 1.2.0   | System upgrade: Vitest testing, Vietnamese i18n, output language (10 languages) |
+| 1.1.x   | Desktop app improvements, electron-updater                                      |
+| 1.0.6   | Dynamic character generation, 50+ slide templates, content-aware selection      |
 
 ## License
 
