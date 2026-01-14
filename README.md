@@ -162,7 +162,7 @@ Output files are generated in `desktop/release/`.
 | -------- | -------------------------------------------------------------- |
 | Frontend | React 19, TypeScript, Vite 7, Tailwind CSS, shadcn/ui, Zustand |
 | Backend  | Bun, Hono, OpenAI SDK, Cheerio                                 |
-| Desktop  | Electron 33, electron-builder, electron-updater                |
+| Desktop  | Electron 32, electron-builder, electron-updater                |
 | UI       | Radix UI primitives, lucide-react icons                        |
 | i18n     | react-i18next (EN/VI/ZH)                                       |
 
@@ -186,12 +186,17 @@ Output files are generated in `desktop/release/`.
 
 ## Version
 
-**v2.0.6** - Backend port reliability and auto-updater improvements
+**v2.0.11** - Fix image generation button state not resetting
 
 ### Changelog
 
 | Version | Highlights                                                                      |
 | ------- | ------------------------------------------------------------------------------- |
+| 2.0.11  | Fix image generation button state not resetting after new prompt generation     |
+| 2.0.10  | Fix Bun double server startup bug (remove export default)                       |
+| 2.0.9   | Gemini config persistence, disable auto-updater temporarily                     |
+| 2.0.8   | Dynamic port resolution with Electron storage                                   |
+| 2.0.7   | Update URLs to fork, add v2.0.5-2.0.6 changelog                                 |
 | 2.0.6   | Fix backend port conflict with retry logic, update auto-updater config          |
 | 2.0.5   | DOMMatrix polyfill for pdfjs-dist compatibility                                 |
 | 2.0.4   | Inline edit for slide prompts before image generation                           |

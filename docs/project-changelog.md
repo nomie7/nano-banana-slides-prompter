@@ -4,6 +4,61 @@ All notable changes to Nano Banana Slides Prompter are documented here.
 
 ---
 
+## [2.0.10] - 2026-01-14
+
+### Fixed - Bun Double Server Startup Bug
+
+- Remove export default to prevent Bun from starting server twice
+- Fixes duplicate port binding issues in development
+
+---
+
+## [2.0.9] - 2026-01-14
+
+### Added - Gemini Config Persistence
+
+- Gemini configuration now persisted to Electron storage
+- Disable auto-updater temporarily for stability
+
+---
+
+## [2.0.8] - 2026-01-14
+
+### Fixed - Dynamic Port Resolution
+
+- Use dynamic port resolution for backend
+- Persist port to Electron storage for consistent access
+
+---
+
+## [2.0.7] - 2026-01-14
+
+### Changed - Repository URLs
+
+- Update URLs to forked repository
+- Add v2.0.5-2.0.6 changelog to documentation
+
+---
+
+## [2.0.6] - 2026-01-14
+
+### Fixed - Port Binding Reliability
+
+- Add port retry logic with up to 5 attempts
+- Fix race condition in port binding
+- Improved backend startup reliability
+
+---
+
+## [2.0.5] - 2026-01-14
+
+### Fixed - PDF Compatibility
+
+- Add DOMMatrix polyfill for pdfjs-dist compatibility
+- Resolves PDF rendering in Electron environment
+
+---
+
 ## [2.0.4] - 2026-01-14
 
 ### Added - Inline Edit for Slide Prompts

@@ -7,7 +7,7 @@
 | Attribute    | Value                       |
 | ------------ | --------------------------- |
 | Name         | Nano Banana Slides Prompter |
-| Version      | 2.0.4                       |
+| Version      | 2.0.10                      |
 | License      | GPL-3.0-or-later            |
 | Repository   | nano-banana-slides-prompter |
 | Last Updated | 2026-01-14                  |
@@ -148,7 +148,7 @@
 
 - **Frontend**: React 19+, TypeScript, Vite 7
 - **Backend**: Bun runtime, Hono framework
-- **Desktop**: Electron 33, electron-builder
+- **Desktop**: Electron 32, electron-builder
 - **LLM**: OpenAI SDK compatible APIs
 - **Deployment**: Docker containers, GHCR images
 
@@ -168,7 +168,7 @@
 
 +------------------+
 |  Desktop Shell   |
-|  Electron 33     |
+|  Electron 32     |
 +------------------+
         |
         +--- Main Process (window, IPC, menu)
@@ -181,6 +181,12 @@
 
 | Version | Date    | Highlights                                                  |
 | ------- | ------- | ----------------------------------------------------------- |
+| 2.0.10  | 2026-01 | Fix Bun double server startup bug                           |
+| 2.0.9   | 2026-01 | Gemini config persistence, disable auto-updater temporarily |
+| 2.0.8   | 2026-01 | Dynamic port resolution with Electron storage               |
+| 2.0.7   | 2026-01 | Update URLs to fork, add v2.0.5-2.0.6 changelog             |
+| 2.0.6   | 2026-01 | Port retry logic, fix race condition in port binding        |
+| 2.0.5   | 2026-01 | DOMMatrix polyfill for pdfjs-dist compatibility             |
 | 2.0.4   | 2026-01 | Inline edit for slide prompts before image generation       |
 | 2.0.3   | 2026-01 | Custom API base URL for Gemini Image Generation             |
 | 2.0.2   | 2026-01 | DOMMatrix polyfill for Electron PDF compatibility           |

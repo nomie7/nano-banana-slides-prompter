@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Check,
@@ -58,7 +58,18 @@ export function PromptOutput({
   const [previewOpen, setPreviewOpen] = useState(false);
   const { toast } = useToast();
 
-  const { isGenerating, images, generateImages, isEnabled: geminiEnabled } = useGeminiImage();
+  const {
+    isGenerating,
+    images,
+    generateImages,
+    reset: resetImages,
+    isEnabled: geminiEnabled,
+  } = useGeminiImage();
+
+  // Reset images when prompt changes (fixes button state not resetting after new prompt generation)
+  useEffect(() => {
+    resetImages();
+  }, [prompt?.plainText, resetImages]);
 
   // Memoize displaySlides to prevent dependency changes on every render
   const displaySlides = useMemo(

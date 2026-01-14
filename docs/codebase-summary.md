@@ -1,10 +1,10 @@
 # Codebase Summary
 
-**Version:** 2.0.4 | **Last Updated:** 2026-01-14
+**Version:** 2.0.10 | **Last Updated:** 2026-01-14
 
 ## Overview
 
-The Nano Banana Slides Prompter is a full-stack application with a React frontend (~10,000 LOC), Hono backend (~2,553 LOC), and Electron desktop shell (~1,094 LOC). Total codebase is approximately 14,000 LOC.
+The Nano Banana Slides Prompter is a full-stack application with a React frontend (~13,125 LOC), Hono backend (~3,572 LOC), and Electron desktop shell (~1,000 LOC). Total codebase is approximately 17,700 LOC.
 
 ## Project Structure
 
@@ -307,7 +307,7 @@ Return Structured Content → Update ContentInput
 
 | Category | Packages            |
 | -------- | ------------------- |
-| Runtime  | Electron 33         |
+| Runtime  | Electron 32         |
 | Build    | electron-builder 25 |
 | Updates  | electron-updater 6  |
 | Logging  | electron-log 5      |

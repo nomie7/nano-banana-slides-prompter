@@ -1,6 +1,6 @@
 # Development Roadmap
 
-**Version:** 2.0.4 | **Last Updated:** 2026-01-14
+**Version:** 2.0.10 | **Last Updated:** 2026-01-14
 
 ## Overview
 
@@ -8,14 +8,14 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 ## Phase Summary
 
-| Phase | Name                           | Status      | Progress |
-| ----- | ------------------------------ | ----------- | -------- |
-| 1     | Foundation & Core Features     | Complete    | 100%     |
-| 2     | Desktop & Internationalization | Complete    | 100%     |
-| 3     | Document Processing & Export   | Complete    | 100%     |
-| 4     | Education & Business Focus     | Complete    | 100%     |
-| 5     | Gemini & UX Improvements       | In Progress | 60%      |
-| 6     | Advanced Features              | Planned     | 0%       |
+| Phase | Name                           | Status   | Progress |
+| ----- | ------------------------------ | -------- | -------- |
+| 1     | Foundation & Core Features     | Complete | 100%     |
+| 2     | Desktop & Internationalization | Complete | 100%     |
+| 3     | Document Processing & Export   | Complete | 100%     |
+| 4     | Education & Business Focus     | Complete | 100%     |
+| 5     | Gemini & UX Improvements       | Complete | 100%     |
+| 6     | Advanced Features              | Planned  | 0%       |
 
 ---
 
@@ -91,7 +91,7 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 ## Phase 5: Gemini & UX Improvements (v2.0.x)
 
-**Status:** In Progress | **Timeline:** Jan 2026
+**Status:** Complete | **Timeline:** Jan 2026
 
 ### Milestones
 
@@ -100,8 +100,9 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 - [x] Custom Gemini API base URL configuration
 - [x] DOMMatrix polyfill for Electron PDF compatibility
 - [x] Inline edit for slide prompts before image generation
-- [ ] Image preview and gallery view
-- [ ] Export generated images to presentation
+- [x] Dynamic port resolution with Electron storage
+- [x] Gemini config persistence
+- [x] Fix Bun double server startup bug
 
 ---
 
@@ -111,6 +112,8 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 ### Planned Features
 
+- [ ] Image preview and gallery view
+- [ ] Export generated images to presentation
 - [ ] Team collaboration features
 - [ ] Analytics dashboard
 - [ ] Template library with sharing
@@ -135,6 +138,12 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 | Version | Date       | Phase | Key Changes                                       |
 | ------- | ---------- | ----- | ------------------------------------------------- |
+| 2.0.10  | 2026-01-14 | 5     | Fix Bun double server startup bug                 |
+| 2.0.9   | 2026-01-14 | 5     | Gemini config persistence, disable auto-updater   |
+| 2.0.8   | 2026-01-14 | 5     | Dynamic port resolution with Electron storage     |
+| 2.0.7   | 2026-01-14 | 5     | Update URLs to fork, add changelog                |
+| 2.0.6   | 2026-01-14 | 5     | Port retry logic, fix race condition              |
+| 2.0.5   | 2026-01-14 | 5     | DOMMatrix polyfill for pdfjs-dist                 |
 | 2.0.4   | 2026-01-14 | 5     | Inline edit for slide prompts                     |
 | 2.0.3   | 2026-01-14 | 5     | Custom Gemini API base URL                        |
 | 2.0.2   | 2026-01-14 | 5     | DOMMatrix polyfill for Electron PDF               |
