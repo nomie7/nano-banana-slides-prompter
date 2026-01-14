@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, Check, Copy } from 'lucide-react';
+import { ChevronDown, ChevronRight, Check, Copy, Sparkles, Loader2, Pencil, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useToast } from '@/hooks/use-toast';
+import { usePromptOptimizer } from '@/hooks/usePromptOptimizer';
+import { OptimizationDiff } from '@/components/optimizer/OptimizationDiff';
 import type { ParsedSlide } from '@/types/slidePrompt';
 
 interface SlideCardProps {
@@ -11,18 +14,36 @@ interface SlideCardProps {
   defaultOpen?: boolean;
   isNew?: boolean;
   animationDelay?: number;
+  onPromptUpdate?: (slideNumber: number, newPrompt: string) => void;
 }
 
-export function SlideCard({ slide, defaultOpen = false, isNew = false, animationDelay = 0 }: SlideCardProps) {
+export function SlideCard({
+  slide,
+  defaultOpen = false,
+  isNew = false,
+  animationDelay = 0,
+  onPromptUpdate,
+}: SlideCardProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedPrompt, setEditedPrompt] = useState(slide.prompt);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setIsOpen(defaultOpen);
   }, [defaultOpen]);
+
+  // Sync editedPrompt with slide.prompt when slide changes
+  useEffect(() => {
+    setEditedPrompt(slide.prompt);
+  }, [slide.prompt]);
+
   const [copied, setCopied] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(!isNew);
+  const [showOptimizationDiff, setShowOptimizationDiff] = useState(false);
   const { toast } = useToast();
+  const { isOptimizing, result, optimize, reset } = usePromptOptimizer();
 
   useEffect(() => {
     if (isNew && !hasAnimated) {
@@ -53,13 +74,54 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
     }
   };
 
-  const animationClass = isNew && !hasAnimated
-    ? 'animate-slide-up'
-    : '';
+  const animationClass = isNew && !hasAnimated ? 'animate-slide-up' : '';
 
-  const animationStyle = isNew && !hasAnimated
-    ? { animationDelay: `${animationDelay}ms` }
-    : {};
+  const animationStyle = isNew && !hasAnimated ? { animationDelay: `${animationDelay}ms` } : {};
+
+  const handleOptimize = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const result = await optimize(slide.prompt);
+    if (result) {
+      setShowOptimizationDiff(true);
+    }
+  };
+
+  const handleAcceptOptimization = (optimizedPrompt: string) => {
+    if (onPromptUpdate) {
+      onPromptUpdate(slide.slideNumber, optimizedPrompt);
+    }
+    reset();
+  };
+
+  const handleRejectOptimization = () => {
+    reset();
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    setIsOpen(true);
+    // Focus textarea after render
+    setTimeout(() => textareaRef.current?.focus(), 100);
+  };
+
+  const handleSaveEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onPromptUpdate && editedPrompt.trim() !== slide.prompt) {
+      onPromptUpdate(slide.slideNumber, editedPrompt.trim());
+      toast({
+        title: t('slideCard.editSaved', 'Saved'),
+        description: t('slideCard.editSavedDesc', 'Prompt updated successfully'),
+      });
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditedPrompt(slide.prompt);
+    setIsEditing(false);
+  };
 
   return (
     <Collapsible
@@ -83,35 +145,101 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
               <span className="font-medium text-foreground">{slide.title}</span>
             </div>
           </div>
-          <Button
-            onClick={handleCopy}
-            variant="ghost"
-            size="sm"
-            className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
-          >
-            {copied ? (
-              <>
-                <Check className="h-3.5 w-3.5 mr-1.5 text-green-500" />
-                <span className="text-xs">{t('buttons.copied')}</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-3.5 w-3.5 mr-1.5" />
-                <span className="text-xs">{t('buttons.copy')}</span>
-              </>
+          <div className="flex items-center gap-1">
+            {/* Edit button - only show when onPromptUpdate is provided */}
+            {onPromptUpdate && !isEditing && (
+              <Button
+                onClick={handleEdit}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+              >
+                <Pencil className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
+                <span className="text-xs">{t('buttons.edit', 'Edit')}</span>
+              </Button>
             )}
-          </Button>
+            <Button
+              onClick={handleOptimize}
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+              disabled={isOptimizing || isEditing}
+            >
+              {isOptimizing ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                  <span className="text-xs">{t('buttons.optimizing', 'Optimizing...')}</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5 text-yellow-500" />
+                  <span className="text-xs">{t('buttons.optimize', 'Optimize')}</span>
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={handleCopy}
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 mr-1.5 text-green-500" />
+                  <span className="text-xs">{t('buttons.copied')}</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5 mr-1.5" />
+                  <span className="text-xs">{t('buttons.copy')}</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="px-4 pb-4">
-          <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg p-4 border border-border/30">
-            <pre className="text-sm text-foreground whitespace-pre-wrap font-mono leading-relaxed">
-              {slide.prompt}
-            </pre>
-          </div>
+          {isEditing ? (
+            <div className="space-y-3">
+              <Textarea
+                ref={textareaRef}
+                value={editedPrompt}
+                onChange={(e) => setEditedPrompt(e.target.value)}
+                className="min-h-[200px] font-mono text-sm resize-y"
+                placeholder={t('slideCard.editPlaceholder', 'Enter your prompt...')}
+              />
+              <div className="flex justify-end gap-2">
+                <Button onClick={handleCancelEdit} variant="outline" size="sm" className="h-8">
+                  <X className="h-3.5 w-3.5 mr-1.5" />
+                  {t('buttons.cancel', 'Cancel')}
+                </Button>
+                <Button onClick={handleSaveEdit} variant="default" size="sm" className="h-8">
+                  <Check className="h-3.5 w-3.5 mr-1.5" />
+                  {t('buttons.save', 'Save')}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg p-4 border border-border/30">
+              <pre className="text-sm text-foreground whitespace-pre-wrap font-mono leading-relaxed">
+                {slide.prompt}
+              </pre>
+            </div>
+          )}
         </div>
       </CollapsibleContent>
+
+      {/* Optimization diff dialog */}
+      {result && (
+        <OptimizationDiff
+          result={result}
+          open={showOptimizationDiff}
+          onOpenChange={setShowOptimizationDiff}
+          onAccept={handleAcceptOptimization}
+          onReject={handleRejectOptimization}
+        />
+      )}
     </Collapsible>
   );
 }

@@ -685,6 +685,19 @@ export const styleDescriptions: Record<SlideStyle, string> = {
   'neon-scientific': 'cinematic scientific visualization style with very dark backgrounds (deep black #000000 to dark blue #0A0F1A), glowing bioluminescent elements with cyan/teal primary colors (#00D4FF, #00CED1), warm orange/amber energy accents (#FF6B35, #FFB800), particle effects and flowing energy waves, holographic technical diagrams with scientific data overlays, high-contrast neon lighting, futuristic laboratory aesthetic with transparent layers and glass-like elements, dramatic spot lighting effects, anatomical or molecular structures with glowing edges, dynamic force field visualizations, technical callouts with measurement lines, cinematic depth with layered composition, physics/biology themed with movie poster quality rendering',
 };
 
+export const LANGUAGE_LABELS: Record<string, string> = {
+  en: 'English',
+  vi: 'Vietnamese (Tiếng Việt)',
+  zh: 'Chinese (中文)',
+  ja: 'Japanese (日本語)',
+  ko: 'Korean (한국어)',
+  th: 'Thai (ภาษาไทย)',
+  id: 'Indonesian (Bahasa Indonesia)',
+  fr: 'French (Français)',
+  de: 'German (Deutsch)',
+  es: 'Spanish (Español)',
+};
+
 export const colorPaletteDescriptions: Record<ColorPalette, string> = {
   'auto': 'harmonious colors that complement the visual style and content mood, typically 2-3 accent colors plus neutrals',
   'corporate-blue': 'navy blue primary (#1E3A5F), light blue accents (#4A90D9), crisp white backgrounds, silver highlights - professional and trustworthy',
@@ -1103,6 +1116,7 @@ export interface PromptConfig {
   character?: CharacterSettings;
   generatedCharacter?: GeneratedCharacter;
   slideTypeSequence?: string[];
+  outputLanguage?: string;
 }
 
 export function buildUserPrompt(config: PromptConfig): string {
@@ -1116,10 +1130,38 @@ export function buildUserPrompt(config: PromptConfig): string {
     character,
     generatedCharacter,
     slideTypeSequence,
+    outputLanguage,
   } = config;
 
   const styleLabel = style.charAt(0).toUpperCase() + style.slice(1).replace(/-/g, ' ');
   const persona = stylePersonas[style];
+
+  // Build language instruction block
+  const languageLabel = outputLanguage ? LANGUAGE_LABELS[outputLanguage] : null;
+  const languageInstruction = outputLanguage && outputLanguage !== 'en'
+    ? `
+---
+
+## OUTPUT LANGUAGE REQUIREMENT
+
+**CRITICAL**: Generate ALL output in ${languageLabel}.
+
+This includes:
+- All slide titles and descriptions
+- All labels (Background, Character, Layout, Title, etc.)
+- All explanatory text and annotations
+- All formatting markers and section headers
+
+**PRESERVE TECHNICAL TERMS**: Keep technical terminology, proper nouns, brand names, and domain-specific vocabulary from the source content in their original form. Do not translate these.
+
+Examples of what to preserve:
+- Technology names: "Machine Learning", "API", "Docker"
+- Brand names: "Nano Banana Pro", "OpenAI"
+- Acronyms: "AI", "UI/UX", "ROI"
+
+---
+`
+    : '';
 
   let characterBlock = '';
 
@@ -1213,7 +1255,7 @@ For EACH slide, you MUST describe:
 ${persona}
 
 You are creating a ${styleLabel} presentation. EVERY visual decision must reflect ${styleLabel} aesthetics. This style is non-negotiable—it defines every element you describe.
-${characterBlock}
+${characterBlock}${languageInstruction}
 ---
 
 Generate ${slideCount} CINEMATICALLY RICH Nano Banana Pro Slides prompts for a visually stunning presentation deck.

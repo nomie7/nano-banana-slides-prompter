@@ -1,0 +1,95 @@
+{
+  "category": "creative",
+  "templates": [
+    {
+      "id": "portfolio-showcase",
+      "name": "Portfolio Showcase",
+      "nameKey": "templates.creative.portfolioShowcase.name",
+      "category": "creative",
+      "description": "Creative portfolio and work samples",
+      "descriptionKey": "templates.creative.portfolioShowcase.description",
+      "tags": ["portfolio", "showcase", "creative", "design"],
+      "config": {
+        "style": "glassmorphism",
+        "aspectRatio": "16:9",
+        "slideCount": 12,
+        "colorPalette": "gradient-mesh",
+        "layoutStructure": "visual-heavy"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "event-wedding",
+      "name": "Event / Wedding",
+      "nameKey": "templates.creative.eventWedding.name",
+      "category": "creative",
+      "description": "Special event or wedding celebration",
+      "descriptionKey": "templates.creative.eventWedding.description",
+      "tags": ["event", "wedding", "celebration", "party"],
+      "config": {
+        "style": "watercolor",
+        "aspectRatio": "16:9",
+        "slideCount": 15,
+        "colorPalette": "sunset-pink",
+        "layoutStructure": "visual-heavy"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "storytelling",
+      "name": "Storytelling",
+      "nameKey": "templates.creative.storytelling.name",
+      "category": "creative",
+      "description": "Narrative-driven visual story",
+      "descriptionKey": "templates.creative.storytelling.description",
+      "tags": ["story", "narrative", "creative", "visual"],
+      "config": {
+        "style": "hand-drawn",
+        "aspectRatio": "16:9",
+        "slideCount": 10,
+        "colorPalette": "warm-orange",
+        "layoutStructure": "visual-heavy",
+        "character": {
+          "enabled": true,
+          "renderStyle": "anime",
+          "gender": "none"
+        }
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "travel-blog",
+      "name": "Travel Blog",
+      "nameKey": "templates.creative.travelBlog.name",
+      "category": "creative",
+      "description": "Travel adventures and destinations",
+      "descriptionKey": "templates.creative.travelBlog.description",
+      "tags": ["travel", "blog", "adventure", "destination"],
+      "config": {
+        "style": "vintage",
+        "aspectRatio": "16:9",
+        "slideCount": 12,
+        "colorPalette": "forest-earth",
+        "layoutStructure": "visual-heavy"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "art-exhibition",
+      "name": "Art Exhibition",
+      "nameKey": "templates.creative.artExhibition.name",
+      "category": "creative",
+      "description": "Art gallery and exhibition showcase",
+      "descriptionKey": "templates.creative.artExhibition.description",
+      "tags": ["art", "exhibition", "gallery", "museum"],
+      "config": {
+        "style": "minimalist",
+        "aspectRatio": "1:1",
+        "slideCount": 10,
+        "colorPalette": "elegant-monochrome",
+        "layoutStructure": "visual-heavy"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

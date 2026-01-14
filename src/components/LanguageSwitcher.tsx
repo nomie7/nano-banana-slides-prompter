@@ -11,6 +11,7 @@ import {
 const languages = [
   { code: 'en', label: 'English' },
   { code: 'zh', label: '中文' },
+  { code: 'vi', label: 'Tiếng Việt' },
 ] as const;
 
 export function LanguageSwitcher() {

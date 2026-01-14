@@ -72,6 +72,7 @@ const generateSchema = z.object({
       renderStyle: z.enum(['pixar', 'real', 'anime', 'cartoon', 'sketch', 'chibi', 'low-poly', 'mascot']),
       gender: z.enum(['none', 'male', 'female']),
     }).optional(),
+    outputLanguage: z.enum(['en', 'vi', 'zh', 'ja', 'ko', 'th', 'id', 'fr', 'de', 'es']).optional(),
   }),
   llmConfig: z.object({
     apiKey: z.string(),
@@ -186,6 +187,7 @@ promptRouter.post(
       character: body.settings.character,
       generatedCharacter,
       slideTypeSequence,
+      outputLanguage: body.settings.outputLanguage,
     });
 
     try {
@@ -327,6 +329,7 @@ promptRouter.post(
       character: body.settings.character,
       generatedCharacter,
       slideTypeSequence,
+      outputLanguage: body.settings.outputLanguage,
     });
 
     return streamSSE(c, async (stream) => {

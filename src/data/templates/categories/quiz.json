@@ -1,0 +1,73 @@
+{
+  "category": "quiz",
+  "templates": [
+    {
+      "id": "multiple-choice",
+      "name": "Multiple Choice Quiz",
+      "nameKey": "templates.quiz.multipleChoice.name",
+      "category": "quiz",
+      "description": "Interactive multiple choice questions with options",
+      "descriptionKey": "templates.quiz.multipleChoice.description",
+      "tags": ["quiz", "multiple-choice", "assessment", "interactive"],
+      "config": {
+        "style": "educational",
+        "aspectRatio": "16:9",
+        "slideCount": 10,
+        "colorPalette": "corporate-blue",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "true-false",
+      "name": "True/False Quiz",
+      "nameKey": "templates.quiz.trueFalse.name",
+      "category": "quiz",
+      "description": "Simple true or false question format",
+      "descriptionKey": "templates.quiz.trueFalse.description",
+      "tags": ["quiz", "true-false", "assessment", "simple"],
+      "config": {
+        "style": "minimalist",
+        "aspectRatio": "16:9",
+        "slideCount": 8,
+        "colorPalette": "nature-green",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "fill-in-blank",
+      "name": "Fill-in-the-Blank",
+      "nameKey": "templates.quiz.fillInBlank.name",
+      "category": "quiz",
+      "description": "Complete the sentence with missing words",
+      "descriptionKey": "templates.quiz.fillInBlank.description",
+      "tags": ["quiz", "fill-blank", "vocabulary", "learning"],
+      "config": {
+        "style": "educational",
+        "aspectRatio": "16:9",
+        "slideCount": 10,
+        "colorPalette": "modern-purple",
+        "layoutStructure": "text-heavy"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "matching",
+      "name": "Matching Quiz",
+      "nameKey": "templates.quiz.matching.name",
+      "category": "quiz",
+      "description": "Match items from two columns together",
+      "descriptionKey": "templates.quiz.matching.description",
+      "tags": ["quiz", "matching", "pairing", "interactive"],
+      "config": {
+        "style": "flat-design",
+        "aspectRatio": "16:9",
+        "slideCount": 8,
+        "colorPalette": "warm-orange",
+        "layoutStructure": "visual-heavy"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}

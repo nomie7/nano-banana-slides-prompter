@@ -1,0 +1,90 @@
+{
+  "category": "business",
+  "templates": [
+    {
+      "id": "sales-proposal",
+      "name": "Sales Proposal",
+      "nameKey": "templates.business.salesProposal.name",
+      "category": "business",
+      "description": "Persuasive sales and proposal deck",
+      "descriptionKey": "templates.business.salesProposal.description",
+      "tags": ["sales", "proposal", "client", "deal"],
+      "config": {
+        "style": "professional",
+        "aspectRatio": "16:9",
+        "slideCount": 12,
+        "colorPalette": "corporate-blue",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "company-overview",
+      "name": "Company Overview",
+      "nameKey": "templates.business.companyOverview.name",
+      "category": "business",
+      "description": "Company profile and capabilities",
+      "descriptionKey": "templates.business.companyOverview.description",
+      "tags": ["company", "profile", "about", "corporate"],
+      "config": {
+        "style": "professional",
+        "aspectRatio": "16:9",
+        "slideCount": 10,
+        "colorPalette": "ocean-teal",
+        "layoutStructure": "visual-heavy"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "project-status",
+      "name": "Project Status",
+      "nameKey": "templates.business.projectStatus.name",
+      "category": "business",
+      "description": "Project progress and milestone updates",
+      "descriptionKey": "templates.business.projectStatus.description",
+      "tags": ["project", "status", "progress", "milestone"],
+      "config": {
+        "style": "infographic",
+        "aspectRatio": "16:9",
+        "slideCount": 8,
+        "colorPalette": "nature-green",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "strategy-planning",
+      "name": "Strategy Planning",
+      "nameKey": "templates.business.strategyPlanning.name",
+      "category": "business",
+      "description": "Strategic roadmap and planning session",
+      "descriptionKey": "templates.business.strategyPlanning.description",
+      "tags": ["strategy", "planning", "roadmap", "vision"],
+      "config": {
+        "style": "minimalist",
+        "aspectRatio": "16:9",
+        "slideCount": 15,
+        "colorPalette": "elegant-monochrome",
+        "layoutStructure": "balanced"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "id": "financial-report",
+      "name": "Financial Report",
+      "nameKey": "templates.business.financialReport.name",
+      "category": "business",
+      "description": "Financial data and business metrics",
+      "descriptionKey": "templates.business.financialReport.description",
+      "tags": ["financial", "report", "metrics", "data"],
+      "config": {
+        "style": "infographic",
+        "aspectRatio": "16:9",
+        "slideCount": 12,
+        "colorPalette": "royal-gold",
+        "layoutStructure": "text-heavy"
+      },
+      "version": "1.0.0"
+    }
+  ]
+}
