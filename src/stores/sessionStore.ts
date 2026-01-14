@@ -7,7 +7,31 @@ import type {
   GeneratedPrompt,
 } from '@/types/slidePrompt';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Cache for backend port
+let cachedApiBase: string | null = null;
+let apiBasePromise: Promise<string> | null = null;
+
+/**
+ * Get API base URL dynamically - uses Electron backend port if available
+ */
+async function getApiBase(): Promise<string> {
+  if (cachedApiBase) return cachedApiBase;
+  if (apiBasePromise) return apiBasePromise;
+
+  apiBasePromise = (async () => {
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      const port = await window.electronAPI.getBackendPort();
+      if (port) {
+        cachedApiBase = `http://localhost:${port}`;
+        return cachedApiBase;
+      }
+    }
+    cachedApiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    return cachedApiBase;
+  })();
+
+  return apiBasePromise;
+}
 
 const generateId = (): string => `session_${crypto.randomUUID()}`;
 
@@ -77,7 +101,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
 
   loadSessions: async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/sessions`);
+      const apiBase = await getApiBase();
+      const res = await fetch(`${apiBase}/api/sessions`);
       if (res.ok) {
         const data = await res.json();
         const normalizedSessions = (data.sessions || []).map((session: Session) => ({
@@ -118,7 +143,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
     }));
 
     try {
-      await fetch(`${API_BASE}/api/sessions`, {
+      const apiBase = await getApiBase();
+      await fetch(`${apiBase}/api/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSession),
@@ -151,7 +177,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
     });
 
     try {
-      await fetch(`${API_BASE}/api/sessions/${id}`, { method: 'DELETE' });
+      const apiBase = await getApiBase();
+      await fetch(`${apiBase}/api/sessions/${id}`, { method: 'DELETE' });
     } catch (e) {
       console.error('Failed to delete session:', e);
     }
@@ -160,9 +187,10 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   setCurrentSession: async (id) => {
     set({ currentSessionId: id });
     try {
-      await fetch(`${API_BASE}/api/sessions/current/${id}`, { method: 'PUT' });
+      const apiBase = await getApiBase();
+      await fetch(`${apiBase}/api/sessions/current/${id}`, { method: 'PUT' });
 
-      const res = await fetch(`${API_BASE}/api/sessions`);
+      const res = await fetch(`${apiBase}/api/sessions`);
       if (res.ok) {
         const data = await res.json();
         const freshSession = data.sessions.find((s: Session) => s.id === id);
@@ -252,7 +280,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
       }
       set({ syncInFlight: true });
       try {
-        await fetch(`${API_BASE}/api/sessions/sync`, {
+        const apiBase = await getApiBase();
+        await fetch(`${apiBase}/api/sessions/sync`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessions, currentSessionId }),

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Settings, RotateCcw, Save, Eye, EyeOff, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,16 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useSettingsStore } from '@/stores/settingsStore';
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '');
+/**
+ * Get API base URL dynamically - uses Electron backend port if available
+ */
+async function getApiBase(): Promise<string> {
+  if (typeof window !== 'undefined' && window.electronAPI) {
+    const port = await window.electronAPI.getBackendPort();
+    if (port) return `http://localhost:${port}`;
+  }
+  return (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '');
+}
 
 export function SettingsDialog() {
   const { t } = useTranslation();
@@ -53,46 +62,84 @@ export function SettingsDialog() {
   const [geminiEnabled, setGeminiEnabled] = useState(false);
   const [geminiBaseURL, setGeminiBaseURL] = useState('');
 
+  // Cache API base URL
+  const apiBaseRef = useRef<string | null>(null);
+  const getApiBaseUrl = useCallback(async (): Promise<string> => {
+    if (apiBaseRef.current) return apiBaseRef.current;
+    apiBaseRef.current = await getApiBase();
+    return apiBaseRef.current;
+  }, []);
+
+  // Load settings from Electron on mount (persistent storage)
+  useEffect(() => {
+    async function loadFromElectron() {
+      if (!window.electronAPI) return;
+      try {
+        const config = await window.electronAPI.getLLMConfig();
+        if (config?.apiKey || config?.apiBase || config?.model) {
+          // Sync Electron config to Zustand store if not already set
+          const current = useSettingsStore.getState().settings;
+          if (!current?.apiKey && !current?.baseURL && !current?.model) {
+            setSettings({
+              apiKey: config.apiKey || '',
+              baseURL: config.apiBase || '',
+              model: config.model || '',
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load settings from Electron:', e);
+      }
+    }
+    loadFromElectron();
+  }, [setSettings]);
+
+  // Load default settings when dialog opens
   useEffect(() => {
     if (!open) return;
 
-    // Load LLM settings
-    fetch(`${API_BASE}/api/settings/llm`)
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`${res.status}`))))
-      .then((data) => {
-        setDefaultConfig(data);
-        setApiKey(storedSettings?.apiKey || '');
-        setBaseURL(storedSettings?.baseURL || data.baseURL || '');
-        setModel(storedSettings?.model || data.model || '');
-      })
-      .catch(() => {
-        toast({
-          title: t('settings.error'),
-          description: t('settings.loadFailed', 'Failed to load default LLM settings.'),
-          variant: 'destructive',
-        });
-      });
+    async function loadSettings() {
+      const apiBase = await getApiBaseUrl();
 
-    // Load Gemini settings
-    fetch(`${API_BASE}/api/gemini/config`)
-      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`${res.status}`))))
-      .then((data) => {
-        setGeminiDefaultConfig(data);
-        setGeminiApiKey(storedGeminiSettings?.apiKey || '');
-        setGeminiModel(storedGeminiSettings?.model || data.model || '');
-        setGeminiEnabled(storedGeminiSettings?.enabled ?? false);
-        setGeminiBaseURL(storedGeminiSettings?.baseURL || '');
-      })
-      .catch(() => {
-        // Gemini config optional, ignore errors
-        setGeminiDefaultConfig({
-          model: 'gemini-2.0-flash-preview-image-generation',
-          hasApiKey: false,
+      // Load LLM settings
+      fetch(`${apiBase}/api/settings/llm`)
+        .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`${res.status}`))))
+        .then((data) => {
+          setDefaultConfig(data);
+          setApiKey(storedSettings?.apiKey || '');
+          setBaseURL(storedSettings?.baseURL || data.baseURL || '');
+          setModel(storedSettings?.model || data.model || '');
+        })
+        .catch(() => {
+          toast({
+            title: t('settings.error'),
+            description: t('settings.loadFailed', 'Failed to load default LLM settings.'),
+            variant: 'destructive',
+          });
         });
-      });
-  }, [open, toast, t, storedSettings, storedGeminiSettings]);
 
-  const handleSave = () => {
+      // Load Gemini settings
+      fetch(`${apiBase}/api/gemini/config`)
+        .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`${res.status}`))))
+        .then((data) => {
+          setGeminiDefaultConfig(data);
+          setGeminiApiKey(storedGeminiSettings?.apiKey || '');
+          setGeminiModel(storedGeminiSettings?.model || data.model || '');
+          setGeminiEnabled(storedGeminiSettings?.enabled ?? false);
+          setGeminiBaseURL(storedGeminiSettings?.baseURL || '');
+        })
+        .catch(() => {
+          // Gemini config optional, ignore errors
+          setGeminiDefaultConfig({
+            model: 'gemini-2.0-flash-preview-image-generation',
+            hasApiKey: false,
+          });
+        });
+    }
+    loadSettings();
+  }, [open, toast, t, storedSettings, storedGeminiSettings, getApiBaseUrl]);
+
+  const handleSave = async () => {
     if (!baseURL.trim() || !model.trim()) {
       toast({
         title: t('settings.error'),
@@ -120,20 +167,33 @@ export function SettingsDialog() {
       return;
     }
 
-    // Save LLM settings
+    // Save LLM settings to Zustand (session storage)
     setSettings({
       apiKey: apiKey.trim(),
       baseURL: baseURL.trim(),
       model: model.trim(),
     });
 
-    // Save Gemini settings
+    // Save Gemini settings to Zustand (session storage)
     setGeminiSettings({
       apiKey: geminiApiKey.trim(),
       model: geminiModel.trim() || geminiDefaultConfig?.model || '',
       enabled: geminiEnabled,
       baseURL: geminiBaseURL.trim() || undefined,
     });
+
+    // Also persist to Electron file storage for cross-session persistence
+    if (window.electronAPI) {
+      try {
+        await window.electronAPI.setLLMConfig({
+          apiKey: apiKey.trim(),
+          apiBase: baseURL.trim(),
+          model: model.trim(),
+        });
+      } catch (e) {
+        console.warn('Failed to persist settings to Electron:', e);
+      }
+    }
 
     toast({ title: t('settings.saved') });
     setOpen(false);
@@ -164,7 +224,8 @@ export function SettingsDialog() {
 
     setTestingConnection(true);
     try {
-      const response = await fetch(`${API_BASE}/api/gemini/test-connection`, {
+      const apiBase = await getApiBaseUrl();
+      const response = await fetch(`${apiBase}/api/gemini/test-connection`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

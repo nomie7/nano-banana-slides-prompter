@@ -2,7 +2,7 @@
  * usePromptOptimizer Hook
  * Provides prompt optimization functionality via API
  */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -27,7 +27,31 @@ export interface UsePromptOptimizerReturn extends UsePromptOptimizerState {
   reset: () => void;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Cache for backend port
+let cachedApiBase: string | null = null;
+let apiBasePromise: Promise<string> | null = null;
+
+/**
+ * Get API base URL dynamically - uses Electron backend port if available
+ */
+async function getApiBase(): Promise<string> {
+  if (cachedApiBase) return cachedApiBase;
+  if (apiBasePromise) return apiBasePromise;
+
+  apiBasePromise = (async () => {
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      const port = await window.electronAPI.getBackendPort();
+      if (port) {
+        cachedApiBase = `http://localhost:${port}`;
+        return cachedApiBase;
+      }
+    }
+    cachedApiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    return cachedApiBase;
+  })();
+
+  return apiBasePromise;
+}
 
 /**
  * Hook for optimizing slide prompts via LLM
@@ -54,7 +78,8 @@ export function usePromptOptimizer(): UsePromptOptimizerReturn {
       setResult(null);
 
       try {
-        const response = await fetch(`${API_BASE}/api/optimize-prompt`, {
+        const apiBase = await getApiBase();
+        const response = await fetch(`${apiBase}/api/optimize-prompt`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt, iterations }),
