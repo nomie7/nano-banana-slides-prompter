@@ -1,6 +1,6 @@
 # Code Standards & Conventions
 
-**Version:** 1.2.2 | **Last Updated:** 2026-01-13
+**Version:** 2.0.4 | **Last Updated:** 2026-01-14
 
 ## Directory Organization
 
@@ -439,6 +439,8 @@ OPENAI_API_BASE=https://api.openai.com/v1
 OPENAI_API_KEY=your-api-key
 OPENAI_MODEL=gpt-4o
 PORT=3001
+GEMINI_API_KEY=your-gemini-key
+GEMINI_API_BASE=https://generativelanguage.googleapis.com
 ```
 
 ## Code Quality Tools

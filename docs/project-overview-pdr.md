@@ -7,10 +7,10 @@
 | Attribute    | Value                       |
 | ------------ | --------------------------- |
 | Name         | Nano Banana Slides Prompter |
-| Version      | 2.0.0                       |
+| Version      | 2.0.4                       |
 | License      | GPL-3.0-or-later            |
 | Repository   | nano-banana-slides-prompter |
-| Last Updated | 2026-01-13                  |
+| Last Updated | 2026-01-14                  |
 
 ## Target Users
 
@@ -95,6 +95,18 @@
 - **Input Sanitization**: XSS protection for user inputs
 - **Content Validation**: Enhanced validation for all input types
 
+### 13. Gemini Image Generation (v2.0.0+)
+
+- **Imagen 4 Model**: Text-to-image generation via Google Gemini API
+- **Batch Generation**: Generate images for multiple slides
+- **Custom API Base URL**: Configurable Gemini endpoint (v2.0.3)
+- **Test Connection**: Verify Gemini API connectivity
+
+### 14. Inline Prompt Editing (v2.0.4)
+
+- **Edit Before Generation**: Modify slide prompts before image generation
+- **Direct Editing**: Edit individual slide prompts in PromptOutput
+
 ### Functional Requirements
 
 | ID    | Requirement                              | Priority | Status |
@@ -118,6 +130,9 @@
 | FR-17 | Brand Kit with localStorage persistence  | Medium   | Done   |
 | FR-18 | Course Builder Mode (Beta)               | Low      | Done   |
 | FR-19 | Input sanitization and security          | High     | Done   |
+| FR-20 | Gemini Image Generation                  | Medium   | Done   |
+| FR-21 | Custom Gemini API base URL               | Low      | Done   |
+| FR-22 | Inline edit for slide prompts            | Medium   | Done   |
 
 ### Non-Functional Requirements
 
@@ -166,8 +181,10 @@
 
 | Version | Date    | Highlights                                                  |
 | ------- | ------- | ----------------------------------------------------------- |
-| 2.0.0   | 2026-01 | Quiz Templates, Brand Kit, Course Builder, Security         |
-| 1.3.0   | 2026-01 | Gemini Image Generation integration                         |
+| 2.0.4   | 2026-01 | Inline edit for slide prompts before image generation       |
+| 2.0.3   | 2026-01 | Custom API base URL for Gemini Image Generation             |
+| 2.0.2   | 2026-01 | DOMMatrix polyfill for Electron PDF compatibility           |
+| 2.0.0   | 2026-01 | Quiz Templates, Brand Kit, Course Builder, Gemini, Security |
 | 1.2.5   | 2026-01 | PDF/DOCX import, PPTX/PDF export, batch processing          |
 | 1.2.2   | 2026-01 | Settings hot-reload using Zustand store                     |
 | 1.2.1   | 2026-01 | CI workflow fixes, auto-release                             |

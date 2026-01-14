@@ -1,6 +1,6 @@
 # Development Roadmap
 
-**Version:** 1.2.5 | **Last Updated:** 2026-01-13
+**Version:** 2.0.4 | **Last Updated:** 2026-01-14
 
 ## Overview
 
@@ -8,13 +8,14 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 ## Phase Summary
 
-| Phase | Name                           | Status   | Progress |
-| ----- | ------------------------------ | -------- | -------- |
-| 1     | Foundation & Core Features     | Complete | 100%     |
-| 2     | Desktop & Internationalization | Complete | 100%     |
-| 3     | Document Processing & Export   | Complete | 100%     |
-| 4     | Education & Business Focus     | Complete | 100%     |
-| 5     | Advanced Features              | Planned  | 0%       |
+| Phase | Name                           | Status      | Progress |
+| ----- | ------------------------------ | ----------- | -------- |
+| 1     | Foundation & Core Features     | Complete    | 100%     |
+| 2     | Desktop & Internationalization | Complete    | 100%     |
+| 3     | Document Processing & Export   | Complete    | 100%     |
+| 4     | Education & Business Focus     | Complete    | 100%     |
+| 5     | Gemini & UX Improvements       | In Progress | 60%      |
+| 6     | Advanced Features              | Planned     | 0%       |
 
 ---
 
@@ -88,7 +89,23 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 ---
 
-## Phase 5: Advanced Features (Planned)
+## Phase 5: Gemini & UX Improvements (v2.0.x)
+
+**Status:** In Progress | **Timeline:** Jan 2026
+
+### Milestones
+
+- [x] Gemini Image Generation integration
+- [x] Batch image generation support
+- [x] Custom Gemini API base URL configuration
+- [x] DOMMatrix polyfill for Electron PDF compatibility
+- [x] Inline edit for slide prompts before image generation
+- [ ] Image preview and gallery view
+- [ ] Export generated images to presentation
+
+---
+
+## Phase 6: Advanced Features (Planned)
 
 **Status:** Planned | **Timeline:** Q2 2026
 
@@ -116,12 +133,16 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 ## Version History
 
-| Version | Date       | Phase | Key Changes                               |
-| ------- | ---------- | ----- | ----------------------------------------- |
-| 1.2.5   | 2026-01-13 | 4     | Quiz Templates, Brand Kit, Course Builder |
-| 1.2.4   | 2026-01-13 | 3     | Gemini Image Generation                   |
-| 1.2.3   | 2026-01-13 | 3     | Document import/export, batch processing  |
-| 1.2.2   | 2026-01-12 | 2     | Settings hot-reload                       |
-| 1.2.0   | 2026-01-12 | 2     | Vietnamese i18n, output language          |
-| 1.1.x   | 2025-12    | 2     | Desktop app, auto-updater                 |
-| 1.0.x   | 2024-11    | 1     | Initial release, core features            |
+| Version | Date       | Phase | Key Changes                                       |
+| ------- | ---------- | ----- | ------------------------------------------------- |
+| 2.0.4   | 2026-01-14 | 5     | Inline edit for slide prompts                     |
+| 2.0.3   | 2026-01-14 | 5     | Custom Gemini API base URL                        |
+| 2.0.2   | 2026-01-14 | 5     | DOMMatrix polyfill for Electron PDF               |
+| 2.0.0   | 2026-01-13 | 4     | Quiz Templates, Brand Kit, Course Builder, Gemini |
+| 1.2.5   | 2026-01-13 | 4     | Quiz Templates, Brand Kit, Course Builder         |
+| 1.2.4   | 2026-01-13 | 3     | Gemini Image Generation                           |
+| 1.2.3   | 2026-01-13 | 3     | Document import/export, batch processing          |
+| 1.2.2   | 2026-01-12 | 2     | Settings hot-reload                               |
+| 1.2.0   | 2026-01-12 | 2     | Vietnamese i18n, output language                  |
+| 1.1.x   | 2025-12    | 2     | Desktop app, auto-updater                         |
+| 1.0.x   | 2024-11    | 1     | Initial release, core features                    |

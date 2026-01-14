@@ -52,7 +52,9 @@ app.onError((err, c) => {
   return c.json({ success: false, error: err.message || 'Internal server error' }, 500);
 });
 
-const requestedPort = Number(process.env.PORT) || 3001;
+// Handle PORT=0 explicitly (dynamic allocation) - don't treat 0 as falsy
+const envPort = process.env.PORT;
+const requestedPort = envPort === '0' ? 0 : Number(envPort) || 3001;
 
 // Try port binding with retry logic for production reliability
 const MAX_PORT_RETRIES = 5;
@@ -60,14 +62,16 @@ let server: ReturnType<typeof Bun.serve> | null = null;
 let boundPort = requestedPort;
 
 for (let attempt = 0; attempt < MAX_PORT_RETRIES; attempt++) {
-  const tryPort = requestedPort === 0 ? 0 : requestedPort + attempt;
+  // For dynamic allocation (PORT=0), use base port 3001 + attempt for retry
+  const basePort = requestedPort === 0 ? 3001 : requestedPort;
+  const tryPort = basePort + attempt;
   try {
     server = Bun.serve({
       port: tryPort,
       fetch: app.fetch,
       idleTimeout: 255,
     });
-    boundPort = server.port;
+    boundPort = server.port ?? tryPort;
     break; // Success - exit retry loop
   } catch (err: unknown) {
     const error = err as { code?: string };

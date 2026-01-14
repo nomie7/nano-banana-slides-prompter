@@ -1,6 +1,6 @@
 # System Architecture
 
-**Version:** 2.0.0 | **Last Updated:** 2026-01-13
+**Version:** 2.0.4 | **Last Updated:** 2026-01-14
 
 ## High-Level Overview
 
@@ -158,6 +158,12 @@ flowchart TD
 | `/api/sessions/current/:id`   | PUT    | Set current session | -                                | `{ success }`                    |
 | `/api/sessions/sync`          | POST   | Bulk sync           | `{ sessions, currentSessionId }` | `{ success }`                    |
 | `/api/settings/llm`           | GET    | Get LLM config      | -                                | `{ baseUrl, model }`             |
+| `/api/generate-image`         | POST   | Generate image      | `{ prompt, config }`             | `{ imageUrl, base64 }`           |
+| `/api/generate-images-batch`  | POST   | Batch image gen     | `{ prompts[], config }`          | `{ images[] }`                   |
+| `/api/gemini/test`            | POST   | Test Gemini conn    | `{ apiKey, apiBase }`            | `{ success, model }`             |
+| `/api/gemini/config`          | GET    | Get Gemini config   | -                                | `{ apiBase, model }`             |
+| `/api/upload/pdf`             | POST   | Upload PDF          | `multipart/form-data`            | `{ content, pages }`             |
+| `/api/upload/docx`            | POST   | Upload DOCX         | `multipart/form-data`            | `{ content }`                    |
 
 ### Service Layer
 
@@ -296,12 +302,14 @@ graph TB
 
 **Backend** (`server/.env`):
 
-| Variable          | Description      | Default                   |
-| ----------------- | ---------------- | ------------------------- |
-| `PORT`            | Server port      | 3001                      |
-| `OPENAI_API_BASE` | LLM API base URL | https://api.openai.com/v1 |
-| `OPENAI_API_KEY`  | API key          | (required)                |
-| `OPENAI_MODEL`    | Model name       | gpt-4o                    |
+| Variable          | Description         | Default                                   |
+| ----------------- | ------------------- | ----------------------------------------- |
+| `PORT`            | Server port         | 3001                                      |
+| `OPENAI_API_BASE` | LLM API base URL    | https://api.openai.com/v1                 |
+| `OPENAI_API_KEY`  | API key             | (required)                                |
+| `OPENAI_MODEL`    | Model name          | gpt-4o                                    |
+| `GEMINI_API_KEY`  | Gemini API key      | (optional)                                |
+| `GEMINI_API_BASE` | Gemini API base URL | https://generativelanguage.googleapis.com |
 
 **Frontend** (build-time):
 
