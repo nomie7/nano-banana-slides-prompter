@@ -90,5 +90,3 @@ if (!server) {
 // Output ACTUAL bound port for Electron IPC detection (AFTER successful bind)
 console.log(`PORT:${boundPort}`);
 console.log(`Server running at http://localhost:${boundPort}`);
-
-export default server;
