@@ -1,6 +1,6 @@
 {
   "name": "nano-banana-slides-prompter-desktop",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "Desktop application for Nano Banana Slides Prompter",
   "homepage": "https://github.com/xuan2261/nano-banana-slides-prompter",
   "main": "dist/main.js",
