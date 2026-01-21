@@ -234,6 +234,20 @@
     "loadSessionsTitle": "加载会话失败",
     "loadSessionsDescription": "加载会话时发生错误。请重试。"
   },
+  "error": {
+    "title": "出现错误",
+    "description": "发生意外错误。您的工作已自动保存。",
+    "retry": "重试",
+    "details": "错误详情"
+  },
+  "dnd": {
+    "dragHandle": "拖动以重新排序",
+    "reordered": "幻灯片已重新排序"
+  },
+  "regenerate": {
+    "success": "幻灯片已成功重新生成",
+    "failed": "无法重新生成幻灯片"
+  },
   "notFound": {
     "message": "页面未找到",
     "returnHome": "返回首页"

@@ -234,6 +234,20 @@
     "loadSessionsTitle": "Không thể tải các phiên",
     "loadSessionsDescription": "Đã xảy ra lỗi khi tải các phiên của bạn. Vui lòng thử lại."
   },
+  "error": {
+    "title": "Đã xảy ra lỗi",
+    "description": "Một lỗi không mong muốn đã xảy ra. Công việc của bạn đã được tự động lưu.",
+    "retry": "Thử lại",
+    "details": "Chi tiết lỗi"
+  },
+  "dnd": {
+    "dragHandle": "Kéo để sắp xếp lại",
+    "reordered": "Đã sắp xếp lại slides"
+  },
+  "regenerate": {
+    "success": "Đã tạo lại slide thành công",
+    "failed": "Không thể tạo lại slide"
+  },
   "notFound": {
     "message": "Không tìm thấy trang",
     "returnHome": "Quay Về Trang Chủ"

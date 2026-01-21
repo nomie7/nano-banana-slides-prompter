@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useGeminiImage } from '@/hooks/useGeminiImage';
 import { SlideCard } from './SlideCard';
+import { SlideListDndContext } from './SlideListDndContext';
 import { GeminiImagePreview } from '@/components/gemini/GeminiImagePreview';
 import type { GeneratedPrompt, OutputFormat, ParsedSlide } from '@/types/slidePrompt';
 
@@ -92,6 +93,16 @@ export function PromptOutput({
       onSlidesUpdate(updatedSlides);
     },
     [displaySlides, onSlidesUpdate]
+  );
+
+  // Handle slides reorder from drag & drop
+  const handleSlidesReorder = useCallback(
+    (reorderedSlides: ParsedSlide[]) => {
+      if (onSlidesUpdate) {
+        onSlidesUpdate(reorderedSlides);
+      }
+    },
+    [onSlidesUpdate]
   );
 
   if (!prompt && !isStreaming) {
@@ -258,20 +269,33 @@ export function PromptOutput({
 
             <TabsContent value="text" className="mt-0">
               {hasSlides || isStreaming ? (
-                <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-1">
-                  {displaySlides.map((slide, index) => (
-                    <SlideCard
-                      key={slide.slideNumber}
-                      slide={slide}
-                      defaultOpen={allExpanded}
-                      isNew={false}
-                      animationDelay={index * 50}
+                <div className="max-h-[70vh] overflow-y-auto pr-1">
+                  {isStreaming ? (
+                    // During streaming, show slides without drag & drop
+                    <div className="space-y-3">
+                      {displaySlides.map((slide, index) => (
+                        <SlideCard
+                          key={slide.slideNumber}
+                          slide={slide}
+                          defaultOpen={allExpanded}
+                          isNew={false}
+                          animationDelay={index * 50}
+                          onPromptUpdate={onSlidesUpdate ? handlePromptUpdate : undefined}
+                        />
+                      ))}
+                      {Array.from({ length: remainingSkeletons }).map((_, i) => (
+                        <SlideSkeleton key={`skeleton-${i}`} />
+                      ))}
+                    </div>
+                  ) : (
+                    // After generation, enable drag & drop reordering
+                    <SlideListDndContext
+                      slides={displaySlides}
+                      onSlidesReorder={handleSlidesReorder}
                       onPromptUpdate={onSlidesUpdate ? handlePromptUpdate : undefined}
+                      disabled={false}
                     />
-                  ))}
-                  {Array.from({ length: remainingSkeletons }).map((_, i) => (
-                    <SlideSkeleton key={`skeleton-${i}`} />
-                  ))}
+                  )}
                 </div>
               ) : (
                 <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-xl p-4 max-h-96 overflow-auto border border-border/30">

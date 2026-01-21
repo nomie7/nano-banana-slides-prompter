@@ -1,6 +1,6 @@
 # System Architecture
 
-**Version:** 2.0.10 | **Last Updated:** 2026-01-14
+**Version:** 2.0.12 | **Last Updated:** 2026-01-21
 
 ## High-Level Overview
 
@@ -130,9 +130,11 @@ flowchart TD
     Router -->|/api/sessions| Sessions[Sessions Route]
     Router -->|/api/settings| Settings[Settings Route]
     Router -->|/api/optimize-prompt| Optimize[Optimize Route]
+    Router -->|/api/regenerate-slide| Regenerate[Regenerate Route]
     Router -->|/health| Health[Health Check]
 
     Prompt --> LLMService[LLM Service]
+    Regenerate --> LLMService
     Extract --> ScraperService[Scraper Service]
     Sessions --> FileStorage[File Storage]
     Optimize --> OptimizerService[Prompt Optimizer Service]
@@ -151,6 +153,7 @@ flowchart TD
 | `/api/generate-prompt-stream` | POST   | Stream prompts      | `SlidePromptConfig`              | SSE stream                       |
 | `/api/extract-url`            | POST   | Extract URL content | `{ url }`                        | `{ title, content }`             |
 | `/api/optimize-prompt`        | POST   | Optimize prompt     | `{ prompt, context }`            | `{ optimizedPrompt, changes }`   |
+| `/api/regenerate-slide`       | POST   | Regenerate slide    | `RegenerateRequest`              | `{ success, slide }`             |
 | `/api/sessions`               | GET    | List sessions       | -                                | `{ sessions, currentSessionId }` |
 | `/api/sessions`               | POST   | Create session      | `Session`                        | `{ success, session }`           |
 | `/api/sessions/:id`           | PUT    | Update session      | `Partial<Session>`               | `{ success }`                    |
@@ -194,19 +197,27 @@ classDiagram
         -analyzePrompt(prompt) PromptAnalysis
         -generateImprovement(analysis) string
     }
+
+    class RegenerateService {
+        +regenerateSlide(context) Promise~SlideResult~
+        -buildPrompt(context) string
+        -parseResponse(response) ParsedSlide
+    }
 ```
 
 ### Prompt Engine
 
 The prompt engine (`server/src/prompts/`) contains:
 
-| Component            | Description                                         |
-| -------------------- | --------------------------------------------------- |
-| **Visual Styles**    | 20 styles (Professional, Technical, Creative, etc.) |
-| **Color Palettes**   | 13 palettes (Auto, Corporate, Vibrant, etc.)        |
-| **Character Styles** | 8 render styles (Pixar, Anime, Cartoon, etc.)       |
-| **Slide Templates**  | 50+ templates across 10 categories                  |
-| **Style Personas**   | Creative identities for each style                  |
+| Component            | Description                                                       |
+| -------------------- | ----------------------------------------------------------------- |
+| **Visual Styles**    | 20 styles (Professional, Technical, Creative, etc.) + 'auto' mode |
+| **Color Palettes**   | 13 palettes (Auto, Corporate, Vibrant, etc.)                      |
+| **Character Styles** | 8 render styles (Pixar, Anime, Cartoon, etc.)                     |
+| **Slide Templates**  | 50+ templates across 10 categories                                |
+| **Style Personas**   | Creative identities for each style                                |
+
+**Auto Mode**: When style is set to 'auto', no visual style instructions are included in the prompt, allowing the LLM to determine the best style based on content.
 
 **Slide Type Categories**:
 
@@ -266,10 +277,12 @@ interface ContentConfig {
 
 interface PresentationSettings {
   aspectRatio: '16:9' | '4:3' | '1:1';
-  slideCount: number;
+  slideCount: number; // 1-200
   colorPalette: ColorPalette;
   layoutStructure: LayoutStructure;
 }
+
+type SlideStyle = 'auto' | 'professional' | 'technical' | 'creative' | 'educational' | 'minimalist' | /* ... 15 more styles */;
 ```
 
 ## Deployment Architecture

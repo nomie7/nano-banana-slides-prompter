@@ -1,6 +1,6 @@
 # Codebase Summary
 
-**Version:** 2.0.10 | **Last Updated:** 2026-01-14
+**Version:** 2.0.12 | **Last Updated:** 2026-01-21
 
 ## Overview
 
@@ -65,14 +65,24 @@ nano-banana-slides-prompter/
 
 ### Domain Components (`src/components/slide-prompt/`)
 
-| Component                  | Purpose                            |
-| -------------------------- | ---------------------------------- |
-| `ContentInput.tsx`         | Text/URL/CSV content input         |
-| `StyleSelector.tsx`        | Visual style selection (20 styles) |
-| `CharacterSelector.tsx`    | Character presenter options        |
-| `PresentationSettings.tsx` | Aspect ratio, slide count, palette |
-| `PromptOutput.tsx`         | Generated prompts display          |
-| `SlideCard.tsx`            | Individual slide prompt card       |
+| Component                  | Purpose                                                         |
+| -------------------------- | --------------------------------------------------------------- |
+| `ContentInput.tsx`         | Text/URL/CSV content input                                      |
+| `StyleSelector.tsx`        | Visual style selection (20 styles) with auto/custom mode toggle |
+| `CharacterSelector.tsx`    | Character presenter options                                     |
+| `PresentationSettings.tsx` | Aspect ratio, slide count (1-200), palette                      |
+| `PromptOutput.tsx`         | Generated prompts display                                       |
+| `SlideCard.tsx`            | Individual slide prompt card                                    |
+| `SlideListDndContext.tsx`  | Drag-and-drop context provider (dnd-kit)                        |
+| `SortableSlideCard.tsx`    | Draggable slide card wrapper                                    |
+
+### Error Handling (`src/components/error/`)
+
+| Component           | Purpose                                |
+| ------------------- | -------------------------------------- |
+| `ErrorBoundary.tsx` | Catches JS errors, renders fallback UI |
+| `ErrorFallback.tsx` | Fallback UI with error details, retry  |
+| `index.ts`          | Re-exports error components            |
 
 ### UI Components (`src/components/ui/`)
 
@@ -114,12 +124,14 @@ nano-banana-slides-prompter/
 
 ### Custom Hooks
 
-| Hook                        | Purpose                             |
-| --------------------------- | ----------------------------------- |
-| `useStreamingGeneration.ts` | SSE streaming for prompt generation |
-| `usePromptOptimizer.ts`     | Prompt optimization via LLM         |
-| `use-toast.ts`              | Toast notification management       |
-| `use-mobile.tsx`            | Mobile device detection             |
+| Hook                        | Purpose                                  |
+| --------------------------- | ---------------------------------------- |
+| `useStreamingGeneration.ts` | SSE streaming for prompt generation      |
+| `usePromptOptimizer.ts`     | Prompt optimization via LLM              |
+| `useSlideRegeneration.ts`   | Single slide regeneration with context   |
+| `useAutoSave.ts`            | Auto-save to localStorage (30s interval) |
+| `use-toast.ts`              | Toast notification management            |
+| `use-mobile.tsx`            | Mobile device detection                  |
 
 ### Utilities (`src/lib/`)
 
@@ -129,6 +141,12 @@ nano-banana-slides-prompter/
 | `api.ts`             | API client functions                                          |
 | `promptGenerator.ts` | Prompt generation logic                                       |
 | `export.ts`          | Export orchestration (MD, TXT, JSON, PPTX, PDF, Canva, Figma) |
+
+### Utility Functions (`src/lib/utils/`)
+
+| File                | Purpose                                |
+| ------------------- | -------------------------------------- |
+| `reorder-slides.ts` | Slide reordering with auto-renumbering |
 
 ### Exporters (`src/lib/exporters/`)
 
@@ -160,13 +178,14 @@ nano-banana-slides-prompter/
 
 ### Routes (`server/src/routes/`)
 
-| File          | Endpoints                                                       | Description            |
-| ------------- | --------------------------------------------------------------- | ---------------------- |
-| `prompt.ts`   | `POST /api/generate-prompt`, `POST /api/generate-prompt-stream` | Prompt generation      |
-| `extract.ts`  | `POST /api/extract-url`                                         | URL content extraction |
-| `sessions.ts` | `GET/POST /api/sessions`, `PUT/DELETE /api/sessions/:id`        | Session CRUD           |
-| `settings.ts` | `GET /api/settings/llm`                                         | LLM configuration      |
-| `optimize.ts` | `POST /api/optimize-prompt`                                     | Prompt optimization    |
+| File            | Endpoints                                                       | Description               |
+| --------------- | --------------------------------------------------------------- | ------------------------- |
+| `prompt.ts`     | `POST /api/generate-prompt`, `POST /api/generate-prompt-stream` | Prompt generation         |
+| `extract.ts`    | `POST /api/extract-url`                                         | URL content extraction    |
+| `sessions.ts`   | `GET/POST /api/sessions`, `PUT/DELETE /api/sessions/:id`        | Session CRUD              |
+| `settings.ts`   | `GET /api/settings/llm`                                         | LLM configuration         |
+| `optimize.ts`   | `POST /api/optimize-prompt`                                     | Prompt optimization       |
+| `regenerate.ts` | `POST /api/regenerate-slide`                                    | Single slide regeneration |
 
 ### Services (`server/src/services/`)
 
@@ -178,11 +197,12 @@ nano-banana-slides-prompter/
 
 ### Prompts (`server/src/prompts/`)
 
-| File           | Purpose                           | LOC    |
-| -------------- | --------------------------------- | ------ |
-| `system.ts`    | System prompts, styles, templates | ~1,300 |
-| `types.ts`     | Type definitions                  | ~280   |
-| `optimizer.ts` | Optimizer system prompts          | ~100   |
+| File                   | Purpose                           | LOC    |
+| ---------------------- | --------------------------------- | ------ |
+| `system.ts`            | System prompts, styles, templates | ~1,300 |
+| `types.ts`             | Type definitions                  | ~280   |
+| `optimizer.ts`         | Optimizer system prompts          | ~100   |
+| `regenerate-prompt.ts` | Slide regeneration prompts        | ~70    |
 
 **System Prompt Features**:
 
@@ -257,20 +277,22 @@ Return Structured Content → Update ContentInput
 | Directory                        | Files | Purpose                 |
 | -------------------------------- | ----- | ----------------------- |
 | `src/components/ui/`             | 48    | UI primitives           |
-| `src/components/slide-prompt/`   | 6     | Domain components       |
+| `src/components/slide-prompt/`   | 8     | Domain components       |
+| `src/components/error/`          | 3     | Error boundary          |
 | `src/components/brand-kit/`      | 1     | Brand Kit editor        |
 | `src/components/course-builder/` | 1     | Course Builder toggle   |
 | `src/components/`                | 4     | App components          |
 | `src/pages/`                     | 2     | Route pages             |
 | `src/stores/`                    | 4     | State stores            |
-| `src/hooks/`                     | 3     | Custom hooks            |
+| `src/hooks/`                     | 5     | Custom hooks            |
 | `src/lib/`                       | 3     | Utilities               |
+| `src/lib/utils/`                 | 1     | Utility functions       |
 | `src/data/templates/categories/` | 5     | Template categories     |
 | `src/types/`                     | 1     | Type definitions        |
 | `src/i18n/`                      | 4     | i18n config + 3 locales |
-| `server/src/routes/`             | 5     | API routes              |
+| `server/src/routes/`             | 6     | API routes              |
 | `server/src/services/`           | 3     | Services                |
-| `server/src/prompts/`            | 3     | Prompt logic            |
+| `server/src/prompts/`            | 4     | Prompt logic            |
 | `desktop/src/`                   | 6     | Electron main process   |
 | `desktop/scripts/`               | 1     | Build scripts           |
 

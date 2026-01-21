@@ -1,6 +1,6 @@
 # Code Standards & Conventions
 
-**Version:** 2.0.10 | **Last Updated:** 2026-01-14
+**Version:** 2.0.12 | **Last Updated:** 2026-01-21
 
 ## Directory Organization
 
@@ -10,11 +10,13 @@
 src/
 ├── components/
 │   ├── ui/                 # Reusable UI primitives (shadcn/ui)
-│   └── slide-prompt/       # Feature-specific components
+│   ├── slide-prompt/       # Feature-specific components
+│   └── error/              # Error boundary components
 ├── pages/                  # Route page components
 ├── stores/                 # Zustand state stores
 ├── hooks/                  # Custom React hooks
 ├── lib/                    # Utility functions
+│   └── utils/              # Specialized utilities
 ├── types/                  # TypeScript type definitions
 └── i18n/                   # Internationalization config
 ```
@@ -314,6 +316,11 @@ const { t } = useTranslation();
   },
   "settings": {
     "slideCount": "Number of Slides"
+  },
+  "styleSelector": {
+    "autoMode": "Auto",
+    "customMode": "Custom",
+    "autoHint": "Let AI decide the best style"
   }
 }
 ```

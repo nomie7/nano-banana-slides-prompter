@@ -1,6 +1,6 @@
 # Development Roadmap
 
-**Version:** 2.0.10 | **Last Updated:** 2026-01-14
+**Version:** 2.0.12 | **Last Updated:** 2026-01-21
 
 ## Overview
 
@@ -8,14 +8,14 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 ## Phase Summary
 
-| Phase | Name                           | Status   | Progress |
-| ----- | ------------------------------ | -------- | -------- |
-| 1     | Foundation & Core Features     | Complete | 100%     |
-| 2     | Desktop & Internationalization | Complete | 100%     |
-| 3     | Document Processing & Export   | Complete | 100%     |
-| 4     | Education & Business Focus     | Complete | 100%     |
-| 5     | Gemini & UX Improvements       | Complete | 100%     |
-| 6     | Advanced Features              | Planned  | 0%       |
+| Phase | Name                           | Status      | Progress |
+| ----- | ------------------------------ | ----------- | -------- |
+| 1     | Foundation & Core Features     | Complete    | 100%     |
+| 2     | Desktop & Internationalization | Complete    | 100%     |
+| 3     | Document Processing & Export   | Complete    | 100%     |
+| 4     | Education & Business Focus     | Complete    | 100%     |
+| 5     | Gemini & UX Improvements       | Complete    | 100%     |
+| 6     | Advanced Features              | In Progress | 30%      |
 
 ---
 
@@ -103,12 +103,21 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 - [x] Dynamic port resolution with Electron storage
 - [x] Gemini config persistence
 - [x] Fix Bun double server startup bug
+- [x] Visual Style toggle (auto/custom mode)
+- [x] Increased slide count limit to 200
 
 ---
 
-## Phase 6: Advanced Features (Planned)
+## Phase 6: Advanced Features (In Progress)
 
-**Status:** Planned | **Timeline:** Q2 2026
+**Status:** In Progress | **Timeline:** Q1 2026
+
+### Completed Features
+
+- [x] Slide Regeneration - context-aware single slide regeneration
+- [x] Drag-and-Drop Reordering - reorder slides with dnd-kit
+- [x] Auto-Save - periodic localStorage backup (30s interval)
+- [x] Error Boundary - graceful error handling with fallback UI
 
 ### Planned Features
 
@@ -138,6 +147,7 @@ This document tracks the development phases, milestones, and progress of Nano Ba
 
 | Version | Date       | Phase | Key Changes                                       |
 | ------- | ---------- | ----- | ------------------------------------------------- |
+| 2.0.12  | 2026-01-21 | 5     | Visual Style toggle, slide count limit 200        |
 | 2.0.10  | 2026-01-14 | 5     | Fix Bun double server startup bug                 |
 | 2.0.9   | 2026-01-14 | 5     | Gemini config persistence, disable auto-updater   |
 | 2.0.8   | 2026-01-14 | 5     | Dynamic port resolution with Electron storage     |

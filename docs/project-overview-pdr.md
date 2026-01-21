@@ -7,10 +7,10 @@
 | Attribute    | Value                       |
 | ------------ | --------------------------- |
 | Name         | Nano Banana Slides Prompter |
-| Version      | 2.0.10                      |
+| Version      | 2.0.12                      |
 | License      | GPL-3.0-or-later            |
 | Repository   | nano-banana-slides-prompter |
-| Last Updated | 2026-01-14                  |
+| Last Updated | 2026-01-21                  |
 
 ## Target Users
 
@@ -31,6 +31,7 @@
 ### 2. Visual Styling
 
 - **20 Visual Styles**: Professional, Technical, Creative, Educational, Minimalist, etc.
+- **Auto/Custom Mode Toggle**: Generate prompts without style instructions (auto) or with selected style (custom)
 - **13 Color Palettes**: Auto, Corporate, Vibrant, Pastel, Dark, etc.
 - **Layout Structures**: Balanced, Text-Heavy, Visual-First, Minimal
 
@@ -107,6 +108,30 @@
 - **Edit Before Generation**: Modify slide prompts before image generation
 - **Direct Editing**: Edit individual slide prompts in PromptOutput
 
+### 15. Slide Regeneration (v2.0.13+)
+
+- **Context-Aware**: Uses previous/next slide context for consistency
+- **Custom Instructions**: Optional user instructions for regeneration
+- **Single Slide**: Regenerate individual slides without full regeneration
+
+### 16. Drag-and-Drop Reordering (v2.0.13+)
+
+- **dnd-kit Integration**: Accessible drag-and-drop with keyboard support
+- **Auto-Renumbering**: Slides renumbered after reorder
+- **Visual Feedback**: Drag overlay and opacity changes
+
+### 17. Auto-Save (v2.0.13+)
+
+- **Periodic Backup**: 30-second interval to localStorage
+- **Crash Recovery**: Restore draft after crashes
+- **Quota Handling**: Graceful handling of localStorage limits
+
+### 18. Error Boundary (v2.0.13+)
+
+- **Graceful Fallback**: Catch JS errors, show user-friendly UI
+- **Error Details**: Expandable error message for debugging
+- **Retry Option**: Reset error state and retry
+
 ### Functional Requirements
 
 | ID    | Requirement                              | Priority | Status |
@@ -133,6 +158,10 @@
 | FR-20 | Gemini Image Generation                  | Medium   | Done   |
 | FR-21 | Custom Gemini API base URL               | Low      | Done   |
 | FR-22 | Inline edit for slide prompts            | Medium   | Done   |
+| FR-23 | Slide regeneration with context          | Medium   | Done   |
+| FR-24 | Drag-and-drop slide reordering           | Medium   | Done   |
+| FR-25 | Auto-save to localStorage                | Low      | Done   |
+| FR-26 | Error boundary with fallback UI          | High     | Done   |
 
 ### Non-Functional Requirements
 
@@ -181,6 +210,7 @@
 
 | Version | Date    | Highlights                                                  |
 | ------- | ------- | ----------------------------------------------------------- |
+| 2.0.12  | 2026-01 | Visual Style toggle (auto/custom), slide count limit 200    |
 | 2.0.10  | 2026-01 | Fix Bun double server startup bug                           |
 | 2.0.9   | 2026-01 | Gemini config persistence, disable auto-updater temporarily |
 | 2.0.8   | 2026-01 | Dynamic port resolution with Electron storage               |
@@ -217,6 +247,10 @@
 - [x] Quiz Templates (Done in v2.0.0)
 - [x] Brand Kit (Done in v2.0.0)
 - [x] Course Builder Mode (Done in v2.0.0)
+- [x] Slide Regeneration (Done in v2.0.13)
+- [x] Drag-and-Drop Reordering (Done in v2.0.13)
+- [x] Auto-Save (Done in v2.0.13)
+- [x] Error Boundary (Done in v2.0.13)
 - [ ] Template library with pre-built configurations
 - [ ] Export prompts to various formats (JSON, Markdown)
 - [ ] Team collaboration features

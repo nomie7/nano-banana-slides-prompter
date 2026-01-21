@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, Check, Copy, Sparkles, Loader2, Pencil, X } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Check,
+  Copy,
+  Sparkles,
+  Loader2,
+  Pencil,
+  X,
+  RefreshCw,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -15,6 +25,8 @@ interface SlideCardProps {
   isNew?: boolean;
   animationDelay?: number;
   onPromptUpdate?: (slideNumber: number, newPrompt: string) => void;
+  onRegenerate?: (slideNumber: number) => void;
+  isRegenerating?: boolean;
 }
 
 export function SlideCard({
@@ -23,6 +35,8 @@ export function SlideCard({
   isNew = false,
   animationDelay = 0,
   onPromptUpdate,
+  onRegenerate,
+  isRegenerating = false,
 }: SlideCardProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -97,6 +111,13 @@ export function SlideCard({
     reset();
   };
 
+  const handleRegenerate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRegenerate) {
+      onRegenerate(slide.slideNumber);
+    }
+  };
+
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsEditing(true);
@@ -146,6 +167,28 @@ export function SlideCard({
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {/* Regenerate button */}
+            {onRegenerate && (
+              <Button
+                onClick={handleRegenerate}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+                disabled={isRegenerating || isEditing}
+              >
+                {isRegenerating ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                    <span className="text-xs">{t('buttons.regenerating', 'Regenerating...')}</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5 text-purple-500" />
+                    <span className="text-xs">{t('buttons.regenerate', 'Regenerate')}</span>
+                  </>
+                )}
+              </Button>
+            )}
             {/* Edit button - only show when onPromptUpdate is provided */}
             {onPromptUpdate && !isEditing && (
               <Button

@@ -237,6 +237,20 @@
     "loadSessionsTitle": "Failed to load sessions",
     "loadSessionsDescription": "An error occurred while loading your sessions. Please try again."
   },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Your work has been auto-saved.",
+    "retry": "Try Again",
+    "details": "Error details"
+  },
+  "dnd": {
+    "dragHandle": "Drag to reorder",
+    "reordered": "Slides reordered"
+  },
+  "regenerate": {
+    "success": "Slide regenerated successfully",
+    "failed": "Failed to regenerate slide"
+  },
   "notFound": {
     "message": "Page not found",
     "returnHome": "Return to Home"

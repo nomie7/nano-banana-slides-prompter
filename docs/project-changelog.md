@@ -4,6 +4,34 @@ All notable changes to Nano Banana Slides Prompter are documented here.
 
 ---
 
+## [2.0.13] - 2026-01-21
+
+### Added
+
+- Slide regeneration feature with dedicated API endpoint (`/api/regenerate-slide`)
+- Drag-and-drop slide reordering using dnd-kit library
+- Auto-save functionality (30s interval to localStorage)
+- Error boundary components for graceful error handling
+
+### Changed
+
+- Updated documentation with new features and architecture
+
+---
+
+## [2.0.12] - 2026-01-21
+
+### Added
+
+- Visual Style toggle (auto/custom mode) - allows generating prompts without visual style instructions
+- Translations for style selector modes (EN, VI, ZH): `styleSelector.autoMode`, `styleSelector.customMode`, `styleSelector.autoHint`
+
+### Changed
+
+- Increased slide count limit from 20 to 200
+
+---
+
 ## [2.0.10] - 2026-01-14
 
 ### Fixed - Bun Double Server Startup Bug

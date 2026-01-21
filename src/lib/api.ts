@@ -279,3 +279,54 @@ export async function importDocx(file: File): Promise<ImportFileResponse> {
   }
   return response.json();
 }
+
+/**
+ * Request body for regenerating a single slide
+ */
+export interface RegenerateSlideRequest {
+  slideNumber: number;
+  previousSlide?: { title: string; prompt: string };
+  nextSlide?: { title: string; prompt: string };
+  style: string;
+  settings: {
+    aspectRatio: string;
+    slideCount: number;
+    colorPalette: string;
+    layoutStructure: string;
+  };
+  instructions?: string;
+  llmConfig?: {
+    apiKey?: string;
+    baseURL?: string;
+    model?: string;
+  };
+}
+
+/**
+ * Response from regenerate slide endpoint
+ */
+export interface RegenerateSlideResponse {
+  success: boolean;
+  slide?: ParsedSlide;
+  error?: string;
+}
+
+/**
+ * Regenerate a single slide with context awareness
+ */
+export async function regenerateSlide(
+  request: RegenerateSlideRequest
+): Promise<RegenerateSlideResponse> {
+  const baseUrl = await getBaseUrl();
+  const response = await fetch(`${baseUrl}/api/regenerate-slide`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    return { success: false, error: error.error || `HTTP error: ${response.status}` };
+  }
+  return response.json();
+}
