@@ -8,13 +8,33 @@ interface SortableSlideCardProps {
   slide: ParsedSlide;
   onPromptUpdate?: (slideNumber: number, newPrompt: string) => void;
   disabled?: boolean;
+  // Image generation props
+  onGenerateImage?: (slideNumber: number) => void;
+  isGeneratingImage?: boolean;
+  generatedImageUrl?: string;
+  showImageButton?: boolean;
+  // Checkbox props
+  isSelected?: boolean;
+  onSelectChange?: (slideNumber: number, selected: boolean) => void;
+  showCheckbox?: boolean;
 }
 
 /**
  * Wrapper component that makes SlideCard draggable using dnd-kit.
  * Provides drag handle and visual feedback during drag operations.
  */
-export function SortableSlideCard({ slide, onPromptUpdate, disabled }: SortableSlideCardProps) {
+export function SortableSlideCard({
+  slide,
+  onPromptUpdate,
+  disabled,
+  onGenerateImage,
+  isGeneratingImage,
+  generatedImageUrl,
+  showImageButton,
+  isSelected,
+  onSelectChange,
+  showCheckbox,
+}: SortableSlideCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `slide-${slide.slideNumber}`,
     disabled,
@@ -42,7 +62,17 @@ export function SortableSlideCard({ slide, onPromptUpdate, disabled }: SortableS
         <GripVertical className="h-5 w-5 text-muted-foreground" />
       </button>
 
-      <SlideCard slide={slide} onPromptUpdate={onPromptUpdate} />
+      <SlideCard
+        slide={slide}
+        onPromptUpdate={onPromptUpdate}
+        onGenerateImage={onGenerateImage}
+        isGeneratingImage={isGeneratingImage}
+        generatedImageUrl={generatedImageUrl}
+        showImageButton={showImageButton}
+        isSelected={isSelected}
+        onSelectChange={onSelectChange}
+        showCheckbox={showCheckbox}
+      />
     </div>
   );
 }

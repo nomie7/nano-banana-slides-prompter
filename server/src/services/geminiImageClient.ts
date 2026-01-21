@@ -5,6 +5,8 @@ export interface GeminiImageConfig {
   apiKey: string;
   model?: string;
   baseURL?: string; // Custom API endpoint (e.g., http://127.0.0.1:8045)
+  aspectRatio?: string; // e.g., '16:9', '9:16', '1:1', '4:3'
+  resolution?: string; // e.g., '1K', '2K', '4K'
 }
 
 export interface GeneratedImage {
@@ -18,7 +20,39 @@ export interface GenerateImageResult {
   error?: string;
 }
 
-const DEFAULT_MODEL = 'gemini-2.0-flash-preview-image-generation';
+const DEFAULT_MODEL = 'gemini-3-pro-image';
+const DEFAULT_ASPECT_RATIO = '16:9';
+const DEFAULT_RESOLUTION = '2K';
+
+// Aspect ratio descriptions for prompt embedding
+const ASPECT_RATIO_DESC: Record<string, string> = {
+  '16:9': '16:9 landscape widescreen',
+  '9:16': '9:16 portrait vertical',
+  '1:1': '1:1 square',
+  '4:3': '4:3 standard',
+  '3:4': '3:4 portrait',
+  '3:2': '3:2 photo landscape',
+  '2:3': '2:3 photo portrait',
+  '21:9': '21:9 ultrawide cinematic',
+};
+
+/**
+ * Enhance prompt with aspect ratio and text rendering instructions
+ */
+function enhancePrompt(
+  basePrompt: string,
+  aspectRatio: string = DEFAULT_ASPECT_RATIO,
+  resolution: string = DEFAULT_RESOLUTION
+): string {
+  const aspectDesc = ASPECT_RATIO_DESC[aspectRatio] || `${aspectRatio} aspect ratio`;
+  const prefix = `Generate an image with the following specifications:
+- Aspect Ratio: ${aspectDesc}
+- Resolution: ${resolution}
+- Text Rendering: Use clean, readable fonts. Render all text correctly.
+
+`;
+  return prefix + basePrompt;
+}
 
 const defaultConfig: GeminiImageConfig = {
   apiKey: process.env.GEMINI_API_KEY || '',
@@ -49,6 +83,14 @@ export async function generateSlideImage(
 ): Promise<GenerateImageResult> {
   try {
     const { genAI, requestOptions } = createClient(config);
+
+    // Enhance prompt with aspect ratio and resolution
+    const enhancedPrompt = enhancePrompt(
+      prompt,
+      config?.aspectRatio || DEFAULT_ASPECT_RATIO,
+      config?.resolution || DEFAULT_RESOLUTION
+    );
+
     const model = genAI.getGenerativeModel(
       {
         model: config?.model || defaultConfig.model || DEFAULT_MODEL,
@@ -78,7 +120,7 @@ export async function generateSlideImage(
       requestOptions
     );
 
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(enhancedPrompt);
     const response = result.response;
     const images: GeneratedImage[] = [];
 
@@ -141,7 +183,7 @@ export async function testGeminiConnection(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const { genAI, requestOptions } = createClient(config);
-    const modelName = config?.model || defaultConfig.model || 'gemini-1.5-flash';
+    const modelName = config?.model || defaultConfig.model || DEFAULT_MODEL;
     const model = genAI.getGenerativeModel({ model: modelName }, requestOptions);
     await model.generateContent('Say "OK" if you can hear me.');
     return { success: true };

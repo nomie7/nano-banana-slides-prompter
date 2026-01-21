@@ -14,6 +14,8 @@ export interface GeminiSettings {
   model: string;
   enabled: boolean;
   baseURL?: string; // Custom API endpoint (e.g., http://127.0.0.1:8045)
+  aspectRatio?: string; // e.g., '16:9', '9:16', '1:1', '4:3'
+  resolution?: string; // e.g., '1K', '2K', '4K'
 }
 
 interface SettingsStore {

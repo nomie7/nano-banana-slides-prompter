@@ -445,7 +445,11 @@
     "close": "Close",
     "noApiKey": "Please configure Gemini API key in settings",
     "generationFailed": "Image generation failed",
-    "generationSuccess": "Generated {{count}} images"
+    "generationSuccess": "Generated {{count}} images",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "generateSelected": "Generate Selected",
+    "regenerateImage": "Regenerate"
   },
   "brandKit": {
     "title": "Brand Kit",

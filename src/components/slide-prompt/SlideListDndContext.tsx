@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -21,12 +21,22 @@ import { SortableSlideCard } from './SortableSlideCard';
 import { SlideCard } from './SlideCard';
 import { reorderSlides } from '@/lib/utils/reorder-slides';
 import type { ParsedSlide } from '@/types/slidePrompt';
+import type { GeneratedImage } from '@/hooks/useGeminiImage';
 
 interface SlideListDndContextProps {
   slides: ParsedSlide[];
   onSlidesReorder: (slides: ParsedSlide[]) => void;
   onPromptUpdate?: (slideNumber: number, newPrompt: string) => void;
   disabled?: boolean;
+  // Image generation props
+  onGenerateImage?: (slideNumber: number) => void;
+  generatingSlideNumber?: number | null;
+  images?: GeneratedImage[];
+  showImageButton?: boolean;
+  // Checkbox props
+  selectedSlides?: Set<number>;
+  onSelectChange?: (slideNumber: number, selected: boolean) => void;
+  showCheckbox?: boolean;
 }
 
 /**
@@ -38,6 +48,13 @@ export function SlideListDndContext({
   onSlidesReorder,
   onPromptUpdate,
   disabled,
+  onGenerateImage,
+  generatingSlideNumber,
+  images = [],
+  showImageButton = false,
+  selectedSlides,
+  onSelectChange,
+  showCheckbox = false,
 }: SlideListDndContextProps) {
   const [activeSlide, setActiveSlide] = useState<ParsedSlide | null>(null);
 
@@ -75,6 +92,15 @@ export function SlideListDndContext({
 
   const slideIds = slides.map((s) => `slide-${s.slideNumber}`);
 
+  // Memoize image URLs to prevent recreation on every render
+  const imageUrlMap = useMemo(() => {
+    const map = new Map<number, string>();
+    images.forEach((img) => {
+      map.set(img.slideNumber, `data:${img.mimeType};base64,${img.data}`);
+    });
+    return map;
+  }, [images]);
+
   return (
     <DndContext
       sensors={sensors}
@@ -92,6 +118,13 @@ export function SlideListDndContext({
               slide={slide}
               onPromptUpdate={onPromptUpdate}
               disabled={disabled}
+              onGenerateImage={onGenerateImage}
+              isGeneratingImage={generatingSlideNumber === slide.slideNumber}
+              generatedImageUrl={imageUrlMap.get(slide.slideNumber)}
+              showImageButton={showImageButton}
+              isSelected={selectedSlides?.has(slide.slideNumber)}
+              onSelectChange={onSelectChange}
+              showCheckbox={showCheckbox}
             />
           ))}
         </div>

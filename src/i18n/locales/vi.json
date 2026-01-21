@@ -442,7 +442,11 @@
     "close": "Đóng",
     "noApiKey": "Vui lòng cấu hình Gemini API key trong cài đặt",
     "generationFailed": "Tạo hình ảnh thất bại",
-    "generationSuccess": "Đã tạo {{count}} hình ảnh"
+    "generationSuccess": "Đã tạo {{count}} hình ảnh",
+    "selectAll": "Chọn Tất Cả",
+    "deselectAll": "Bỏ Chọn Tất Cả",
+    "generateSelected": "Tạo Ảnh Đã Chọn",
+    "regenerateImage": "Tạo Lại"
   },
   "brandKit": {
     "title": "Bộ Thương Hiệu",

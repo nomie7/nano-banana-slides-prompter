@@ -10,9 +10,11 @@ import {
   Pencil,
   X,
   RefreshCw,
+  ImageIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useToast } from '@/hooks/use-toast';
 import { usePromptOptimizer } from '@/hooks/usePromptOptimizer';
@@ -27,6 +29,15 @@ interface SlideCardProps {
   onPromptUpdate?: (slideNumber: number, newPrompt: string) => void;
   onRegenerate?: (slideNumber: number) => void;
   isRegenerating?: boolean;
+  // Image generation props
+  onGenerateImage?: (slideNumber: number) => void;
+  isGeneratingImage?: boolean;
+  generatedImageUrl?: string;
+  showImageButton?: boolean;
+  // Checkbox props
+  isSelected?: boolean;
+  onSelectChange?: (slideNumber: number, selected: boolean) => void;
+  showCheckbox?: boolean;
 }
 
 export function SlideCard({
@@ -37,6 +48,13 @@ export function SlideCard({
   onPromptUpdate,
   onRegenerate,
   isRegenerating = false,
+  onGenerateImage,
+  isGeneratingImage = false,
+  generatedImageUrl,
+  showImageButton = false,
+  isSelected = false,
+  onSelectChange,
+  showCheckbox = false,
 }: SlideCardProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -144,6 +162,19 @@ export function SlideCard({
     setIsEditing(false);
   };
 
+  const handleGenerateImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onGenerateImage) {
+      onGenerateImage(slide.slideNumber);
+    }
+  };
+
+  const handleCheckboxChange = (checked: boolean | 'indeterminate') => {
+    if (onSelectChange && checked !== 'indeterminate') {
+      onSelectChange(slide.slideNumber, checked);
+    }
+  };
+
   return (
     <Collapsible
       open={isOpen}
@@ -154,6 +185,25 @@ export function SlideCard({
       <CollapsibleTrigger asChild>
         <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors">
           <div className="flex items-center gap-3">
+            {/* Checkbox for selection */}
+            {showCheckbox && (
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={handleCheckboxChange}
+                onClick={(e) => e.stopPropagation()}
+                className="mr-1"
+              />
+            )}
+            {/* Thumbnail preview when image exists */}
+            {generatedImageUrl && (
+              <div className="w-8 h-8 rounded overflow-hidden border border-border/50 flex-shrink-0">
+                <img
+                  src={generatedImageUrl}
+                  alt={`Slide ${slide.slideNumber}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">
               {slide.slideNumber}
             </div>
@@ -167,6 +217,33 @@ export function SlideCard({
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {/* Generate Image button */}
+            {showImageButton && onGenerateImage && (
+              <Button
+                onClick={handleGenerateImage}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+                disabled={isGeneratingImage || isEditing}
+              >
+                {isGeneratingImage ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                    <span className="text-xs">{t('gemini.generating', 'Generating...')}</span>
+                  </>
+                ) : generatedImageUrl ? (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
+                    <span className="text-xs">{t('gemini.regenerateImage', 'Regenerate')}</span>
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
+                    <span className="text-xs">{t('gemini.generateImage', 'Generate Image')}</span>
+                  </>
+                )}
+              </Button>
+            )}
             {/* Regenerate button */}
             {onRegenerate && (
               <Button

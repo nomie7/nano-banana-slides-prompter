@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Check,
@@ -9,6 +9,8 @@ import {
   ChevronUp,
   Loader2,
   Sparkles,
+  CheckSquare,
+  Square,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -57,20 +59,21 @@ export function PromptOutput({
   const [copied, setCopied] = useState(false);
   const [allExpanded, setAllExpanded] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [selectedSlides, setSelectedSlides] = useState<Set<number>>(new Set());
+  const [generatingSlideNumber, setGeneratingSlideNumber] = useState<number | null>(null);
   const { toast } = useToast();
 
   const {
     isGenerating,
     images,
     generateImages,
+    generateSingleImage,
     reset: resetImages,
     isEnabled: geminiEnabled,
   } = useGeminiImage();
 
-  // Reset images when prompt changes (fixes button state not resetting after new prompt generation)
-  useEffect(() => {
-    resetImages();
-  }, [prompt?.plainText, resetImages]);
+  // Reset images when prompt changes - use key pattern instead of effect
+  const promptKey = prompt?.plainText ?? '';
 
   // Memoize displaySlides to prevent dependency changes on every render
   const displaySlides = useMemo(
@@ -104,6 +107,51 @@ export function PromptOutput({
     },
     [onSlidesUpdate]
   );
+
+  // Handle single slide image generation
+  const handleGenerateSingleImage = useCallback(
+    async (slideNumber: number) => {
+      const slide = displaySlides.find((s) => s.slideNumber === slideNumber);
+      if (!slide) return;
+
+      setGeneratingSlideNumber(slideNumber);
+      await generateSingleImage(slide);
+      setGeneratingSlideNumber(null);
+    },
+    [displaySlides, generateSingleImage]
+  );
+
+  // Handle checkbox selection change
+  const handleSelectChange = useCallback((slideNumber: number, selected: boolean) => {
+    setSelectedSlides((prev) => {
+      const next = new Set(prev);
+      if (selected) {
+        next.add(slideNumber);
+      } else {
+        next.delete(slideNumber);
+      }
+      return next;
+    });
+  }, []);
+
+  // Handle select all / deselect all
+  const handleToggleSelectAll = useCallback(() => {
+    if (selectedSlides.size === displaySlides.length) {
+      setSelectedSlides(new Set());
+    } else {
+      setSelectedSlides(new Set(displaySlides.map((s) => s.slideNumber)));
+    }
+  }, [selectedSlides.size, displaySlides]);
+
+  // Handle generate selected slides
+  const handleGenerateSelected = useCallback(async () => {
+    if (selectedSlides.size === 0 || !prompt?.slides) return;
+
+    const slidesToGenerate = prompt.slides.filter((s) => selectedSlides.has(s.slideNumber));
+    await generateImages(slidesToGenerate);
+    setSelectedSlides(new Set());
+    setPreviewOpen(true);
+  }, [selectedSlides, prompt, generateImages]);
 
   if (!prompt && !isStreaming) {
     return (
@@ -185,6 +233,49 @@ export function PromptOutput({
               )}
             </CardTitle>
             <div className="flex items-center gap-2">
+              {/* Select All toggle - only show when Gemini enabled */}
+              {hasSlides && format === 'text' && !isStreaming && geminiEnabled && (
+                <Button
+                  onClick={handleToggleSelectAll}
+                  variant="ghost"
+                  size="sm"
+                  className="transition-all duration-200"
+                >
+                  {selectedSlides.size === displaySlides.length ? (
+                    <>
+                      <CheckSquare className="h-4 w-4 mr-1 text-primary" />
+                      {t('gemini.deselectAll', 'Deselect All')}
+                    </>
+                  ) : (
+                    <>
+                      <Square className="h-4 w-4 mr-1" />
+                      {t('gemini.selectAll', 'Select All')}
+                    </>
+                  )}
+                </Button>
+              )}
+              {/* Generate Selected button */}
+              {!isStreaming && geminiEnabled && selectedSlides.size > 0 && (
+                <Button
+                  onClick={handleGenerateSelected}
+                  variant="secondary"
+                  size="sm"
+                  disabled={isGenerating}
+                  className="transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {t('gemini.generating')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      {t('gemini.generateSelected', 'Generate Selected')} ({selectedSlides.size})
+                    </>
+                  )}
+                </Button>
+              )}
               {hasSlides && format === 'text' && !isStreaming && (
                 <Button onClick={() => setAllExpanded(!allExpanded)} variant="ghost" size="sm">
                   {allExpanded ? (
@@ -294,6 +385,13 @@ export function PromptOutput({
                       onSlidesReorder={handleSlidesReorder}
                       onPromptUpdate={onSlidesUpdate ? handlePromptUpdate : undefined}
                       disabled={false}
+                      onGenerateImage={handleGenerateSingleImage}
+                      generatingSlideNumber={generatingSlideNumber}
+                      images={images}
+                      showImageButton={geminiEnabled}
+                      selectedSlides={selectedSlides}
+                      onSelectChange={handleSelectChange}
+                      showCheckbox={geminiEnabled}
                     />
                   )}
                 </div>

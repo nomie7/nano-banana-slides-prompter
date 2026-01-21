@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -19,8 +19,10 @@ interface UseGeminiImageState {
 
 interface UseGeminiImageReturn extends UseGeminiImageState {
   generateImages: (slides: ParsedSlide[]) => Promise<void>;
+  generateSingleImage: (slide: ParsedSlide) => Promise<GeneratedImage | null>;
   testConnection: () => Promise<boolean>;
   reset: () => void;
+  clearImage: (slideNumber: number) => void;
   isEnabled: boolean;
 }
 
@@ -36,6 +38,7 @@ export function useGeminiImage(): UseGeminiImageReturn {
   const { t } = useTranslation();
   const { toast } = useToast();
   const { geminiSettings } = useSettingsStore();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const [state, setState] = useState<UseGeminiImageState>({
     isGenerating: false,
@@ -43,6 +46,13 @@ export function useGeminiImage(): UseGeminiImageReturn {
     images: [],
     error: null,
   });
+
+  // Cleanup abort controller on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   const isEnabled = geminiSettings?.enabled ?? false;
 
@@ -63,6 +73,7 @@ export function useGeminiImage(): UseGeminiImageReturn {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           apiKey: geminiSettings.apiKey,
+          model: geminiSettings.model || undefined,
           baseURL: geminiSettings.baseURL || undefined,
         }),
       });
@@ -110,6 +121,10 @@ export function useGeminiImage(): UseGeminiImageReturn {
         error: null,
       }));
 
+      // Create new abort controller for this request
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = new AbortController();
+
       try {
         const baseUrl = await getBaseUrl();
         const prompts = slides.map((slide) => slide.prompt);
@@ -122,7 +137,10 @@ export function useGeminiImage(): UseGeminiImageReturn {
             apiKey: geminiSettings.apiKey,
             model: geminiSettings.model,
             baseURL: geminiSettings.baseURL || undefined,
+            aspectRatio: geminiSettings.aspectRatio || '16:9',
+            resolution: geminiSettings.resolution || '2K',
           }),
+          signal: abortControllerRef.current.signal,
         });
 
         const data = await response.json();
@@ -175,6 +193,92 @@ export function useGeminiImage(): UseGeminiImageReturn {
     [geminiSettings, t, toast]
   );
 
+  const generateSingleImage = useCallback(
+    async (slide: ParsedSlide): Promise<GeneratedImage | null> => {
+      if (!geminiSettings?.apiKey) {
+        toast({
+          title: t('gemini.generationFailed'),
+          description: t('gemini.noApiKey'),
+          variant: 'destructive',
+        });
+        return null;
+      }
+
+      setState((prev) => ({
+        ...prev,
+        isGenerating: true,
+        progress: { current: 0, total: 1 },
+        error: null,
+      }));
+
+      // Create new abort controller for this request
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = new AbortController();
+
+      try {
+        const baseUrl = await getBaseUrl();
+        const response = await fetch(`${baseUrl}/api/gemini/generate-images`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompts: [slide.prompt],
+            apiKey: geminiSettings.apiKey,
+            model: geminiSettings.model,
+            baseURL: geminiSettings.baseURL || undefined,
+            aspectRatio: geminiSettings.aspectRatio || '16:9',
+            resolution: geminiSettings.resolution || '2K',
+          }),
+          signal: abortControllerRef.current.signal,
+        });
+
+        const data = await response.json();
+
+        if (data.success || data.summary?.success > 0) {
+          const result = data.results[0];
+          if (result?.success && result.images?.[0]) {
+            const newImage: GeneratedImage = {
+              data: result.images[0].data,
+              mimeType: result.images[0].mimeType,
+              slideNumber: slide.slideNumber,
+            };
+
+            setState((prev) => ({
+              ...prev,
+              isGenerating: false,
+              progress: { current: 1, total: 1 },
+              images: [
+                ...prev.images.filter((img) => img.slideNumber !== slide.slideNumber),
+                newImage,
+              ],
+            }));
+
+            toast({
+              title: t('gemini.generationSuccess', { count: 1 }),
+            });
+
+            return newImage;
+          }
+        }
+
+        throw new Error(data.error || 'Generation failed');
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        setState((prev) => ({
+          ...prev,
+          isGenerating: false,
+          error: message,
+        }));
+        toast({
+          title: t('gemini.generationFailed'),
+          description: message,
+          variant: 'destructive',
+        });
+        return null;
+      }
+    },
+    [geminiSettings, t, toast]
+  );
+
   const reset = useCallback(() => {
     setState({
       isGenerating: false,
@@ -184,11 +288,20 @@ export function useGeminiImage(): UseGeminiImageReturn {
     });
   }, []);
 
+  const clearImage = useCallback((slideNumber: number) => {
+    setState((prev) => ({
+      ...prev,
+      images: prev.images.filter((img) => img.slideNumber !== slideNumber),
+    }));
+  }, []);
+
   return {
     ...state,
     generateImages,
+    generateSingleImage,
     testConnection,
     reset,
+    clearImage,
     isEnabled,
   };
 }

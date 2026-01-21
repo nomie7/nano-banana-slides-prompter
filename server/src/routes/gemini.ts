@@ -56,6 +56,8 @@ const generateImageSchema = z.object({
   apiKey: z.string().optional(),
   model: z.string().optional(),
   baseURL: z.string().url().optional(),
+  aspectRatio: z.string().optional(),
+  resolution: z.string().optional(),
 });
 
 // Schema for batch image generation
@@ -64,6 +66,8 @@ const generateImagesSchema = z.object({
   apiKey: z.string().optional(),
   model: z.string().optional(),
   baseURL: z.string().url().optional(),
+  aspectRatio: z.string().optional(),
+  resolution: z.string().optional(),
 });
 
 // Schema for connection test
@@ -82,7 +86,7 @@ geminiRouter.post(
   rateLimitMiddleware,
   zValidator('json', generateImageSchema),
   async (c) => {
-    const { prompt, apiKey: clientApiKey, model, baseURL } = c.req.valid('json');
+    const { prompt, apiKey: clientApiKey, model, baseURL, aspectRatio, resolution } = c.req.valid('json');
     const apiKey = getEffectiveApiKey(clientApiKey);
 
     if (!apiKey) {
@@ -95,7 +99,7 @@ geminiRouter.post(
       );
     }
 
-    const result = await generateSlideImage(prompt, { apiKey, model, baseURL });
+    const result = await generateSlideImage(prompt, { apiKey, model, baseURL, aspectRatio, resolution });
 
     if (!result.success) {
       return c.json({ success: false, error: result.error }, 400);
@@ -117,7 +121,7 @@ geminiRouter.post(
   rateLimitMiddleware,
   zValidator('json', generateImagesSchema),
   async (c) => {
-    const { prompts, apiKey: clientApiKey, model, baseURL } = c.req.valid('json');
+    const { prompts, apiKey: clientApiKey, model, baseURL, aspectRatio, resolution } = c.req.valid('json');
     const apiKey = getEffectiveApiKey(clientApiKey);
 
     if (!apiKey) {
@@ -134,6 +138,8 @@ geminiRouter.post(
       apiKey,
       model,
       baseURL,
+      aspectRatio,
+      resolution,
     });
 
     return c.json({
