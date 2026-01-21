@@ -1,6 +1,7 @@
 export type ContentInputType = 'text' | 'topic' | 'file' | 'url';
 
 export type SlideStyle =
+  | 'auto'
   | 'professional'
   | 'technical'
   | 'creative'

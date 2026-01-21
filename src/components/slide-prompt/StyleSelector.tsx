@@ -22,6 +22,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import type { SlideStyle } from '@/types/slidePrompt';
 
@@ -141,67 +143,87 @@ interface StyleSelectorProps {
 
 export function StyleSelector({ value, onChange }: StyleSelectorProps) {
   const { t } = useTranslation();
+  const isAutoMode = value === 'auto';
 
   return (
     <Card className="backdrop-blur-sm bg-card/80 border-border/50 shadow-xl shadow-black/5 transition-all duration-300 hover:shadow-2xl hover:shadow-black/10">
       <CardContent className="pt-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">{t('styleSelector.title')}</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {styleOptions.map((style) => {
-            const Icon = style.icon;
-            const isSelected = value === style.id;
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-foreground">{t('styleSelector.title')}</h3>
+          <div className="flex items-center gap-2">
+            <Label className="text-xs text-muted-foreground">
+              {isAutoMode ? t('styleSelector.autoMode') : t('styleSelector.customMode')}
+            </Label>
+            <Switch
+              checked={!isAutoMode}
+              onCheckedChange={(checked) => onChange(checked ? 'professional' : 'auto')}
+            />
+          </div>
+        </div>
 
-            return (
-              <button
-                key={style.id}
-                onClick={() => onChange(style.id)}
-                className={cn(
-                  'group relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-300',
-                  'hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-                  isSelected
-                    ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
-                    : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-accent/50'
-                )}
-              >
-                <div className="flex gap-1 mb-3">
-                  {style.previewColors.map((color, i) => (
-                    <div
-                      key={i}
-                      className="w-3 h-3 rounded-full ring-1 ring-black/10 transition-transform duration-300 group-hover:scale-110"
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
+        {isAutoMode ? (
+          <div className="flex items-center gap-3 p-4 rounded-xl border-2 border-dashed border-border/50 bg-muted/30">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <p className="text-sm text-muted-foreground">{t('styleSelector.autoHint')}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {styleOptions.map((style) => {
+              const Icon = style.icon;
+              const isSelected = value === style.id;
 
-                <Icon
+              return (
+                <button
+                  key={style.id}
+                  onClick={() => onChange(style.id)}
                   className={cn(
-                    'h-7 w-7 mb-2 transition-all duration-300',
+                    'group relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-300',
+                    'hover:shadow-lg hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                     isSelected
-                      ? 'text-primary scale-110'
-                      : 'text-muted-foreground group-hover:text-foreground group-hover:scale-105'
-                  )}
-                />
-
-                <span
-                  className={cn(
-                    'font-medium text-sm transition-colors duration-300',
-                    isSelected ? 'text-primary' : 'text-foreground'
+                      ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10'
+                      : 'border-border/50 bg-card/50 hover:border-primary/50 hover:bg-accent/50'
                   )}
                 >
-                  {t(`styleSelector.styles.${style.id}.name`)}
-                </span>
+                  <div className="flex gap-1 mb-3">
+                    {style.previewColors.map((color, i) => (
+                      <div
+                        key={i}
+                        className="w-3 h-3 rounded-full ring-1 ring-black/10 transition-transform duration-300 group-hover:scale-110"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
 
-                <span className="text-xs text-muted-foreground text-center mt-1 line-clamp-1">
-                  {t(`styleSelector.styles.${style.id}.description`)}
-                </span>
+                  <Icon
+                    className={cn(
+                      'h-7 w-7 mb-2 transition-all duration-300',
+                      isSelected
+                        ? 'text-primary scale-110'
+                        : 'text-muted-foreground group-hover:text-foreground group-hover:scale-105'
+                    )}
+                  />
 
-                {isSelected && (
-                  <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-primary shadow-lg shadow-primary/50" />
-                )}
-              </button>
-            );
-          })}
-        </div>
+                  <span
+                    className={cn(
+                      'font-medium text-sm transition-colors duration-300',
+                      isSelected ? 'text-primary' : 'text-foreground'
+                    )}
+                  >
+                    {t(`styleSelector.styles.${style.id}.name`)}
+                  </span>
+
+                  <span className="text-xs text-muted-foreground text-center mt-1 line-clamp-1">
+                    {t(`styleSelector.styles.${style.id}.description`)}
+                  </span>
+
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-primary shadow-lg shadow-primary/50" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -75,6 +75,9 @@
   },
   "styleSelector": {
     "title": "视觉风格",
+    "autoMode": "自动",
+    "customMode": "自定义",
+    "autoHint": "不应用视觉风格。提示词将仅关注内容结构。",
     "styles": {
       "professional": { "name": "专业", "description": "简洁的企业风格" },
       "technical": { "name": "技术", "description": "蓝图与图表" },

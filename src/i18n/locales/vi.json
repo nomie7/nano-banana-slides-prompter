@@ -75,6 +75,9 @@
   },
   "styleSelector": {
     "title": "Phong Cách Hình Ảnh",
+    "autoMode": "Tự động",
+    "customMode": "Tuỳ chỉnh",
+    "autoHint": "Không áp dụng phong cách hình ảnh. Prompt chỉ tập trung vào cấu trúc nội dung.",
     "styles": {
       "professional": { "name": "Chuyên Nghiệp", "description": "Thiết kế sạch, doanh nghiệp" },
       "technical": { "name": "Kỹ Thuật", "description": "Bản vẽ & sơ đồ" },

@@ -8,6 +8,7 @@ import type {
 } from '@/types/slidePrompt';
 
 const styleDescriptions: Record<SlideStyle, string> = {
+  auto: 'Let the AI choose the best visual style based on the content, topic, and context. The AI will analyze the presentation subject and automatically select the most appropriate design aesthetic.',
   professional:
     'Clean, corporate design with professional typography, subtle gradients, and business-appropriate imagery. Use structured layouts with clear hierarchy.',
   technical:
@@ -104,8 +105,17 @@ export function generatePrompt(config: SlidePromptConfig): GeneratedPrompt {
 
   const systemPrompt = `You are an expert presentation designer and visual artist. Generate professional slide content with detailed visual descriptions that can be used to create stunning presentations. Follow the specified style guidelines precisely.`;
 
-  const styleName = style.charAt(0).toUpperCase() + style.slice(1).replace('-', ' ');
   const aspectRatioInfo = aspectRatioDescriptions[settings.aspectRatio];
+
+  // Build Visual Style section only if not 'auto'
+  const visualStyleSection =
+    style !== 'auto'
+      ? `## Visual Style
+**Style:** ${style.charAt(0).toUpperCase() + style.slice(1).replace('-', ' ')}
+${styleDescriptions[style]}
+
+`
+      : '';
 
   const userPrompt = `Create a ${settings.slideCount}-slide presentation with the following specifications:
 
@@ -114,11 +124,7 @@ ${contentSummary}
 
 Keep visuals, titles, and callouts coherent with the topic/context above; avoid repeating the topic verbatim on every slide unless it improves clarity.
 
-## Visual Style
-**Style:** ${styleName}
-${styleDescriptions[style]}
-
-## Color Palette
+${visualStyleSection}## Color Palette
 ${colorPaletteDescriptions[settings.colorPalette]}
 
 ## Layout Structure

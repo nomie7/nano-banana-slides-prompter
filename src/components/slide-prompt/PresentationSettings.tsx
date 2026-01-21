@@ -97,13 +97,13 @@ export function PresentationSettings({ value, onChange }: PresentationSettingsPr
             value={[value.slideCount]}
             onValueChange={([count]) => onChange({ ...value, slideCount: count })}
             min={1}
-            max={20}
+            max={200}
             step={1}
             className="w-full"
           />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>1</span>
-            <span>20</span>
+            <span>200</span>
           </div>
         </div>
 

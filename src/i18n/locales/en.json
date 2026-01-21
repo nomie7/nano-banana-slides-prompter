@@ -75,6 +75,9 @@
   },
   "styleSelector": {
     "title": "Visual Style",
+    "autoMode": "Auto",
+    "customMode": "Custom",
+    "autoHint": "No visual style will be applied. The prompt will focus only on content structure.",
     "styles": {
       "professional": { "name": "Professional", "description": "Clean, corporate design" },
       "technical": { "name": "Technical", "description": "Blueprint & diagrams" },
