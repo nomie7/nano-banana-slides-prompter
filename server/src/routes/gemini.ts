@@ -69,6 +69,7 @@ const generateImagesSchema = z.object({
 // Schema for connection test
 const testConnectionSchema = z.object({
   apiKey: z.string().min(1, 'API key is required'),
+  model: z.string().optional(),
   baseURL: z.string().url().optional(),
 });
 
@@ -152,9 +153,9 @@ geminiRouter.post(
  * Test Gemini API connection with provided key
  */
 geminiRouter.post('/test-connection', zValidator('json', testConnectionSchema), async (c) => {
-  const { apiKey, baseURL } = c.req.valid('json');
+  const { apiKey, model, baseURL } = c.req.valid('json');
 
-  const result = await testGeminiConnection({ apiKey, baseURL });
+  const result = await testGeminiConnection({ apiKey, model, baseURL });
 
   if (!result.success) {
     return c.json({ success: false, error: result.error }, 400);

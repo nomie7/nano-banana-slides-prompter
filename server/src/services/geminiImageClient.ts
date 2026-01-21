@@ -141,7 +141,8 @@ export async function testGeminiConnection(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const { genAI, requestOptions } = createClient(config);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }, requestOptions);
+    const modelName = config?.model || defaultConfig.model || 'gemini-1.5-flash';
+    const model = genAI.getGenerativeModel({ model: modelName }, requestOptions);
     await model.generateContent('Say "OK" if you can hear me.');
     return { success: true };
   } catch (error) {

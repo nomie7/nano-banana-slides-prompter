@@ -4,6 +4,15 @@ All notable changes to Nano Banana Slides Prompter are documented here.
 
 ---
 
+## [2.0.14] - 2026-01-21
+
+### Fixed
+
+- Gemini model selection now works in test connection (was hardcoded to `gemini-1.5-flash`)
+- Frontend now sends selected model to backend when testing connection
+
+---
+
 ## [2.0.13] - 2026-01-21
 
 ### Added

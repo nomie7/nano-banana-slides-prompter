@@ -250,6 +250,7 @@ export function SettingsDialog() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           apiKey: geminiApiKey.trim(),
+          model: geminiModel.trim() || undefined,
           baseURL: geminiBaseURL.trim() || undefined,
         }),
       });
