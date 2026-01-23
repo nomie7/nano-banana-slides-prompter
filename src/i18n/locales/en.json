@@ -22,7 +22,10 @@
     "extract": "Extract",
     "extracting": "Extracting...",
     "expandAll": "Expand All",
-    "collapseAll": "Collapse All"
+    "collapseAll": "Collapse All",
+    "export": "Export",
+    "edit": "Edit",
+    "save": "Save"
   },
   "contentInput": {
     "tabs": {
@@ -72,6 +75,9 @@
   },
   "styleSelector": {
     "title": "Visual Style",
+    "autoMode": "Auto",
+    "customMode": "Custom",
+    "autoHint": "No visual style will be applied. The prompt will focus only on content structure.",
     "styles": {
       "professional": { "name": "Professional", "description": "Clean, corporate design" },
       "technical": { "name": "Technical", "description": "Blueprint & diagrams" },
@@ -92,7 +98,10 @@
       "sci-fi-hud": { "name": "Sci-Fi HUD", "description": "Cyberpunk tech schematics" },
       "deep-ocean": { "name": "Deep Ocean", "description": "Nature documentary style" },
       "dev-console": { "name": "Dev Console", "description": "Software architecture docs" },
-      "neon-scientific": { "name": "Neon Scientific", "description": "Bioluminescent sci-fi visualization" }
+      "neon-scientific": {
+        "name": "Neon Scientific",
+        "description": "Bioluminescent sci-fi visualization"
+      }
     }
   },
   "characterSelector": {
@@ -152,7 +161,9 @@
       "visual-heavy": { "label": "Visual Heavy", "description": "70% images" },
       "balanced": { "label": "Balanced", "description": "50/50 mix" },
       "text-heavy": { "label": "Text Heavy", "description": "70% text" }
-    }
+    },
+    "outputLanguage": "Output Language",
+    "outputLanguageDescription": "Language for generated prompts"
   },
   "promptOutput": {
     "noPrompt": "No prompt generated yet",
@@ -169,7 +180,10 @@
     "rawHint": "Raw LLM output for debugging or custom processing."
   },
   "slideCard": {
-    "copiedSlide": "Slide {{number}} prompt copied to clipboard."
+    "copiedSlide": "Slide {{number}} prompt copied to clipboard.",
+    "editSaved": "Saved",
+    "editSavedDesc": "Prompt updated successfully",
+    "editPlaceholder": "Enter your prompt..."
   },
   "settings": {
     "title": "AI Settings",
@@ -211,11 +225,31 @@
     "copyFailedHint": "Please select and copy the text manually.",
     "copiedAll": "Copied All!",
     "copiedAllDesc": "All {{count}} slide prompts copied to clipboard.",
-    "copiedSlide": "Copied!"
+    "copiedSlide": "Copied!",
+    "importSuccess": "File Imported",
+    "importSuccessDesc": "Extracted {{count}} characters from file",
+    "importFailed": "Import Failed",
+    "importFailedDefault": "Could not extract text from file",
+    "fileTooLarge": "File Too Large",
+    "fileTooLargeDesc": "Maximum file size is 10MB"
   },
   "errors": {
     "loadSessionsTitle": "Failed to load sessions",
     "loadSessionsDescription": "An error occurred while loading your sessions. Please try again."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Your work has been auto-saved.",
+    "retry": "Try Again",
+    "details": "Error details"
+  },
+  "dnd": {
+    "dragHandle": "Drag to reorder",
+    "reordered": "Slides reordered"
+  },
+  "regenerate": {
+    "success": "Slide regenerated successfully",
+    "failed": "Failed to regenerate slide"
   },
   "notFound": {
     "message": "Page not found",
@@ -224,6 +258,228 @@
   "language": {
     "label": "Language",
     "zh": "中文",
-    "en": "English"
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "export": {
+    "asJSON": "Export as JSON",
+    "asMarkdown": "Export as Markdown",
+    "asText": "Export as Text",
+    "asPPTX": "Export as PPTX",
+    "asPDF": "Export as PDF",
+    "noSession": "No Session",
+    "noSessionDesc": "Please select a session to export.",
+    "noContent": "No Content",
+    "noContentDesc": "This session has no generated content to export.",
+    "success": "Export Successful",
+    "successDesc": "Session exported as {{format}}.",
+    "failed": "Export Failed",
+    "failedDesc": "Could not export the session. Please try again."
+  },
+  "promptPreview": {
+    "title": "Prompt Preview",
+    "slides": "slides",
+    "formatted": "Formatted",
+    "raw": "Raw",
+    "copied": "Copied!",
+    "copiedDesc": "Prompt content copied to clipboard.",
+    "hint": "Toggle between formatted and raw view. Copy to use in Nano Banana Pro Slides."
+  },
+  "templates": {
+    "button": "Templates",
+    "title": "Choose Template",
+    "slides": "slides",
+    "categories": {
+      "presentation": "Presentation",
+      "education": "Education",
+      "business": "Business",
+      "creative": "Creative",
+      "quiz": "Quiz"
+    },
+    "presentation": {
+      "startupPitch": {
+        "name": "Startup Pitch",
+        "description": "Compelling pitch deck for investors and stakeholders"
+      },
+      "productLaunch": {
+        "name": "Product Launch",
+        "description": "Exciting product announcement presentation"
+      },
+      "quarterlyReview": {
+        "name": "Quarterly Review",
+        "description": "Business performance and metrics overview"
+      },
+      "conferenceTalk": {
+        "name": "Conference Talk",
+        "description": "Engaging keynote for conferences and events"
+      },
+      "teamMeeting": {
+        "name": "Team Meeting",
+        "description": "Internal team updates and collaboration"
+      }
+    },
+    "education": {
+      "lectureSlides": {
+        "name": "Lecture Slides",
+        "description": "Academic lecture with clear explanations"
+      },
+      "tutorial": {
+        "name": "Tutorial",
+        "description": "Step-by-step instructional guide"
+      },
+      "researchPresentation": {
+        "name": "Research Presentation",
+        "description": "Academic research findings and analysis"
+      },
+      "workshop": {
+        "name": "Workshop",
+        "description": "Interactive hands-on learning session"
+      },
+      "studentProject": {
+        "name": "Student Project",
+        "description": "Student assignment or project presentation"
+      }
+    },
+    "business": {
+      "salesProposal": {
+        "name": "Sales Proposal",
+        "description": "Persuasive sales and proposal deck"
+      },
+      "companyOverview": {
+        "name": "Company Overview",
+        "description": "Company profile and capabilities"
+      },
+      "projectStatus": {
+        "name": "Project Status",
+        "description": "Project progress and milestone updates"
+      },
+      "strategyPlanning": {
+        "name": "Strategy Planning",
+        "description": "Strategic roadmap and planning session"
+      },
+      "financialReport": {
+        "name": "Financial Report",
+        "description": "Financial data and business metrics"
+      }
+    },
+    "creative": {
+      "portfolioShowcase": {
+        "name": "Portfolio Showcase",
+        "description": "Creative portfolio and work samples"
+      },
+      "eventWedding": {
+        "name": "Event / Wedding",
+        "description": "Special event or wedding celebration"
+      },
+      "storytelling": {
+        "name": "Storytelling",
+        "description": "Narrative-driven visual story"
+      },
+      "travelBlog": {
+        "name": "Travel Blog",
+        "description": "Travel adventures and destinations"
+      },
+      "artExhibition": {
+        "name": "Art Exhibition",
+        "description": "Art gallery and exhibition showcase"
+      }
+    },
+    "quiz": {
+      "multipleChoice": {
+        "name": "Multiple Choice Quiz",
+        "description": "Interactive multiple choice questions with options"
+      },
+      "trueFalse": {
+        "name": "True/False Quiz",
+        "description": "Simple true or false question format"
+      },
+      "fillInBlank": {
+        "name": "Fill-in-the-Blank",
+        "description": "Complete the sentence with missing words"
+      },
+      "matching": {
+        "name": "Matching Quiz",
+        "description": "Match items from two columns together"
+      }
+    }
+  },
+  "batch": {
+    "panelTitle": "Batch Processing",
+    "processing": "Processing...",
+    "inputLabel": "Enter topics (one per line)",
+    "inputPlaceholder": "Topic 1\nTopic 2\nTopic 3",
+    "addTopics": "Add Topics",
+    "start": "Start Batch",
+    "cancel": "Cancel",
+    "reset": "Reset",
+    "progress": "{{completed}}/{{total}} completed",
+    "jobPending": "Pending",
+    "jobProcessing": "Processing",
+    "jobCompleted": "Completed",
+    "jobFailed": "Failed",
+    "maxTopics": "Maximum {{max}} topics allowed",
+    "noTopics": "No topics added yet"
+  },
+  "gemini": {
+    "title": "Gemini Image Generation",
+    "description": "Generate slide images using Google Gemini",
+    "apiKey": "Gemini API Key",
+    "apiKeyHint": "Get your key from Google AI Studio",
+    "model": "Model",
+    "modelHint": "Default: {{default}}",
+    "baseURL": "API Base URL",
+    "baseURLHint": "Optional. Leave empty to use Google's default endpoint.",
+    "enabled": "Enable Gemini",
+    "enabledHint": "Show Generate Image button in prompt output",
+    "testConnection": "Test Connection",
+    "testing": "Testing...",
+    "testSuccess": "Connection successful",
+    "testFailed": "Connection failed",
+    "generateImage": "Generate Image",
+    "generateImages": "Generate Images",
+    "generating": "Generating...",
+    "preview": "Image Preview",
+    "slideOf": "Slide {{current}} of {{total}}",
+    "download": "Download",
+    "downloadAll": "Download All",
+    "close": "Close",
+    "noApiKey": "Please configure Gemini API key in settings",
+    "generationFailed": "Image generation failed",
+    "generationSuccess": "Generated {{count}} images",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "generateSelected": "Generate Selected",
+    "regenerateImage": "Regenerate"
+  },
+  "brandKit": {
+    "title": "Brand Kit",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Your Company",
+    "primaryColor": "Primary Color",
+    "secondaryColor": "Secondary Color",
+    "fontFamily": "Font Family",
+    "fontSize": "Font Size",
+    "fontSizes": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "logo": "Logo",
+    "logoHint": "Max 500KB, PNG/JPG/SVG",
+    "removeLogo": "Remove",
+    "reset": "Reset",
+    "preview": "Preview"
+  },
+  "courseBuilder": {
+    "title": "Course Mode",
+    "beta": "Beta",
+    "description": "Organize slides into lessons for structured course content.",
+    "courseTitle": "Course Title",
+    "courseTitlePlaceholder": "e.g., Introduction to Machine Learning",
+    "lessons": "Lessons",
+    "slides": "slides",
+    "noLessons": "No lessons yet. Add your first lesson below.",
+    "lessonPlaceholder": "Lesson title...",
+    "futureNote": "Full course builder with lesson-based generation coming in v2.1"
   }
 }

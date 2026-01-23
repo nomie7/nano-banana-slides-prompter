@@ -1,0 +1,152 @@
+name: Build Electron App
+
+on:
+  push:
+    tags: ['v*']
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            bun-target: bun-linux-x64
+          - os: windows-latest
+            platform: win
+            bun-target: bun-windows-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Electron
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/electron
+            ~/AppData/Local/electron/Cache
+          key: ${{ runner.os }}-electron-${{ hashFiles('desktop/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-electron-
+
+      - name: Cache Electron-Builder
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/electron-builder
+            ~/AppData/Local/electron-builder/Cache
+          key: ${{ runner.os }}-electron-builder-${{ hashFiles('desktop/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-electron-builder-
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install server dependencies
+        run: cd server && bun install
+
+      - name: Install desktop dependencies
+        run: cd desktop && npm ci
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Copy frontend to desktop
+        run: |
+          mkdir -p desktop/renderer
+          cp -r dist/* desktop/renderer/
+        shell: bash
+
+      - name: Build backend binary (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p desktop/backend
+          bun build server/src/index.ts --compile --target=${{ matrix.bun-target }} --outfile=desktop/backend/backend
+        shell: bash
+
+      - name: Build backend binary (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir -p desktop/backend
+          bun build server/src/index.ts --compile --target=${{ matrix.bun-target }} --outfile=desktop/backend/backend.exe
+        shell: bash
+
+      - name: Compile Electron TypeScript
+        run: cd desktop && npx tsc
+
+      - name: Build Electron app (Linux)
+        if: matrix.platform == 'linux'
+        run: cd desktop && npx electron-builder --linux --publish never
+
+      - name: Build Electron app (Windows)
+        if: matrix.platform == 'win'
+        run: cd desktop && npx electron-builder --win --publish never
+
+      - name: Upload artifacts (Linux)
+        uses: actions/upload-artifact@v4
+        if: matrix.platform == 'linux'
+        with:
+          name: electron-linux-x64
+          path: |
+            desktop/release/*.AppImage
+            desktop/release/*.deb
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload artifacts (Windows)
+        uses: actions/upload-artifact@v4
+        if: matrix.platform == 'win'
+        with:
+          name: electron-win-x64
+          path: |
+            desktop/release/*.exe
+          retention-days: 7
+          if-no-files-found: ignore
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: find artifacts -type f | head -50
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/**/*.exe
+            artifacts/**/*.AppImage
+            artifacts/**/*.deb
+          draft: false
+          prerelease: ${{ contains(github.ref, '-') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

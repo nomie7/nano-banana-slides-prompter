@@ -6,10 +6,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { extractUrl } from '@/lib/api';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { extractUrl, importPdf, importDocx } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
-import type { ContentInput as ContentInputType, ContentInputType as InputType } from '@/types/slidePrompt';
+import type {
+  ContentInput as ContentInputType,
+  ContentInputType as InputType,
+} from '@/types/slidePrompt';
 
 const topicKeys = [
   'businessStrategy',
@@ -23,8 +32,10 @@ const topicKeys = [
   'salesPitch',
   'companyCulture',
   'researchResults',
-  'eventDemo'
+  'eventDemo',
 ] as const;
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB - must match server limit
 
 interface ContentInputProps {
   value: ContentInputType;
@@ -35,6 +46,7 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<InputType>(value.type);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const { toast } = useToast();
 
   const handleTabChange = (tab: string) => {
@@ -68,7 +80,10 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
         });
         toast({
           title: t('toast.extractSuccess'),
-          description: t('toast.extractSuccessDesc', { title: result.data.title || 'Page', count: result.data.content.length }),
+          description: t('toast.extractSuccessDesc', {
+            title: result.data.title || 'Page',
+            count: result.data.content.length,
+          }),
         });
       } else {
         toast({
@@ -92,45 +107,121 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
     onChange({ ...value, urlContent: '' });
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const fileName = file.name.toLowerCase();
-    const reader = new FileReader();
-    
-    if (fileName.endsWith('.pdf')) {
-      reader.onload = (event) => {
-        onChange({
-          ...value,
-          fileName: file.name,
-          fileContent: event.target?.result as string,
-          fileType: 'pdf'
-        });
-      };
-      reader.readAsDataURL(file);
-    } else {
-      const isCsv = fileName.endsWith('.csv');
-      const isMarkdown = fileName.endsWith('.md') || fileName.endsWith('.markdown');
-      
-      reader.onload = (event) => {
-        let content = event.target?.result as string;
-        
-        if (isCsv) {
-          content = `[CSV DATA - Parse this tabular data for presentation content]\n${content}`;
-        } else if (isMarkdown) {
-          content = `[MARKDOWN CONTENT]\n${content}`;
-        }
-        
-        onChange({
-          ...value,
-          fileName: file.name,
-          fileContent: content,
-          fileType: isCsv ? 'csv' : 'text'
-        });
-      };
-      reader.readAsText(file);
+    // Client-side file size validation (security: prevent large uploads)
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: t('toast.fileTooLarge', 'File Too Large'),
+        description: t('toast.fileTooLargeDesc', 'Maximum file size is 10MB'),
+        variant: 'destructive',
+      });
+      return;
     }
+
+    const fileName = file.name.toLowerCase();
+
+    // Handle PDF and DOCX with server-side parsing
+    if (fileName.endsWith('.pdf')) {
+      setIsImporting(true);
+      try {
+        const result = await importPdf(file);
+        if (result.success && result.data) {
+          onChange({
+            ...value,
+            fileName: file.name,
+            fileContent: result.data.text,
+            fileType: 'text',
+          });
+          toast({
+            title: t('toast.importSuccess', 'File Imported'),
+            description: t('toast.importSuccessDesc', {
+              count: result.data.text.length,
+              defaultValue: `${result.data.text.length} characters extracted`,
+            }),
+          });
+        } else {
+          toast({
+            title: t('toast.importFailed', 'Import Failed'),
+            description:
+              result.error || t('toast.importFailedDefault', 'Could not extract text from file'),
+            variant: 'destructive',
+          });
+        }
+      } catch (error) {
+        toast({
+          title: t('toast.importFailed', 'Import Failed'),
+          description: error instanceof Error ? error.message : t('toast.connectionFailed'),
+          variant: 'destructive',
+        });
+      } finally {
+        setIsImporting(false);
+      }
+      return;
+    }
+
+    if (fileName.endsWith('.docx')) {
+      setIsImporting(true);
+      try {
+        const result = await importDocx(file);
+        if (result.success && result.data) {
+          onChange({
+            ...value,
+            fileName: file.name,
+            fileContent: result.data.text,
+            fileType: 'text',
+          });
+          toast({
+            title: t('toast.importSuccess', 'File Imported'),
+            description: t('toast.importSuccessDesc', {
+              count: result.data.text.length,
+              defaultValue: `${result.data.text.length} characters extracted`,
+            }),
+          });
+        } else {
+          toast({
+            title: t('toast.importFailed', 'Import Failed'),
+            description:
+              result.error || t('toast.importFailedDefault', 'Could not extract text from file'),
+            variant: 'destructive',
+          });
+        }
+      } catch (error) {
+        toast({
+          title: t('toast.importFailed', 'Import Failed'),
+          description: error instanceof Error ? error.message : t('toast.connectionFailed'),
+          variant: 'destructive',
+        });
+      } finally {
+        setIsImporting(false);
+      }
+      return;
+    }
+
+    // Handle text-based files client-side
+    const reader = new FileReader();
+    const isCsv = fileName.endsWith('.csv');
+    const isMarkdown = fileName.endsWith('.md') || fileName.endsWith('.markdown');
+
+    reader.onload = (event) => {
+      let content = event.target?.result as string;
+
+      if (isCsv) {
+        content = `[CSV DATA - Parse this tabular data for presentation content]\n${content}`;
+      } else if (isMarkdown) {
+        content = `[MARKDOWN CONTENT]\n${content}`;
+      }
+
+      onChange({
+        ...value,
+        fileName: file.name,
+        fileContent: content,
+        fileType: isCsv ? 'csv' : 'text',
+      });
+    };
+    reader.readAsText(file);
   };
 
   const clearFile = () => {
@@ -141,6 +232,7 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
     const ext = value.fileName?.split('.').pop()?.toLowerCase();
     if (ext === 'csv') return 'CSV';
     if (ext === 'pdf') return 'PDF';
+    if (ext === 'docx') return 'DOCX';
     if (ext === 'md' || ext === 'markdown') return 'MD';
     return 'TXT';
   };
@@ -240,17 +332,16 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
               ) : (
                 <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors">
                   <Upload className="h-10 w-10 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    {t('contentInput.file.dropHint')}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{t('contentInput.file.dropHint')}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {t('contentInput.file.supportedFormats')}
                   </p>
                   <input
                     type="file"
                     className="hidden"
-                    accept=".txt,.md,.markdown,.csv,.pdf"
+                    accept=".txt,.md,.markdown,.csv,.pdf,.docx"
                     onChange={handleFileUpload}
+                    disabled={isImporting}
                   />
                 </label>
               )}
@@ -310,9 +401,7 @@ export function ContentInput({ value, onChange }: ContentInputProps) {
                   </p>
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">
-                  {t('contentInput.url.hint')}
-                </p>
+                <p className="text-xs text-muted-foreground">{t('contentInput.url.hint')}</p>
               )}
             </div>
           </TabsContent>

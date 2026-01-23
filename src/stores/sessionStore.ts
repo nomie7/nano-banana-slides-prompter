@@ -7,7 +7,31 @@ import type {
   GeneratedPrompt,
 } from '@/types/slidePrompt';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Cache for backend port
+let cachedApiBase: string | null = null;
+let apiBasePromise: Promise<string> | null = null;
+
+/**
+ * Get API base URL dynamically - uses Electron backend port if available
+ */
+async function getApiBase(): Promise<string> {
+  if (cachedApiBase) return cachedApiBase;
+  if (apiBasePromise) return apiBasePromise;
+
+  apiBasePromise = (async () => {
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      const port = await window.electronAPI.getBackendPort();
+      if (port) {
+        cachedApiBase = `http://localhost:${port}`;
+        return cachedApiBase;
+      }
+    }
+    cachedApiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    return cachedApiBase;
+  })();
+
+  return apiBasePromise;
+}
 
 const generateId = (): string => `session_${crypto.randomUUID()}`;
 
@@ -18,9 +42,22 @@ const createDefaultSession = (): Session => ({
   createdAt: Date.now(),
   updatedAt: Date.now(),
   config: {
-    content: { type: 'text', text: '', topic: '', fileContent: '', fileName: '', url: '', urlContent: '' },
+    content: {
+      type: 'text',
+      text: '',
+      topic: '',
+      fileContent: '',
+      fileName: '',
+      url: '',
+      urlContent: '',
+    },
     style: 'professional',
-    settings: { aspectRatio: '16:9', slideCount: 10, colorPalette: 'auto', layoutStructure: 'balanced' },
+    settings: {
+      aspectRatio: '16:9',
+      slideCount: 10,
+      colorPalette: 'auto',
+      layoutStructure: 'balanced',
+    },
   },
   status: 'idle',
   slides: [],
@@ -47,6 +84,7 @@ interface SessionStore {
   updateSessionPrompt: (id: string, prompt: GeneratedPrompt | null) => void;
   updateSessionError: (id: string, error: string | null) => void;
   updateSessionTitle: (id: string, title: string) => void;
+  updateSlideImageUrl: (sessionId: string, slideNumber: number, imageUrl: string) => void;
   syncToServer: () => Promise<void>;
 
   getAbortController: (id: string) => AbortController | undefined;
@@ -64,7 +102,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
 
   loadSessions: async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/sessions`);
+      const apiBase = await getApiBase();
+      const res = await fetch(`${apiBase}/api/sessions`);
       if (res.ok) {
         const data = await res.json();
         const normalizedSessions = (data.sessions || []).map((session: Session) => ({
@@ -74,9 +113,9 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
               ? session.isDefaultTitle
               : session.title === 'New Session',
         }));
-        const normalizedCurrent = normalizedSessions.find(s => s.id === data.currentSessionId)
+        const normalizedCurrent = normalizedSessions.find((s) => s.id === data.currentSessionId)
           ? data.currentSessionId
-          : normalizedSessions[0]?.id ?? null;
+          : (normalizedSessions[0]?.id ?? null);
         set({
           sessions: normalizedSessions,
           currentSessionId: normalizedCurrent,
@@ -94,18 +133,19 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   getCurrentSession: () => {
     const { sessions, currentSessionId } = get();
     if (!currentSessionId) return null;
-    return sessions.find(s => s.id === currentSessionId) || null;
+    return sessions.find((s) => s.id === currentSessionId) || null;
   },
 
   createSession: async () => {
     const newSession = createDefaultSession();
-    set(state => ({
+    set((state) => ({
       sessions: [newSession, ...state.sessions],
       currentSessionId: newSession.id,
     }));
 
     try {
-      await fetch(`${API_BASE}/api/sessions`, {
+      const apiBase = await getApiBase();
+      await fetch(`${apiBase}/api/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newSession),
@@ -121,15 +161,15 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
     const controller = get().abortControllers.get(id);
     if (controller) {
       controller.abort();
-      set(state => {
+      set((state) => {
         const newAbortControllers = new Map(state.abortControllers);
         newAbortControllers.delete(id);
         return { abortControllers: newAbortControllers };
       });
     }
 
-    set(state => {
-      const newSessions = state.sessions.filter(s => s.id !== id);
+    set((state) => {
+      const newSessions = state.sessions.filter((s) => s.id !== id);
       let newCurrentId = state.currentSessionId;
       if (state.currentSessionId === id) {
         newCurrentId = newSessions[0]?.id || null;
@@ -138,7 +178,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
     });
 
     try {
-      await fetch(`${API_BASE}/api/sessions/${id}`, { method: 'DELETE' });
+      const apiBase = await getApiBase();
+      await fetch(`${apiBase}/api/sessions/${id}`, { method: 'DELETE' });
     } catch (e) {
       console.error('Failed to delete session:', e);
     }
@@ -147,22 +188,25 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   setCurrentSession: async (id) => {
     set({ currentSessionId: id });
     try {
-      await fetch(`${API_BASE}/api/sessions/current/${id}`, { method: 'PUT' });
-      
-      const res = await fetch(`${API_BASE}/api/sessions`);
+      const apiBase = await getApiBase();
+      await fetch(`${apiBase}/api/sessions/current/${id}`, { method: 'PUT' });
+
+      const res = await fetch(`${apiBase}/api/sessions`);
       if (res.ok) {
         const data = await res.json();
         const freshSession = data.sessions.find((s: Session) => s.id === id);
         if (freshSession) {
-          set(state => ({
-            sessions: state.sessions.map(s =>
-              s.id === id ? {
-                ...freshSession,
-                isDefaultTitle:
-                  typeof freshSession.isDefaultTitle === 'boolean'
-                    ? freshSession.isDefaultTitle
-                    : freshSession.title === 'New Session',
-              } : s
+          set((state) => ({
+            sessions: state.sessions.map((s) =>
+              s.id === id
+                ? {
+                    ...freshSession,
+                    isDefaultTitle:
+                      typeof freshSession.isDefaultTitle === 'boolean'
+                        ? freshSession.isDefaultTitle
+                        : freshSession.title === 'New Session',
+                  }
+                : s
             ),
           }));
         }
@@ -173,16 +217,16 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionConfig: (id, config) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, config: { ...s.config, ...config }, updatedAt: Date.now() } : s
       ),
     }));
   },
 
   updateSessionStatus: (id, status) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, status, updatedAt: Date.now() } : s
       ),
     }));
@@ -190,8 +234,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionSlides: (id, slides) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, slides, updatedAt: Date.now() } : s
       ),
     }));
@@ -199,8 +243,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionPrompt: (id, generatedPrompt) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, generatedPrompt, updatedAt: Date.now() } : s
       ),
     }));
@@ -208,8 +252,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionError: (id, error) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, error, updatedAt: Date.now() } : s
       ),
     }));
@@ -217,9 +261,28 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   updateSessionTitle: (id, title) => {
-    set(state => ({
-      sessions: state.sessions.map(s =>
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, title, isDefaultTitle: false, updatedAt: Date.now() } : s
+      ),
+    }));
+    get().syncToServer();
+  },
+
+  updateSlideImageUrl: (sessionId, slideNumber, imageUrl) => {
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
+        s.id === sessionId
+          ? {
+              ...s,
+              slides: s.slides.map((slide) =>
+                slide.slideNumber === slideNumber
+                  ? { ...slide, generatedImageUrl: imageUrl }
+                  : slide
+              ),
+              updatedAt: Date.now(),
+            }
+          : s
       ),
     }));
     get().syncToServer();
@@ -237,7 +300,8 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
       }
       set({ syncInFlight: true });
       try {
-        await fetch(`${API_BASE}/api/sessions/sync`, {
+        const apiBase = await getApiBase();
+        await fetch(`${apiBase}/api/sessions/sync`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ sessions, currentSessionId }),
@@ -253,7 +317,7 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   getAbortController: (id) => get().abortControllers.get(id),
 
   setAbortController: (id, controller) => {
-    set(state => {
+    set((state) => {
       const abortControllers = new Map(state.abortControllers);
       abortControllers.set(id, controller);
       return { abortControllers };
@@ -261,7 +325,7 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
   },
 
   removeAbortController: (id) => {
-    set(state => {
+    set((state) => {
       const abortControllers = new Map(state.abortControllers);
       abortControllers.delete(id);
       return { abortControllers };

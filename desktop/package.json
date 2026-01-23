@@ -1,0 +1,30 @@
+{
+  "name": "nano-banana-slides-prompter-desktop",
+  "version": "2.0.18",
+  "description": "Desktop application for Nano Banana Slides Prompter",
+  "homepage": "https://github.com/xuan2261/nano-banana-slides-prompter",
+  "main": "dist/main.js",
+  "author": {
+    "name": "Nano Banana Team",
+    "email": "xuan2261@users.noreply.github.com"
+  },
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "dev": "tsc && electron .",
+    "build": "tsc && electron-builder",
+    "build:backend": "ts-node scripts/build-backend.ts",
+    "prebuild": "npm run build:backend",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "electron-log": "^5.2.0",
+    "electron-updater": "^6.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "electron": "^32.3.3",
+    "electron-builder": "^25.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

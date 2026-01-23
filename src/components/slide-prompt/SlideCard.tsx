@@ -1,9 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, Check, Copy } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Check,
+  Copy,
+  Sparkles,
+  Loader2,
+  Pencil,
+  X,
+  RefreshCw,
+  ImageIcon,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useToast } from '@/hooks/use-toast';
+import { usePromptOptimizer } from '@/hooks/usePromptOptimizer';
+import { OptimizationDiff } from '@/components/optimizer/OptimizationDiff';
 import type { ParsedSlide } from '@/types/slidePrompt';
 
 interface SlideCardProps {
@@ -11,18 +26,56 @@ interface SlideCardProps {
   defaultOpen?: boolean;
   isNew?: boolean;
   animationDelay?: number;
+  onPromptUpdate?: (slideNumber: number, newPrompt: string) => void;
+  onRegenerate?: (slideNumber: number) => void;
+  isRegenerating?: boolean;
+  // Image generation props
+  onGenerateImage?: (slideNumber: number) => void;
+  isGeneratingImage?: boolean;
+  generatedImageUrl?: string;
+  showImageButton?: boolean;
+  // Checkbox props
+  isSelected?: boolean;
+  onSelectChange?: (slideNumber: number, selected: boolean) => void;
+  showCheckbox?: boolean;
 }
 
-export function SlideCard({ slide, defaultOpen = false, isNew = false, animationDelay = 0 }: SlideCardProps) {
+export function SlideCard({
+  slide,
+  defaultOpen = false,
+  isNew = false,
+  animationDelay = 0,
+  onPromptUpdate,
+  onRegenerate,
+  isRegenerating = false,
+  onGenerateImage,
+  isGeneratingImage = false,
+  generatedImageUrl,
+  showImageButton = false,
+  isSelected = false,
+  onSelectChange,
+  showCheckbox = false,
+}: SlideCardProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedPrompt, setEditedPrompt] = useState(slide.prompt);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     setIsOpen(defaultOpen);
   }, [defaultOpen]);
+
+  // Sync editedPrompt with slide.prompt when slide changes
+  useEffect(() => {
+    setEditedPrompt(slide.prompt);
+  }, [slide.prompt]);
+
   const [copied, setCopied] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(!isNew);
+  const [showOptimizationDiff, setShowOptimizationDiff] = useState(false);
   const { toast } = useToast();
+  const { isOptimizing, result, optimize, reset } = usePromptOptimizer();
 
   useEffect(() => {
     if (isNew && !hasAnimated) {
@@ -53,13 +106,74 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
     }
   };
 
-  const animationClass = isNew && !hasAnimated
-    ? 'animate-slide-up'
-    : '';
+  const animationClass = isNew && !hasAnimated ? 'animate-slide-up' : '';
 
-  const animationStyle = isNew && !hasAnimated
-    ? { animationDelay: `${animationDelay}ms` }
-    : {};
+  const animationStyle = isNew && !hasAnimated ? { animationDelay: `${animationDelay}ms` } : {};
+
+  const handleOptimize = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const result = await optimize(slide.prompt);
+    if (result) {
+      setShowOptimizationDiff(true);
+    }
+  };
+
+  const handleAcceptOptimization = (optimizedPrompt: string) => {
+    if (onPromptUpdate) {
+      onPromptUpdate(slide.slideNumber, optimizedPrompt);
+    }
+    reset();
+  };
+
+  const handleRejectOptimization = () => {
+    reset();
+  };
+
+  const handleRegenerate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRegenerate) {
+      onRegenerate(slide.slideNumber);
+    }
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+    setIsOpen(true);
+    // Focus textarea after render
+    setTimeout(() => textareaRef.current?.focus(), 100);
+  };
+
+  const handleSaveEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onPromptUpdate && editedPrompt.trim() !== slide.prompt) {
+      onPromptUpdate(slide.slideNumber, editedPrompt.trim());
+      toast({
+        title: t('slideCard.editSaved', 'Saved'),
+        description: t('slideCard.editSavedDesc', 'Prompt updated successfully'),
+      });
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditedPrompt(slide.prompt);
+    setIsEditing(false);
+  };
+
+  const handleGenerateImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onGenerateImage) {
+      onGenerateImage(slide.slideNumber);
+    }
+  };
+
+  const handleCheckboxChange = (checked: boolean | 'indeterminate') => {
+    if (onSelectChange && checked !== 'indeterminate') {
+      onSelectChange(slide.slideNumber, checked);
+    }
+  };
 
   return (
     <Collapsible
@@ -71,6 +185,25 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
       <CollapsibleTrigger asChild>
         <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors">
           <div className="flex items-center gap-3">
+            {/* Checkbox for selection */}
+            {showCheckbox && (
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={handleCheckboxChange}
+                onClick={(e) => e.stopPropagation()}
+                className="mr-1"
+              />
+            )}
+            {/* Thumbnail preview when image exists */}
+            {generatedImageUrl && (
+              <div className="w-8 h-8 rounded overflow-hidden border border-border/50 flex-shrink-0">
+                <img
+                  src={generatedImageUrl}
+                  alt={`Slide ${slide.slideNumber}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm">
               {slide.slideNumber}
             </div>
@@ -83,35 +216,150 @@ export function SlideCard({ slide, defaultOpen = false, isNew = false, animation
               <span className="font-medium text-foreground">{slide.title}</span>
             </div>
           </div>
-          <Button
-            onClick={handleCopy}
-            variant="ghost"
-            size="sm"
-            className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
-          >
-            {copied ? (
-              <>
-                <Check className="h-3.5 w-3.5 mr-1.5 text-green-500" />
-                <span className="text-xs">{t('buttons.copied')}</span>
-              </>
-            ) : (
-              <>
-                <Copy className="h-3.5 w-3.5 mr-1.5" />
-                <span className="text-xs">{t('buttons.copy')}</span>
-              </>
+          <div className="flex items-center gap-1">
+            {/* Generate Image button */}
+            {showImageButton && onGenerateImage && (
+              <Button
+                onClick={handleGenerateImage}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+                disabled={isGeneratingImage || isEditing}
+              >
+                {isGeneratingImage ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                    <span className="text-xs">{t('gemini.generating', 'Generating...')}</span>
+                  </>
+                ) : generatedImageUrl ? (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
+                    <span className="text-xs">{t('gemini.regenerateImage', 'Regenerate')}</span>
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
+                    <span className="text-xs">{t('gemini.generateImage', 'Generate Image')}</span>
+                  </>
+                )}
+              </Button>
             )}
-          </Button>
+            {/* Regenerate button */}
+            {onRegenerate && (
+              <Button
+                onClick={handleRegenerate}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+                disabled={isRegenerating || isEditing}
+              >
+                {isRegenerating ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                    <span className="text-xs">{t('buttons.regenerating', 'Regenerating...')}</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 mr-1.5 text-purple-500" />
+                    <span className="text-xs">{t('buttons.regenerate', 'Regenerate')}</span>
+                  </>
+                )}
+              </Button>
+            )}
+            {/* Edit button - only show when onPromptUpdate is provided */}
+            {onPromptUpdate && !isEditing && (
+              <Button
+                onClick={handleEdit}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+              >
+                <Pencil className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
+                <span className="text-xs">{t('buttons.edit', 'Edit')}</span>
+              </Button>
+            )}
+            <Button
+              onClick={handleOptimize}
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+              disabled={isOptimizing || isEditing}
+            >
+              {isOptimizing ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                  <span className="text-xs">{t('buttons.optimizing', 'Optimizing...')}</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5 text-yellow-500" />
+                  <span className="text-xs">{t('buttons.optimize', 'Optimize')}</span>
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={handleCopy}
+              variant="ghost"
+              size="sm"
+              className="h-8 px-3 opacity-70 hover:opacity-100 transition-opacity"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 mr-1.5 text-green-500" />
+                  <span className="text-xs">{t('buttons.copied')}</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5 mr-1.5" />
+                  <span className="text-xs">{t('buttons.copy')}</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="px-4 pb-4">
-          <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg p-4 border border-border/30">
-            <pre className="text-sm text-foreground whitespace-pre-wrap font-mono leading-relaxed">
-              {slide.prompt}
-            </pre>
-          </div>
+          {isEditing ? (
+            <div className="space-y-3">
+              <Textarea
+                ref={textareaRef}
+                value={editedPrompt}
+                onChange={(e) => setEditedPrompt(e.target.value)}
+                className="min-h-[200px] font-mono text-sm resize-y"
+                placeholder={t('slideCard.editPlaceholder', 'Enter your prompt...')}
+              />
+              <div className="flex justify-end gap-2">
+                <Button onClick={handleCancelEdit} variant="outline" size="sm" className="h-8">
+                  <X className="h-3.5 w-3.5 mr-1.5" />
+                  {t('buttons.cancel', 'Cancel')}
+                </Button>
+                <Button onClick={handleSaveEdit} variant="default" size="sm" className="h-8">
+                  <Check className="h-3.5 w-3.5 mr-1.5" />
+                  {t('buttons.save', 'Save')}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg p-4 border border-border/30">
+              <pre className="text-sm text-foreground whitespace-pre-wrap font-mono leading-relaxed">
+                {slide.prompt}
+              </pre>
+            </div>
+          )}
         </div>
       </CollapsibleContent>
+
+      {/* Optimization diff dialog */}
+      {result && (
+        <OptimizationDiff
+          result={result}
+          open={showOptimizationDiff}
+          onOpenChange={setShowOptimizationDiff}
+          onAccept={handleAcceptOptimization}
+          onReject={handleRejectOptimization}
+        />
+      )}
     </Collapsible>
   );
 }

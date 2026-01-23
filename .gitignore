@@ -34,3 +34,25 @@ server/.env
 
 # Session data
 server/data/
+
+# Build artifacts
+coverage/
+desktop/release/
+desktop/backend/
+desktop/renderer/
+desktop/resources/backend/
+
+# Temporary files
+nul
+repomix-output.xml
+server/tmpclaude-*
+*.tmp
+
+# Lock files (use package-lock.json or yarn.lock instead)
+bun.lock
+desktop/bun.lock
+
+# Plans and reports (local development only)
+plans/
+tmpclaude-*
+GiaoDienHienTai.PNG

@@ -22,7 +22,10 @@
     "extract": "提取",
     "extracting": "提取中...",
     "expandAll": "全部展开",
-    "collapseAll": "全部折叠"
+    "collapseAll": "全部折叠",
+    "export": "导出",
+    "edit": "编辑",
+    "save": "保存"
   },
   "contentInput": {
     "tabs": {
@@ -72,6 +75,9 @@
   },
   "styleSelector": {
     "title": "视觉风格",
+    "autoMode": "自动",
+    "customMode": "自定义",
+    "autoHint": "不应用视觉风格。提示词将仅关注内容结构。",
     "styles": {
       "professional": { "name": "专业", "description": "简洁的企业风格" },
       "technical": { "name": "技术", "description": "蓝图与图表" },
@@ -152,7 +158,9 @@
       "visual-heavy": { "label": "视觉为主", "description": "70% 图片" },
       "balanced": { "label": "均衡", "description": "50/50 混合" },
       "text-heavy": { "label": "文字为主", "description": "70% 文字" }
-    }
+    },
+    "outputLanguage": "输出语言",
+    "outputLanguageDescription": "生成提示词的语言"
   },
   "promptOutput": {
     "noPrompt": "尚未生成提示词",
@@ -169,12 +177,16 @@
     "rawHint": "用于调试或自定义处理的原始 LLM 输出。"
   },
   "slideCard": {
-    "copiedSlide": "第 {{number}} 张幻灯片提示词已复制到剪贴板。"
+    "copiedSlide": "第 {{number}} 张幻灯片提示词已复制到剪贴板。",
+    "editSaved": "已保存",
+    "editSavedDesc": "提示词已成功更新",
+    "editPlaceholder": "输入您的提示词..."
   },
   "language": {
     "label": "语言",
     "zh": "中文",
-    "en": "English"
+    "en": "English",
+    "vi": "Tiếng Việt"
   },
   "settings": {
     "title": "AI 设置",
@@ -222,8 +234,220 @@
     "loadSessionsTitle": "加载会话失败",
     "loadSessionsDescription": "加载会话时发生错误。请重试。"
   },
+  "error": {
+    "title": "出现错误",
+    "description": "发生意外错误。您的工作已自动保存。",
+    "retry": "重试",
+    "details": "错误详情"
+  },
+  "dnd": {
+    "dragHandle": "拖动以重新排序",
+    "reordered": "幻灯片已重新排序"
+  },
+  "regenerate": {
+    "success": "幻灯片已成功重新生成",
+    "failed": "无法重新生成幻灯片"
+  },
   "notFound": {
     "message": "页面未找到",
     "returnHome": "返回首页"
+  },
+  "export": {
+    "asJSON": "导出为 JSON",
+    "asMarkdown": "导出为 Markdown",
+    "asText": "导出为文本",
+    "noSession": "无会话",
+    "noSessionDesc": "请选择要导出的会话。",
+    "noContent": "无内容",
+    "noContentDesc": "此会话没有可导出的生成内容。",
+    "success": "导出成功",
+    "successDesc": "会话已导出为 {{format}}。",
+    "failed": "导出失败",
+    "failedDesc": "无法导出会话，请重试。"
+  },
+  "promptPreview": {
+    "title": "提示词预览",
+    "slides": "张幻灯片",
+    "formatted": "格式化",
+    "raw": "原始",
+    "copied": "已复制!",
+    "copiedDesc": "提示词内容已复制到剪贴板。",
+    "hint": "切换格式化和原始视图。复制后可在 Nano Banana Pro Slides 中使用。"
+  },
+  "templates": {
+    "button": "模板",
+    "title": "选择模板",
+    "slides": "张幻灯片",
+    "categories": {
+      "presentation": "演示",
+      "education": "教育",
+      "business": "商务",
+      "creative": "创意",
+      "quiz": "测验"
+    },
+    "presentation": {
+      "startupPitch": {
+        "name": "创业路演",
+        "description": "面向投资者和利益相关者的精彩演示"
+      },
+      "productLaunch": {
+        "name": "产品发布",
+        "description": "令人兴奋的产品发布演示"
+      },
+      "quarterlyReview": {
+        "name": "季度回顾",
+        "description": "业务绩效和指标概览"
+      },
+      "conferenceTalk": {
+        "name": "会议演讲",
+        "description": "会议和活动的精彩主题演讲"
+      },
+      "teamMeeting": {
+        "name": "团队会议",
+        "description": "内部团队更新和协作"
+      }
+    },
+    "education": {
+      "lectureSlides": {
+        "name": "课程幻灯片",
+        "description": "解释清晰的学术讲座"
+      },
+      "tutorial": {
+        "name": "教程",
+        "description": "分步说明指南"
+      },
+      "researchPresentation": {
+        "name": "研究报告",
+        "description": "学术研究成果和分析"
+      },
+      "workshop": {
+        "name": "工作坊",
+        "description": "互动实践学习课程"
+      },
+      "studentProject": {
+        "name": "学生项目",
+        "description": "学生作业或项目演示"
+      }
+    },
+    "business": {
+      "salesProposal": {
+        "name": "销售提案",
+        "description": "有说服力的销售和提案演示"
+      },
+      "companyOverview": {
+        "name": "公司概览",
+        "description": "公司简介和能力展示"
+      },
+      "projectStatus": {
+        "name": "项目状态",
+        "description": "项目进度和里程碑更新"
+      },
+      "strategyPlanning": {
+        "name": "战略规划",
+        "description": "战略路线图和规划会议"
+      },
+      "financialReport": {
+        "name": "财务报告",
+        "description": "财务数据和业务指标"
+      }
+    },
+    "creative": {
+      "portfolioShowcase": {
+        "name": "作品集展示",
+        "description": "创意作品集和作品样本"
+      },
+      "eventWedding": {
+        "name": "活动/婚礼",
+        "description": "特殊活动或婚礼庆典"
+      },
+      "storytelling": {
+        "name": "故事叙述",
+        "description": "以叙事驱动的视觉故事"
+      },
+      "travelBlog": {
+        "name": "旅行博客",
+        "description": "旅行冒险和目的地"
+      },
+      "artExhibition": {
+        "name": "艺术展览",
+        "description": "艺术画廊和展览展示"
+      }
+    },
+    "quiz": {
+      "multipleChoice": {
+        "name": "选择题测验",
+        "description": "带多个选项的互动选择题"
+      },
+      "trueFalse": {
+        "name": "判断题测验",
+        "description": "简单的对错判断题格式"
+      },
+      "fillInBlank": {
+        "name": "填空题",
+        "description": "用缺失的词语完成句子"
+      },
+      "matching": {
+        "name": "配对题测验",
+        "description": "将两列的项目进行匹配"
+      }
+    }
+  },
+  "gemini": {
+    "title": "Gemini 图像生成",
+    "description": "使用 Google Gemini 生成幻灯片图像",
+    "apiKey": "Gemini API 密钥",
+    "apiKeyHint": "从 Google AI Studio 获取密钥",
+    "model": "模型",
+    "modelHint": "默认: {{default}}",
+    "baseURL": "API 地址",
+    "baseURLHint": "可选。留空则使用 Google 默认端点。",
+    "enabled": "启用 Gemini",
+    "enabledHint": "在提示词输出中显示生成图像按钮",
+    "testConnection": "测试连接",
+    "testing": "测试中...",
+    "testSuccess": "连接成功",
+    "testFailed": "连接失败",
+    "generateImage": "生成图像",
+    "generateImages": "生成图像",
+    "generating": "生成中...",
+    "preview": "图像预览",
+    "slideOf": "幻灯片 {{current}}/{{total}}",
+    "download": "下载",
+    "downloadAll": "下载全部",
+    "close": "关闭",
+    "noApiKey": "请在设置中配置 Gemini API 密钥",
+    "generationFailed": "图像生成失败",
+    "generationSuccess": "已生成 {{count}} 张图像"
+  },
+  "brandKit": {
+    "title": "品牌套件",
+    "companyName": "公司名称",
+    "companyNamePlaceholder": "您的公司",
+    "primaryColor": "主色调",
+    "secondaryColor": "辅助色",
+    "fontFamily": "字体",
+    "fontSize": "字号",
+    "fontSizes": {
+      "small": "小",
+      "medium": "中",
+      "large": "大"
+    },
+    "logo": "Logo",
+    "logoHint": "最大 500KB，PNG/JPG/SVG",
+    "removeLogo": "移除",
+    "reset": "重置",
+    "preview": "预览"
+  },
+  "courseBuilder": {
+    "title": "课程模式",
+    "beta": "Beta",
+    "description": "将幻灯片组织成课程以获得结构化的课程内容。",
+    "courseTitle": "课程标题",
+    "courseTitlePlaceholder": "例如：机器学习入门",
+    "lessons": "课程",
+    "slides": "张幻灯片",
+    "noLessons": "暂无课程。在下方添加您的第一个课程。",
+    "lessonPlaceholder": "课程标题...",
+    "futureNote": "完整的课程构建器及按课程生成功能将在 v2.1 推出"
   }
 }

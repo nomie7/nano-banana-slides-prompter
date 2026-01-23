@@ -1,0 +1,59 @@
+appId: com.nanobanana.slides-prompter
+productName: Nano Banana Slides Prompter
+copyright: Copyright (c) 2024-2026 Nano Banana Team
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - dist/**/*
+  - renderer/**/*
+  - resources/**/*
+
+extraResources:
+  - from: backend/
+    to: backend/
+    filter:
+      - "**/*"
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: resources/icons/icon.ico
+  artifactName: ${productName}-${version}-win-${arch}.${ext}
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: resources/icons/icon.icns
+  category: public.app-category.productivity
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+  icon: resources/icons
+  category: Office
+  artifactName: ${productName}-${version}-linux-${arch}.${ext}
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+publish:
+  provider: github
+  owner: xuan2261
+  repo: nano-banana-slides-prompter
