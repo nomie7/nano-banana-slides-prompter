@@ -12,6 +12,7 @@ import { optimizeRouter } from './routes/optimize';
 import { geminiRouter } from './routes/gemini';
 import { regenerateRouter } from './routes/regenerate';
 import importRoutes from './routes/import';
+import { imagesRouter } from './routes/images';
 
 const app = new Hono();
 
@@ -46,6 +47,7 @@ app.route('/api', optimizeRouter);
 app.route('/api', regenerateRouter);
 app.route('/api/gemini', geminiRouter);
 app.route('/api/import', importRoutes);
+app.route('/api/images', imagesRouter);
 
 app.notFound((c) => c.json({ error: 'Not Found' }, 404));
 

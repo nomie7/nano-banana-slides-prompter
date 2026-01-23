@@ -107,6 +107,7 @@ export interface ParsedSlide {
   slideNumber: number;
   title: string;
   prompt: string;
+  generatedImageUrl?: string;
 }
 
 export interface GeneratedPrompt {

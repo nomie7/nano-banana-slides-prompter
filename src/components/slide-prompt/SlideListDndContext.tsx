@@ -93,13 +93,21 @@ export function SlideListDndContext({
   const slideIds = slides.map((s) => `slide-${s.slideNumber}`);
 
   // Memoize image URLs to prevent recreation on every render
+  // Priority: 1. In-memory base64 (fresh generation) 2. Persisted URL from slide
   const imageUrlMap = useMemo(() => {
     const map = new Map<number, string>();
+    // First, add persisted URLs from slides
+    slides.forEach((slide) => {
+      if (slide.generatedImageUrl) {
+        map.set(slide.slideNumber, slide.generatedImageUrl);
+      }
+    });
+    // Then, override with fresh base64 images (higher priority)
     images.forEach((img) => {
       map.set(img.slideNumber, `data:${img.mimeType};base64,${img.data}`);
     });
     return map;
-  }, [images]);
+  }, [images, slides]);
 
   return (
     <DndContext

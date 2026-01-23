@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useSessionStore } from '@/stores/sessionStore';
 import type { ParsedSlide } from '@/types/slidePrompt';
 
 export interface GeneratedImage {
@@ -34,10 +35,45 @@ async function getBaseUrl(): Promise<string> {
   return import.meta.env.VITE_API_BASE || '';
 }
 
+/**
+ * Save image to server for persistence across app restarts
+ */
+async function saveImageToServer(
+  sessionId: string,
+  slideNumber: number,
+  imageData: string,
+  mimeType: string
+): Promise<string | null> {
+  try {
+    const baseUrl = await getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/images/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId,
+        slideNumber,
+        imageData,
+        mimeType,
+      }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      return data.imageUrl;
+    }
+    console.error('Failed to save image:', data.error);
+    return null;
+  } catch (error) {
+    console.error('Failed to save image to server:', error);
+    return null;
+  }
+}
+
 export function useGeminiImage(): UseGeminiImageReturn {
   const { t } = useTranslation();
   const { toast } = useToast();
   const { geminiSettings } = useSettingsStore();
+  const { getCurrentSession, updateSlideImageUrl } = useSessionStore();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const [state, setState] = useState<UseGeminiImageState>({
@@ -173,6 +209,22 @@ export function useGeminiImage(): UseGeminiImageReturn {
           toast({
             title: t('gemini.generationSuccess', { count: generatedImages.length }),
           });
+
+          // Save all generated images to server for persistence
+          const currentSession = getCurrentSession();
+          if (currentSession) {
+            for (const img of generatedImages) {
+              const imageUrl = await saveImageToServer(
+                currentSession.id,
+                img.slideNumber,
+                img.data,
+                img.mimeType
+              );
+              if (imageUrl) {
+                updateSlideImageUrl(currentSession.id, img.slideNumber, imageUrl);
+              }
+            }
+          }
         } else {
           throw new Error(data.error || 'Generation failed');
         }
@@ -264,6 +316,20 @@ export function useGeminiImage(): UseGeminiImageReturn {
             toast({
               title: t('gemini.generationSuccess', { count: 1 }),
             });
+
+            // Save to server for persistence across app restarts
+            const currentSession = getCurrentSession();
+            if (currentSession) {
+              const imageUrl = await saveImageToServer(
+                currentSession.id,
+                slide.slideNumber,
+                newImage.data,
+                newImage.mimeType
+              );
+              if (imageUrl) {
+                updateSlideImageUrl(currentSession.id, slide.slideNumber, imageUrl);
+              }
+            }
 
             return newImage;
           }

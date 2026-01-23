@@ -84,6 +84,7 @@ interface SessionStore {
   updateSessionPrompt: (id: string, prompt: GeneratedPrompt | null) => void;
   updateSessionError: (id: string, error: string | null) => void;
   updateSessionTitle: (id: string, title: string) => void;
+  updateSlideImageUrl: (sessionId: string, slideNumber: number, imageUrl: string) => void;
   syncToServer: () => Promise<void>;
 
   getAbortController: (id: string) => AbortController | undefined;
@@ -263,6 +264,25 @@ export const useSessionStore = create<SessionStore>()((set, get) => ({
     set((state) => ({
       sessions: state.sessions.map((s) =>
         s.id === id ? { ...s, title, isDefaultTitle: false, updatedAt: Date.now() } : s
+      ),
+    }));
+    get().syncToServer();
+  },
+
+  updateSlideImageUrl: (sessionId, slideNumber, imageUrl) => {
+    set((state) => ({
+      sessions: state.sessions.map((s) =>
+        s.id === sessionId
+          ? {
+              ...s,
+              slides: s.slides.map((slide) =>
+                slide.slideNumber === slideNumber
+                  ? { ...slide, generatedImageUrl: imageUrl }
+                  : slide
+              ),
+              updatedAt: Date.now(),
+            }
+          : s
       ),
     }));
     get().syncToServer();
